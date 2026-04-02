@@ -393,7 +393,7 @@
     <div class="auth-logo">Ashvaren</div>
     <div class="auth-tagline">Clarity. Structure. Growth.</div>
     <h2>Work tracker</h2>
-    <p>Enter your credentials to get started. These are stored only in your browser's local storage and never sent anywhere except the relevant APIs.</p>
+    <p>Enter your credentials to get started. These are stored only in your browser's local storage.</p>
 
     <div class="config-section">
       <label>Google OAuth client ID</label>
@@ -401,12 +401,12 @@
       <div class="hint">From Google Cloud Console › APIs & Services › Credentials</div>
     </div>
     <div class="config-section">
-      <label>Anthropic API key</label>
-      <input type="password" id="cfg-anthropic-key" placeholder="sk-ant-..." />
-      <div class="hint">From console.anthropic.com</div>
+      <label>AI proxy URL</label>
+      <input type="text" id="cfg-proxy-url" placeholder="https://ashvaren-ai-proxy.xxx.workers.dev" />
+      <div class="hint">Your Cloudflare Worker URL</div>
     </div>
     <button class="btn-primary" onclick="saveConfigAndAuth()">Connect with Google →</button>
-    <p class="auth-note">You will be redirected to Google to grant access to Drive and Calendar. No data leaves your browser except calls to Google and Anthropic.</p>
+    <p class="auth-note">You will be redirected to Google to grant access to Drive and Calendar. Your Anthropic key is stored securely in Cloudflare and never touches this app.</p>
   </div>
 </div>
 
@@ -530,10 +530,10 @@
       <input type="text" id="s-client-id" placeholder="xxxx.apps.googleusercontent.com" />
     </div>
     <div class="field">
-      <label>Anthropic API key</label>
-      <input type="password" id="s-anthropic-key" placeholder="sk-ant-..." />
+      <label>AI proxy URL</label>
+      <input type="text" id="s-proxy-url" placeholder="https://ashvaren-ai-proxy.xxx.workers.dev" />
     </div>
-    <p style="font-size:12px;color:var(--text-tertiary);margin-bottom:1rem;line-height:1.6;">Updating the API key takes effect immediately. Updating the OAuth client ID will trigger a new Google sign-in.</p>
+    <p style="font-size:12px;color:var(--text-tertiary);margin-bottom:1rem;line-height:1.6;">Updating the proxy URL takes effect immediately. Updating the OAuth client ID will trigger a new Google sign-in.</p>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeSettings()">Cancel</button>
       <button class="btn-save" onclick="saveSettings()">Save</button>
@@ -551,7 +551,7 @@ const DRIVE_FOLDER_PATH = 'Ashvaren/Tracker';
 const WORK_CAL = 'mike@ashvaren.com';
 const FAMILY_CAL = 'mikeandlucyw@gmail.com';
 
-let cfg = { clientId: '', anthropicKey: '' };
+let cfg = { clientId: '', proxyUrl: '' };
 let token = null;
 let driveFileId = null;
 let editingEngId = null;
@@ -565,7 +565,7 @@ let state = {
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 window.onload = async () => {
   cfg.clientId = localStorage.getItem('cfg_client_id') || '';
-  cfg.anthropicKey = localStorage.getItem('cfg_anthropic_key') || '';
+  cfg.proxyUrl = localStorage.getItem('cfg_proxy_url') || '';
 
   // Handle OAuth redirect
   const hash = window.location.hash;
@@ -579,22 +579,22 @@ window.onload = async () => {
   }
 
   token = localStorage.getItem('goog_token');
-  if (token && cfg.clientId && cfg.anthropicKey) {
+  if (token && cfg.clientId && cfg.proxyUrl) {
     await startApp();
   } else {
     document.getElementById('loading').style.display = 'none';
     if (cfg.clientId) document.getElementById('cfg-client-id').value = cfg.clientId;
-    if (cfg.anthropicKey) document.getElementById('cfg-anthropic-key').value = cfg.anthropicKey;
+    if (cfg.proxyUrl) document.getElementById('cfg-proxy-url').value = cfg.proxyUrl;
     document.getElementById('auth-screen').style.display = 'flex';
   }
 };
 
 function saveConfigAndAuth() {
   cfg.clientId = document.getElementById('cfg-client-id').value.trim();
-  cfg.anthropicKey = document.getElementById('cfg-anthropic-key').value.trim();
-  if (!cfg.clientId || !cfg.anthropicKey) { alert('Both fields are required.'); return; }
+  cfg.proxyUrl = document.getElementById('cfg-proxy-url').value.trim().replace(/\/$/, '');
+  if (!cfg.clientId || !cfg.proxyUrl) { alert('Both fields are required.'); return; }
   localStorage.setItem('cfg_client_id', cfg.clientId);
-  localStorage.setItem('cfg_anthropic_key', cfg.anthropicKey);
+  localStorage.setItem('cfg_proxy_url', cfg.proxyUrl);
   redirectToGoogle();
 }
 
@@ -613,7 +613,7 @@ function signOut() {
 
 function openSettings() {
   document.getElementById('s-client-id').value = cfg.clientId;
-  document.getElementById('s-anthropic-key').value = cfg.anthropicKey;
+  document.getElementById('s-proxy-url').value = cfg.proxyUrl;
   document.getElementById('settings-modal').classList.add('open');
 }
 
@@ -623,13 +623,13 @@ function closeSettings() {
 
 function saveSettings() {
   const newClientId = document.getElementById('s-client-id').value.trim();
-  const newKey = document.getElementById('s-anthropic-key').value.trim();
-  if (!newClientId || !newKey) { alert('Both fields are required.'); return; }
+  const newProxy = document.getElementById('s-proxy-url').value.trim().replace(/\/$/, '');
+  if (!newClientId || !newProxy) { alert('Both fields are required.'); return; }
   const clientIdChanged = newClientId !== cfg.clientId;
   cfg.clientId = newClientId;
-  cfg.anthropicKey = newKey;
+  cfg.proxyUrl = newProxy;
   localStorage.setItem('cfg_client_id', cfg.clientId);
-  localStorage.setItem('cfg_anthropic_key', cfg.anthropicKey);
+  localStorage.setItem('cfg_proxy_url', cfg.proxyUrl);
   closeSettings();
   if (clientIdChanged) {
     toast('Client ID updated — re-authenticating with Google…');
@@ -994,9 +994,9 @@ async function sendToAI() {
   const context = JSON.stringify({ engagements: state.engagements, tasks: state.tasks });
 
   try {
-    const r = await fetch('https://api.anthropic.com/v1/messages', {
+    const r = await fetch(cfg.proxyUrl, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': cfg.anthropicKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-client-side-api-key-access': 'true' },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-5',
         max_tokens: 1000,
