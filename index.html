@@ -1095,9 +1095,7 @@ Produce the weekly review.` }]
     const raw = (data.content || []).map(c => c.text || '').join('').trim();
     let review;
     try {
-      const clean = raw.replace(/^```json
-?/, '').replace(/
-?```$/, '').trim();
+      const clean = raw.replace(/^```json\n?/, '').replace(/\n?```$/, '').trim();
       review = JSON.parse(clean);
     } catch(e) {
       content.innerHTML = `<div style="font-size:13px;line-height:1.7;color:var(--text-secondary);">${raw}</div>`;
