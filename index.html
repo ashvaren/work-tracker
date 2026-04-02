@@ -773,7 +773,13 @@ ${ctx}
 Analyse the update and respond with exactly two parts on separate lines:
 
 1. UPDATES line (always present):
-UPDATES: {"engagements":[{"id":"...","field":"...","value":"..."}],"tasks":[{"action":"add","title":"...","engagement":"...","due":"today|tomorrow|this-week|later"}],"newClient":{"detected":false}}
+UPDATES: {"engagements":[{"id":"...","fields":{"last":"...","next":"...","status":"..."}}],"tasks":[{"action":"add","title":"...","engagement":"...","due":"today|tomorrow|this-week|later"}],"newClient":{"detected":false}}
+
+CRITICAL rules for engagement updates:
+- Use "fields" as an object containing all changed fields. Never use "field"/"value" format.
+- ALWAYS update both "last" and "next" together when any progress is mentioned. Never update one without the other.
+- If next step is not explicitly stated, INFER a logical one. Examples: signed NDA received means next is send engagement letter; model delivered means next is review call; waiting on signature means status becomes waiting.
+- Only include fields that actually changed.
 
 If you detect a NEW client or engagement (a name not in the engagements list, or phrases like "new engagement", "new client", "just taken on", "prospective"), set newClient to:
 {"detected":true,"name":"<name>","contactName":"<contact if mentioned>","scope":"<scope if mentioned>","type":"confirmed|prospective"}
@@ -791,7 +797,7 @@ Only set detected:true for genuinely new clients not already in the tracker. "Pr
       if(line.startsWith('UPDATES:')){
         try{
           const u=JSON.parse(line.replace('UPDATES:','').trim());
-          (u.engagements||[]).forEach(x=>{const e=state.engagements.find(e=>e.id===x.id);if(e&&x.field)e[x.field]=x.value;});
+          (u.engagements||[]).forEach(x=>{const e=state.engagements.find(e=>e.id===x.id);if(e&&x.fields){Object.entries(x.fields).forEach(([k,v])=>{if(k in e)e[k]=v;});}else if(e&&x.field)e[x.field]=x.value;});
           (u.tasks||[]).forEach(x=>{if(x.action==='add')state.tasks.push({id:'t'+Date.now()+Math.random(),title:x.title,engagement:x.engagement||'',due:x.due||'this-week',done:false});});
           if(u.newClient&&u.newClient.detected)newClient=u.newClient;
         }catch(e){console.warn(e);}
