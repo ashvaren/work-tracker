@@ -205,7 +205,8 @@
 </head>
 <body>
 
-<div id="loading"><div class="spinner"></div><p>Loading…</p></div>
+<div id="loading"><div class="spinner"></div><p id="loading-msg">Loading…</p></div>
+<div id="error-banner" style="display:none;position:fixed;top:0;left:0;right:0;background:#A32D2D;color:#fff;padding:12px 16px;font-size:13px;z-index:9999;line-height:1.6;white-space:pre-wrap;"></div>
 
 <div id="auth-screen" style="display:none">
   <div class="auth-card">
@@ -431,6 +432,25 @@
 <div class="toast" id="toast"></div>
 
 <script>
+// Global error handler — surfaces JS errors visibly
+window.onerror = function(msg, src, line, col, err) {
+  const banner = document.getElementById('error-banner');
+  const loadMsg = document.getElementById('loading-msg');
+  if (banner) {
+    banner.style.display = 'block';
+    banner.textContent = 'JS Error: ' + msg + '\nFile: ' + src + ' Line: ' + line + ':' + col + (err ? '\n' + err.stack : '');
+  }
+  if (loadMsg) loadMsg.textContent = 'Error on load — see red banner';
+  return false;
+};
+window.addEventListener('unhandledrejection', function(e) {
+  const banner = document.getElementById('error-banner');
+  if (banner) {
+    banner.style.display = 'block';
+    banner.textContent = (banner.textContent || '') + '\nUnhandled promise: ' + (e.reason ? e.reason.toString() : 'unknown');
+  }
+});
+
 const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/calendar.readonly';
 const DRIVE_FILE = 'ashvaren-tracker-state.json';
 const WORK_CAL = 'mike@ashvaren.com';
@@ -485,7 +505,14 @@ window.onload = async () => {
     await boot(); return;
   }
   token = localStorage.getItem('goog_token');
-  if (token && cfg.clientId && cfg.proxyUrl) { await boot(); }
+  if (token && cfg.clientId && cfg.proxyUrl) {
+    try { await boot(); }
+    catch(e) {
+      const banner = document.getElementById('error-banner');
+      if (banner) { banner.style.display='block'; banner.textContent='Boot error: ' + e.message + '\n' + e.stack; }
+      document.getElementById('loading-msg').textContent = 'Boot failed — see red banner';
+    }
+  }
   else {
     document.getElementById('loading').style.display = 'none';
     if (cfg.clientId) document.getElementById('cfg-client-id').value = cfg.clientId;
