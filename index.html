@@ -194,6 +194,43 @@
   .upload-result .result-summary { background: var(--bg); border-radius: 7px; padding: 10px 12px; margin-bottom: 8px; font-size: 13px; line-height: 1.6; color: var(--text); }
   .upload-result .result-tasks { font-size: 12px; color: var(--green); margin-top: 4px; }
   .upload-result .result-drive { font-size: 12px; color: var(--blue); margin-top: 4px; }
+
+  /* PIPELINE TAB */
+  .pipeline-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 1.5rem; }
+  .metric-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.25rem; box-shadow: var(--shadow); }
+  .metric-label { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 6px; }
+  .metric-value { font-size: 24px; font-weight: 500; color: var(--navy); }
+  .metric-sub { font-size: 12px; color: var(--text-tertiary); margin-top: 3px; }
+  .pipeline-table { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; box-shadow: var(--shadow); overflow: hidden; }
+  .pipeline-table table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .pipeline-table th { padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-tertiary); border-bottom: 1px solid var(--border); background: var(--bg); }
+  .pipeline-table td { padding: 11px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .pipeline-table tr:last-child td { border-bottom: none; }
+  .pipeline-table tr:hover td { background: var(--bg); }
+  .pipeline-edit-btn { font-size: 11px; padding: 2px 8px; border: 1px solid var(--border); border-radius: 5px; background: transparent; color: var(--text-secondary); cursor: pointer; }
+  .pipeline-edit-btn:hover { background: var(--blue-light); color: var(--blue); border-color: var(--blue-mid); }
+  .prob-bar-wrap { display: flex; align-items: center; gap: 8px; }
+  .prob-bar { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .prob-bar-fill { height: 100%; border-radius: 2px; background: var(--blue); }
+
+  /* NOTES HISTORY */
+  .eng-history { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+  .eng-history-title { font-size: 10px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; }
+  .eng-history-entry { padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .eng-history-entry:last-child { border-bottom: none; }
+  .eng-history-date { font-size: 10px; color: var(--text-tertiary); margin-bottom: 2px; }
+  .eng-history-text { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  .eng-history-type { display: inline-block; font-size: 9px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; padding: 1px 5px; border-radius: 3px; margin-right: 4px; }
+  .ht-upload { background: var(--blue-light); color: var(--blue); }
+  .ht-ai { background: var(--green-bg); color: var(--green); }
+  .ht-manual { background: #f1efe8; color: #5f5e5a; }
+  .add-note-btn { font-size: 11px; padding: 2px 8px; border: 1px solid var(--border); border-radius: 5px; background: transparent; color: var(--text-secondary); cursor: pointer; }
+  .add-note-btn:hover { background: var(--bg); }
+
+  /* EMAIL COMPOSE */
+  .task-mail-btn { opacity: 0; font-size: 11px; padding: 2px 8px; border: 1px solid var(--border); border-radius: 5px; background: transparent; color: var(--blue); cursor: pointer; transition: opacity 0.15s; margin-right: 4px; }
+  .task-row:hover .task-mail-btn { opacity: 1; }
+  .task-mail-btn:hover { background: var(--blue-light); border-color: var(--blue-mid); }
   #loading { display: flex; align-items: center; justify-content: center; min-height: 100vh; flex-direction: column; gap: 12px; }
   .spinner { width: 24px; height: 24px; border: 2px solid var(--border); border-top-color: var(--navy); border-radius: 50%; animation: spin 0.7s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
@@ -244,6 +281,7 @@
     <button class="nav-tab active" onclick="showView('today',this)">Today</button>
     <button class="nav-tab" onclick="showView('engagements',this)">Engagements</button>
     <button class="nav-tab" onclick="showView('tasks',this)">Tasks</button>
+    <button class="nav-tab" onclick="showView('pipeline',this)">Pipeline</button>
   </div>
   <main>
     <div class="ai-bar">
@@ -299,6 +337,20 @@
       </div>
     </div>
     <div id="view-engagements" style="display:none"><div class="cards-grid" id="cards-grid"></div></div>
+
+    <div id="view-pipeline" style="display:none">
+      <div class="pipeline-metrics">
+        <div class="metric-card"><div class="metric-label">Confirmed revenue</div><div class="metric-value" id="pm-confirmed">£0</div><div class="metric-sub">Active engagements at 100%</div></div>
+        <div class="metric-card"><div class="metric-label">Weighted pipeline</div><div class="metric-value" id="pm-weighted">£0</div><div class="metric-sub">All engagements × probability</div></div>
+        <div class="metric-card"><div class="metric-label">Total pipeline</div><div class="metric-value" id="pm-total">£0</div><div class="metric-sub">Unweighted</div></div>
+      </div>
+      <div class="pipeline-table">
+        <table>
+          <thead><tr><th>Client</th><th>Fee type</th><th>Est. value</th><th>Probability</th><th>Weighted</th><th></th></tr></thead>
+          <tbody id="pipeline-tbody"></tbody>
+        </table>
+      </div>
+    </div>
     <div id="view-tasks" style="display:none">
       <div class="task-toolbar">
         <div class="filter-pills" id="filter-pills"></div>
@@ -352,12 +404,27 @@
       <div class="field"><label id="ob-scope-lbl">Scope summary</label><textarea id="ob-scope" placeholder="One or two sentences — becomes the recital in the engagement letter."></textarea></div>
       <div id="ob-confirmed-fields">
         <div class="field-row">
-          <div class="field"><label>Fee structure <span class="opt">optional</span></label>
-            <select id="ob-fee"><option value="">TBD</option><option>Day rate (£1,500)</option><option>Half-day (£800)</option><option>Hourly (£250)</option><option>Fixed fee</option><option>Retainer</option></select>
+          <div class="field"><label>Fee type</label>
+            <select id="ob-fee" onchange="updateFeeInputs()">
+              <option value="">TBD</option>
+              <option value="day-rate">Day rate (£1,500)</option>
+              <option value="half-day">Half-day (£800)</option>
+              <option value="hourly">Hourly (£250)</option>
+              <option value="fixed">Fixed fee</option>
+              <option value="retainer">Retainer</option>
+            </select>
           </div>
           <div class="field"><label>NDA</label>
             <select id="ob-nda"><option value="ashvaren">Yes — Ashvaren NDA</option><option value="client">Yes — client's own</option><option value="none">No NDA needed</option></select>
           </div>
+        </div>
+        <div class="field-row" id="ob-days-row" style="display:none">
+          <div class="field"><label>Estimated days</label><input type="number" id="ob-days" placeholder="e.g. 5" min="0" step="0.5" /></div>
+          <div class="field"><label>Fixed amount <span class="opt">override</span></label><input type="number" id="ob-fixed-amt" placeholder="e.g. 5000" /></div>
+        </div>
+        <div class="field-row" id="ob-fixed-row" style="display:none">
+          <div class="field"><label>Fixed amount (£)</label><input type="number" id="ob-fixed-amt2" placeholder="e.g. 5000" /></div>
+          <div class="field"><label>Probability % <span class="opt">default 100</span></label><input type="number" id="ob-prob" placeholder="100" min="0" max="100" value="100" /></div>
         </div>
         <div class="field"><label>Billing contact <span class="opt">if different</span></label><input type="text" id="ob-billing" placeholder="Name and email" /></div>
       </div>
@@ -394,6 +461,24 @@
     <div class="field"><label>Last action</label><input type="text" id="em-last" /></div>
     <div class="field"><label>Next step</label><input type="text" id="em-next" /></div>
     <div class="field"><label>Deadline <span class="opt">optional</span></label><input type="text" id="em-deadline" /></div>
+    <div class="section-divider">Pipeline</div>
+    <div class="field-row">
+      <div class="field"><label>Fee type</label>
+        <select id="em-fee-type">
+          <option value="">TBD</option>
+          <option value="day-rate">Day rate (£1,500)</option>
+          <option value="half-day">Half-day (£800)</option>
+          <option value="hourly">Hourly (£250)</option>
+          <option value="fixed">Fixed fee</option>
+          <option value="retainer">Retainer</option>
+        </select>
+      </div>
+      <div class="field"><label>Probability %</label><input type="number" id="em-prob" placeholder="100" min="0" max="100" /></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Est. days <span class="opt">for day/hourly rates</span></label><input type="number" id="em-days" placeholder="e.g. 5" min="0" step="0.5" /></div>
+      <div class="field"><label>Fixed amount £ <span class="opt">for fixed/retainer</span></label><input type="number" id="em-fixed" placeholder="e.g. 5000" /></div>
+    </div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeEngModal()">Cancel</button>
       <button class="btn-save" onclick="saveEngagement()">Save</button>
@@ -415,6 +500,18 @@
   </div>
 </div>
 
+
+<!-- MANUAL NOTE MODAL -->
+<div class="modal-overlay" id="note-modal">
+  <div class="modal">
+    <h2>Add note</h2>
+    <div class="field"><label>Note</label><textarea id="nm-text" placeholder="What happened? Key decisions, commitments, context…" style="min-height:100px;"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeNoteModal()">Cancel</button>
+      <button class="btn-save" onclick="saveNote()">Save</button>
+    </div>
+  </div>
+</div>
 <!-- SETTINGS MODAL -->
 <div class="modal-overlay" id="settings-modal">
   <div class="modal">
@@ -481,6 +578,11 @@ function normaliseState() {
     scope: '',
     notes: '',
     deadline: '',
+    history: [],
+    feeType: '',
+    estDays: null,
+    fixedAmount: null,
+    probability: e.isProspective ? 25 : 100,
     ...e
   }));
   state.tasks = state.tasks.map(t => ({
@@ -647,7 +749,7 @@ function renderCalPanel(evs,id){
 function render(){
   renderCalPanel(calEvents.today,'cal-today');
   renderCalPanel(calEvents.tomorrow,'cal-tomorrow');
-  renderTodayTasks(); renderCards(); renderTasks();
+  renderTodayTasks(); renderCards(); renderTasks(); renderPipeline();
   checkProspectFlags();
   updateUploadEngSelect();
 }
@@ -687,6 +789,20 @@ function renderCards(){
         }
         <button class="eng-btn danger" onclick="deleteEng('${e.id}')">Remove</button>
       </div>
+      ${(e.history||[]).length > 0 ? `<div class="eng-history">
+        <div class="eng-history-title">
+          <span>History (${(e.history||[]).length})</span>
+          <button class="add-note-btn" onclick="openNoteModal('${e.id}')">+ Note</button>
+        </div>
+        ${[...(e.history||[])].reverse().slice(0,3).map(h=>`
+          <div class="eng-history-entry">
+            <div class="eng-history-date"><span class="eng-history-type ht-${h.type}">${h.type}</span>${h.date}</div>
+            <div class="eng-history-text">${h.text}</div>
+          </div>`).join('')}
+      </div>` : `<div class="eng-history">
+        <div class="eng-history-title"><span>History</span><button class="add-note-btn" onclick="openNoteModal('${e.id}')">+ Note</button></div>
+        <div style="font-size:12px;color:var(--text-tertiary);padding:6px 0;">No entries yet</div>
+      </div>`}
     </div>`).join('')+`<div class="add-card" onclick="openOnboard()">+ New engagement</div>`;
 }
 
@@ -697,11 +813,11 @@ function renderTasks(){
   const lbl={today:'Today',tomorrow:'Tomorrow','this-week':'This week',later:'Later',done:'Done'};
   document.getElementById('task-list').innerHTML=Object.entries(g).map(([k,ts])=>{
     if(!ts.length)return'';
-    return`<div class="task-group"><div class="task-group-header">${lbl[k]} (${ts.length})</div>${ts.map(t=>`<div class="task-row"><div class="task-check ${t.done?'done':''}" onclick="toggleTask('${t.id}')"></div><div class="task-body"><div class="task-title ${t.done?'done':''}">${t.title}</div><div class="task-meta">${eName(t.engagement)?`<span class="meta-eng">${eName(t.engagement)}</span>`:''}<span class="meta-due">${lbl[t.due]||t.due}</span></div></div><button class="task-del" onclick="delTask('${t.id}')">Remove</button></div>`).join('')}</div>`;
+    return`<div class="task-group"><div class="task-group-header">${lbl[k]} (${ts.length})</div>${ts.map(t=>`<div class="task-row"><div class="task-check ${t.done?'done':''}" onclick="toggleTask('${t.id}')"></div><div class="task-body"><div class="task-title ${t.done?'done':''}">${t.title}</div><div class="task-meta">${eName(t.engagement)?`<span class="meta-eng">${eName(t.engagement)}</span>`:''}<span class="meta-due">${lbl[t.due]||t.due}</span></div></div><button class="task-mail-btn" onclick="draftEmail('${t.id}')" title="Draft email">✉</button><button class="task-del" onclick="delTask('${t.id}')">Remove</button></div>`).join('')}</div>`;
   }).join('');
 }
 
-function showView(n,btn){['today','engagements','tasks'].forEach(v=>document.getElementById('view-'+v).style.display='none');document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));document.getElementById('view-'+n).style.display='block';btn.classList.add('active');}
+function showView(n,btn){['today','engagements','tasks','pipeline'].forEach(v=>document.getElementById('view-'+v).style.display='none');document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));document.getElementById('view-'+n).style.display='block';btn.classList.add('active');}
 function openDrive(id){window.open(`https://drive.google.com/drive/folders/${id}`,'_blank');}
 
 async function createFolderForEng(engId) {
@@ -862,6 +978,11 @@ async function doCreate(){
     notes:[v('ob-legal')?`Legal: ${v('ob-legal')}`:'',v('ob-conum')?`Co.No.: ${v('ob-conum')}`:'',v('ob-intro')?`Via: ${v('ob-intro')}`:'',v('ob-conflict')?`Conflict: ${v('ob-conflict')}`:'',v('ob-dm')?`DM: ${v('ob-dm')}`:'',!isp&&v('ob-fee')?`Fee: ${v('ob-fee')}`:'',!isp&&v('ob-billing')?`Billing: ${v('ob-billing')}`:'',!isp?`NDA: ${nda}`:'',isp&&v('ob-budget')?`Budget: ${v('ob-budget')}`:''].filter(Boolean).join(' | '),
     driveFolder, isProspective:isp,
     lastContact: new Date().toISOString().split('T')[0],
+    history: [],
+    feeType: !isp ? v('ob-fee') : '',
+    estDays: !isp && v('ob-days') ? parseFloat(v('ob-days')) : null,
+    fixedAmount: !isp && (v('ob-fixed-amt')||v('ob-fixed-amt2')) ? parseFloat(v('ob-fixed-amt')||v('ob-fixed-amt2')) : null,
+    probability: isp ? 25 : 100,
   };
   state.engagements.push(eng);
 
@@ -896,7 +1017,12 @@ function openEditEng(id){
 }
 function closeEngModal(){document.getElementById('eng-modal').classList.remove('open');}
 function saveEngagement(){
-  const d={name:document.getElementById('em-name').value.trim(),type:document.getElementById('em-type').value,status:document.getElementById('em-status').value,last:document.getElementById('em-last').value.trim(),next:document.getElementById('em-next').value.trim(),deadline:document.getElementById('em-deadline').value.trim()};
+  const feeType=document.getElementById('em-fee-type').value;
+  const prob=document.getElementById('em-prob').value;
+  const days=document.getElementById('em-days').value;
+  const fixed=document.getElementById('em-fixed').value;
+  const d={name:document.getElementById('em-name').value.trim(),type:document.getElementById('em-type').value,status:document.getElementById('em-status').value,last:document.getElementById('em-last').value.trim(),next:document.getElementById('em-next').value.trim(),deadline:document.getElementById('em-deadline').value.trim(),feeType,probability:prob?parseInt(prob):undefined,estDays:days?parseFloat(days):undefined,fixedAmount:fixed?parseFloat(fixed):undefined};
+  Object.keys(d).forEach(k=>d[k]===undefined&&delete d[k]);
   if(!d.name)return; const i=state.engagements.findIndex(e=>e.id===editEngId); if(i>-1)state.engagements[i]={...state.engagements[i],...d};
   closeEngModal(); saveAndRender();
 }
@@ -962,7 +1088,7 @@ Only set detected:true for genuinely new clients not already in the tracker. "Pr
       if(line.startsWith('UPDATES:')){
         try{
           const u=JSON.parse(line.replace('UPDATES:','').trim());
-          (u.engagements||[]).forEach(x=>{const e=state.engagements.find(e=>e.id===x.id);if(e&&x.fields){Object.entries(x.fields).forEach(([k,v])=>{if(k in e)e[k]=v;});touchProspect(x.id);}else if(e&&x.field){e[x.field]=x.value;touchProspect(x.id);}});
+          (u.engagements||[]).forEach(x=>{const e=state.engagements.find(e=>e.id===x.id);if(e&&x.fields){Object.entries(x.fields).forEach(([k,v])=>{if(k in e)e[k]=v;});touchProspect(x.id);if(x.fields.last)addHistoryEntry(x.id,'ai',x.fields.last);}else if(e&&x.field){e[x.field]=x.value;touchProspect(x.id);}});
           (u.tasks||[]).forEach(x=>{if(x.action==='add')state.tasks.push({id:'t'+Date.now()+Math.random(),title:x.title,engagement:x.engagement||'',due:x.due||'this-week',done:false});});
           if(u.newClient&&u.newClient.detected)newClient=u.newClient;
         }catch(e){console.warn(e);}
@@ -1269,6 +1395,7 @@ Extract ALL action items, decisions requiring follow-up, and commitments made. B
       if (parsed.lastAction) eng.last = parsed.lastAction;
       if (parsed.nextStep) eng.next = parsed.nextStep;
       if (parsed.statusChange) eng.status = parsed.statusChange;
+      if (parsed.summary) addHistoryEntry(engId, 'upload', parsed.summary);
     }
 
     // Create tasks
@@ -1352,11 +1479,138 @@ async function uploadFileToDrive(file, folderId, fileName) {
   return fileId;
 }
 
+
+// ── PIPELINE ──────────────────────────────────────────────────────────────────
+const DAILY_RATES = { 'day-rate': 1500, 'half-day': 800, 'hourly': 250 };
+
+function calcEngValue(e) {
+  if (e.fixedAmount) return e.fixedAmount;
+  if (e.feeType && DAILY_RATES[e.feeType] && e.estDays) return DAILY_RATES[e.feeType] * e.estDays;
+  return 0;
+}
+
+function fmtGBP(n) {
+  if (!n) return '—';
+  return '£' + Math.round(n).toLocaleString('en-GB');
+}
+
+function renderPipeline() {
+  const engs = state.engagements;
+  let confirmed = 0, weighted = 0, total = 0;
+  engs.forEach(e => {
+    const val = calcEngValue(e);
+    const prob = (e.probability != null ? e.probability : (e.isProspective ? 25 : 100)) / 100;
+    total += val;
+    weighted += val * prob;
+    if (!e.isProspective && e.status === 'active') confirmed += val;
+  });
+  document.getElementById('pm-confirmed').textContent = fmtGBP(confirmed);
+  document.getElementById('pm-weighted').textContent = fmtGBP(weighted);
+  document.getElementById('pm-total').textContent = fmtGBP(total);
+
+  const tbody = document.getElementById('pipeline-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = engs.map(e => {
+    const val = calcEngValue(e);
+    const prob = e.probability != null ? e.probability : (e.isProspective ? 25 : 100);
+    const wval = Math.round(val * prob / 100);
+    const feeLabel = { 'day-rate':'Day rate','half-day':'Half-day','hourly':'Hourly','fixed':'Fixed','retainer':'Retainer','':'TBD' }[e.feeType||''] || 'TBD';
+    return `<tr>
+      <td><strong>${e.name}</strong><br><span style="font-size:11px;color:var(--text-tertiary)">${e.contactName||''}</span></td>
+      <td>${feeLabel}${e.estDays ? ` &times; ${e.estDays}d` : ''}</td>
+      <td>${fmtGBP(val)}</td>
+      <td><div class="prob-bar-wrap"><div class="prob-bar"><div class="prob-bar-fill" style="width:${prob}%"></div></div><span style="font-size:12px;min-width:32px;text-align:right">${prob}%</span></div></td>
+      <td>${fmtGBP(wval)}</td>
+      <td><button class="pipeline-edit-btn" onclick="openEditEng('${e.id}')">Edit</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function updateFeeInputs() {
+  const ft = document.getElementById('ob-fee').value;
+  const daysRow = document.getElementById('ob-days-row');
+  const fixedRow = document.getElementById('ob-fixed-row');
+  if (!daysRow) return;
+  daysRow.style.display = ['day-rate','half-day','hourly'].includes(ft) ? 'grid' : 'none';
+  fixedRow.style.display = ['fixed','retainer'].includes(ft) ? 'grid' : 'none';
+}
+
+// ── NOTES HISTORY ─────────────────────────────────────────────────────────────
+let noteModalEngId = null;
+
+function addHistoryEntry(engId, type, text) {
+  const e = state.engagements.find(x => x.id === engId);
+  if (!e) return;
+  if (!e.history) e.history = [];
+  e.history.push({
+    date: new Date().toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}),
+    type,
+    text
+  });
+}
+
+function openNoteModal(engId) {
+  noteModalEngId = engId;
+  document.getElementById('nm-text').value = '';
+  document.getElementById('note-modal').classList.add('open');
+}
+function closeNoteModal() { document.getElementById('note-modal').classList.remove('open'); }
+function saveNote() {
+  const text = document.getElementById('nm-text').value.trim();
+  if (!text || !noteModalEngId) return;
+  addHistoryEntry(noteModalEngId, 'manual', text);
+  closeNoteModal();
+  saveAndRender();
+}
+
+// ── EMAIL DRAFT ───────────────────────────────────────────────────────────────
+async function draftEmail(taskId) {
+  const task = state.tasks.find(t => t.id === taskId);
+  if (!task) return;
+  const eng = state.engagements.find(e => e.id === task.engagement);
+  const contactEmail = eng ? (eng.contactEmail || '') : '';
+  const contactName = eng ? (eng.contactName || '') : '';
+  const engName = eng ? eng.name : '';
+
+  // Use AI to draft the email body
+  toast('Drafting email…');
+  try {
+    const r = await fetch(cfg.proxyUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-5',
+        max_tokens: 600,
+        system: `You are drafting a short professional email for Mike Warriner at Ashvaren Advisory, London. Mike is a corporate lawyer, accountant, CFO and COO.
+Write a concise, professional email in British English. Sign off as Mike Warriner, Ashvaren Advisory.
+Respond with JSON only: {"subject":"...","body":"..."}`,
+        messages: [{ role: 'user', content: `Task: ${task.title}\nClient: ${engName}\nContact: ${contactName}\nContext: ${eng ? eng.last : ''}\nNext step: ${eng ? eng.next : ''}\n\nDraft a short email to action this task.` }]
+      })
+    });
+    const data = await r.json();
+    const raw = (data.content||[]).map(c=>c.text||'').join('').trim();
+    let parsed;
+    try { parsed = JSON.parse(raw.replace(/^```json\n?/,'').replace(/\n?```$/,'').trim()); }
+    catch(e) { parsed = { subject: task.title, body: `Hi ${contactName},\n\n${task.title}\n\nBest regards,\nMike Warriner\nAshvaren Advisory` }; }
+
+    const subject = encodeURIComponent(parsed.subject || task.title);
+    const body = encodeURIComponent(parsed.body || '');
+    const to = encodeURIComponent(contactEmail);
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${subject}&body=${body}`;
+    window.open(gmailUrl, '_blank');
+  } catch(e) {
+    // Fallback - open Gmail compose with basic info
+    const subject = encodeURIComponent(task.title);
+    const to = encodeURIComponent(contactEmail);
+    window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${subject}`, '_blank');
+  }
+}
+
 document.getElementById('ai-input').addEventListener('keydown',e=>{if(e.key==='Enter')sendToAI();});
 
 // Onboarding modal does NOT close on backdrop click — data loss prevention
 // Other modals close on backdrop click as before
-['eng-modal','task-modal','settings-modal'].forEach(id=>{
+['eng-modal','task-modal','settings-modal','note-modal'].forEach(id=>{
   document.getElementById(id).addEventListener('click',e=>{if(e.target.id===id)document.getElementById(id).classList.remove('open');});
 });
 
