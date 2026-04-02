@@ -419,7 +419,8 @@
     </div>
     <div class="header-right">
       <span class="sync-status" id="sync-status"></span>
-      <button class="sync-btn" onclick="saveToDrive()">Save to Drive</button>
+      <button class="sync-btn" onclick="saveToD()">Save to Drive</button>
+      <button class="sync-btn" onclick="openSettings()">Settings</button>
       <button class="sync-btn" onclick="signOut()">Sign out</button>
     </div>
   </header>
@@ -520,6 +521,26 @@
   </div>
 </div>
 
+<!-- SETTINGS MODAL -->
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal">
+    <h2>Settings</h2>
+    <div class="field">
+      <label>Google OAuth client ID</label>
+      <input type="text" id="s-client-id" placeholder="xxxx.apps.googleusercontent.com" />
+    </div>
+    <div class="field">
+      <label>Anthropic API key</label>
+      <input type="password" id="s-anthropic-key" placeholder="sk-ant-..." />
+    </div>
+    <p style="font-size:12px;color:var(--text-tertiary);margin-bottom:1rem;line-height:1.6;">Updating the API key takes effect immediately. Updating the OAuth client ID will trigger a new Google sign-in.</p>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeSettings()">Cancel</button>
+      <button class="btn-save" onclick="saveSettings()">Save</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -588,6 +609,34 @@ function signOut() {
   token = null;
   document.getElementById('app').style.display = 'none';
   document.getElementById('auth-screen').style.display = 'flex';
+}
+
+function openSettings() {
+  document.getElementById('s-client-id').value = cfg.clientId;
+  document.getElementById('s-anthropic-key').value = cfg.anthropicKey;
+  document.getElementById('settings-modal').classList.add('open');
+}
+
+function closeSettings() {
+  document.getElementById('settings-modal').classList.remove('open');
+}
+
+function saveSettings() {
+  const newClientId = document.getElementById('s-client-id').value.trim();
+  const newKey = document.getElementById('s-anthropic-key').value.trim();
+  if (!newClientId || !newKey) { alert('Both fields are required.'); return; }
+  const clientIdChanged = newClientId !== cfg.clientId;
+  cfg.clientId = newClientId;
+  cfg.anthropicKey = newKey;
+  localStorage.setItem('cfg_client_id', cfg.clientId);
+  localStorage.setItem('cfg_anthropic_key', cfg.anthropicKey);
+  closeSettings();
+  if (clientIdChanged) {
+    toast('Client ID updated — re-authenticating with Google…');
+    setTimeout(() => redirectToGoogle(), 1200);
+  } else {
+    toast('Settings saved');
+  }
 }
 
 async function startApp() {
@@ -926,7 +975,7 @@ function setTaskFilter(id) { taskFilterEngId = id; renderTasks(); }
 function saveAndRender() { render(); saveToD(); }
 
 // ─── MODAL CLOSE ON BACKDROP ──────────────────────────────────────────────────
-['eng-modal', 'task-modal'].forEach(id => {
+['eng-modal', 'task-modal', 'settings-modal'].forEach(id => {
   document.getElementById(id).addEventListener('click', e => { if (e.target.id === id) document.getElementById(id).classList.remove('open'); });
 });
 
