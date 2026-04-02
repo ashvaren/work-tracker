@@ -442,6 +442,14 @@ let obStep = 0, obType = 'confirmed';
 let calEvents = { today:[], tomorrow:[] };
 let state = { engagements:[], tasks:[] };
 
+const FOLLOWUP_DAYS = 7;
+function daysSince(dateStr) {
+  if (!dateStr) return 999;
+  const d = new Date(dateStr);
+  const now = new Date();
+  return Math.floor((now - d) / (1000 * 60 * 60 * 24));
+}
+
 // ── STATE NORMALISATION ───────────────────────────────────────────────────────
 function normaliseState() {
   state.engagements = state.engagements.map(e => ({
@@ -945,15 +953,6 @@ Only set detected:true for genuinely new clients not already in the tracker. "Pr
 
 
 // ── PROSPECT FOLLOW-UP CHASING ────────────────────────────────────────────────
-const FOLLOWUP_DAYS = 7;
-
-function daysSince(dateStr) {
-  if (!dateStr) return 999;
-  const d = new Date(dateStr);
-  const now = new Date();
-  return Math.floor((now - d) / (1000 * 60 * 60 * 24));
-}
-
 function checkProspectFlags() {
   const overdue = state.engagements.filter(e =>
     e.isProspective && e.status === 'prospective' && daysSince(e.lastContact) >= FOLLOWUP_DAYS
