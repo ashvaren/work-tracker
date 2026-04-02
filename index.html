@@ -6,64 +6,21 @@
 <title>Ashvaren — Work Tracker</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
   :root {
-    --navy: #1A1A2E;
-    --blue: #2C5F8A;
-    --blue-light: #e8f0f8;
-    --blue-mid: #b8cfe3;
-    --text: #1a1a2e;
-    --text-secondary: #5a6272;
-    --text-tertiary: #9aa0ad;
-    --bg: #f7f8fa;
-    --surface: #ffffff;
-    --border: rgba(26,26,46,0.12);
-    --border-strong: rgba(26,26,46,0.22);
-    --amber: #854F0B;
-    --amber-bg: #FAEEDA;
-    --green: #3B6D11;
-    --green-bg: #EAF3DE;
-    --red: #A32D2D;
-    --red-bg: #FCEBEB;
+    --navy: #1A1A2E; --blue: #2C5F8A; --blue-light: #e8f0f8; --blue-mid: #b8cfe3;
+    --text: #1a1a2e; --text-secondary: #5a6272; --text-tertiary: #9aa0ad;
+    --bg: #f7f8fa; --surface: #ffffff;
+    --border: rgba(26,26,46,0.12); --border-strong: rgba(26,26,46,0.22);
+    --amber: #854F0B; --amber-bg: #FAEEDA;
+    --green: #3B6D11; --green-bg: #EAF3DE;
+    --red: #A32D2D; --red-bg: #FCEBEB;
+    --purple: #5B3FA0; --purple-bg: #EEE8FA;
     --shadow: 0 1px 3px rgba(26,26,46,0.08), 0 1px 2px rgba(26,26,46,0.04);
   }
-
-  body {
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    font-size: 14px;
-    line-height: 1.5;
-    min-height: 100vh;
-  }
-
-  /* ---------- AUTH SCREEN ---------- */
-  #auth-screen {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    padding: 2rem;
-  }
-  .auth-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 2.5rem;
-    max-width: 420px;
-    width: 100%;
-    box-shadow: var(--shadow);
-    text-align: center;
-  }
-  .auth-logo {
-    font-size: 13px;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--navy);
-    margin-bottom: 6px;
-  }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; min-height: 100vh; }
+  #auth-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; }
+  .auth-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 2.5rem; max-width: 420px; width: 100%; box-shadow: var(--shadow); text-align: center; }
+  .auth-logo { font-size: 13px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--navy); margin-bottom: 6px; }
   .auth-tagline { font-size: 11px; color: var(--text-tertiary); letter-spacing: 0.08em; margin-bottom: 2rem; }
   .auth-card h2 { font-size: 18px; font-weight: 600; color: var(--navy); margin-bottom: 8px; }
   .auth-card p { font-size: 13px; color: var(--text-secondary); margin-bottom: 1.5rem; line-height: 1.6; }
@@ -75,227 +32,90 @@
   .btn-primary { display: block; width: 100%; padding: 10px; background: var(--navy); color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; margin-top: 1rem; transition: background 0.15s; }
   .btn-primary:hover { background: var(--blue); }
   .auth-note { font-size: 11px; color: var(--text-tertiary); margin-top: 1rem; line-height: 1.6; }
-
-  /* ---------- APP SHELL ---------- */
   #app { display: none; min-height: 100vh; }
-
-  header {
-    background: var(--navy);
-    color: #fff;
-    padding: 0 2rem;
-    height: 54px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 50;
-  }
+  header { background: var(--navy); color: #fff; padding: 0 2rem; height: 54px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
   .header-left { display: flex; align-items: baseline; gap: 16px; }
   .logo { font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #fff; }
   .logo-tag { font-size: 10px; color: rgba(255,255,255,0.45); letter-spacing: 0.06em; }
-  .header-date { font-size: 12px; color: rgba(255,255,255,0.55); }
   .header-right { display: flex; align-items: center; gap: 8px; }
   .sync-btn { font-size: 12px; padding: 5px 12px; border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; background: transparent; color: rgba(255,255,255,0.75); cursor: pointer; transition: all 0.15s; }
   .sync-btn:hover { background: rgba(255,255,255,0.08); color: #fff; }
   .sync-status { font-size: 11px; color: rgba(255,255,255,0.4); }
-
-  .nav-bar {
-    background: var(--surface);
-    border-bottom: 1px solid var(--border);
-    padding: 0 2rem;
-    display: flex;
-    gap: 0;
-  }
-  .nav-tab {
-    padding: 12px 18px;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-secondary);
-    cursor: pointer;
-    border: none;
-    background: transparent;
-    border-bottom: 2px solid transparent;
-    margin-bottom: -1px;
-    transition: all 0.15s;
-  }
+  .nav-bar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; }
+  .nav-tab { padding: 12px 18px; font-size: 13px; font-weight: 500; color: var(--text-secondary); cursor: pointer; border: none; background: transparent; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
   .nav-tab:hover { color: var(--text); }
   .nav-tab.active { color: var(--navy); border-bottom-color: var(--navy); }
-
   main { padding: 1.75rem 2rem; max-width: 1100px; }
-
-  /* ---------- AI BAR ---------- */
-  .ai-bar {
-    background: var(--surface);
-    border: 1px solid var(--blue-mid);
-    border-radius: 10px;
-    padding: 12px 14px;
-    margin-bottom: 1.5rem;
-    box-shadow: var(--shadow);
-  }
-  .ai-bar-label {
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--blue);
-    margin-bottom: 6px;
-  }
+  .ai-bar { background: var(--surface); border: 1px solid var(--blue-mid); border-radius: 10px; padding: 12px 14px; margin-bottom: 1.5rem; box-shadow: var(--shadow); }
+  .ai-bar-label { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue); margin-bottom: 6px; }
   .ai-bar-row { display: flex; gap: 8px; }
-  .ai-bar-row input {
-    flex: 1;
-    padding: 9px 12px;
-    border: 1px solid var(--border);
-    border-radius: 7px;
-    font-size: 14px;
-    font-family: inherit;
-    color: var(--text);
-    background: var(--bg);
-    outline: none;
-  }
+  .ai-bar-row input { flex: 1; padding: 9px 12px; border: 1px solid var(--border); border-radius: 7px; font-size: 14px; font-family: inherit; color: var(--text); background: var(--bg); outline: none; }
   .ai-bar-row input:focus { border-color: var(--blue); }
   .ai-bar-row input::placeholder { color: var(--text-tertiary); }
-  .ai-send {
-    padding: 9px 18px;
-    background: var(--navy);
-    color: #fff;
-    border: none;
-    border-radius: 7px;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: background 0.15s;
-  }
+  .ai-send { padding: 9px 18px; background: var(--navy); color: #fff; border: none; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; transition: background 0.15s; }
   .ai-send:hover { background: var(--blue); }
   .ai-send:disabled { opacity: 0.5; cursor: not-allowed; }
-  .ai-response {
-    margin-top: 10px;
-    font-size: 13px;
-    color: var(--text-secondary);
-    line-height: 1.6;
-    border-top: 1px solid var(--border);
-    padding-top: 10px;
-    display: none;
-  }
+  .ai-response { margin-top: 10px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; border-top: 1px solid var(--border); padding-top: 10px; display: none; }
   .ai-response.visible { display: block; }
   .ai-thinking { color: var(--text-tertiary); font-style: italic; }
-
-  /* ---------- TODAY VIEW ---------- */
   .today-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
-  @media (max-width: 700px) { .today-grid { grid-template-columns: 1fr; } }
-
-  .panel {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    box-shadow: var(--shadow);
-  }
-  .panel-header {
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; box-shadow: var(--shadow); }
+  .panel-header { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
   .panel-title { font-size: 12px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-secondary); }
   .panel-body { padding: 8px 0; }
-
-  .cal-event {
-    padding: 8px 16px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-  }
+  .cal-event { padding: 8px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 10px; }
   .cal-event:last-child { border-bottom: none; }
   .cal-time { font-size: 11px; color: var(--text-tertiary); min-width: 44px; padding-top: 1px; }
   .cal-title { font-size: 13px; font-weight: 500; }
   .cal-cal { font-size: 11px; color: var(--text-tertiary); }
   .cal-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
-  .dot-work { background: #2C5F8A; }
-  .dot-family { background: #9b59b6; }
-
+  .dot-work { background: #2C5F8A; } .dot-family { background: #9b59b6; }
   .today-task { padding: 8px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 10px; }
   .today-task:last-child { border-bottom: none; }
-  .task-check { width: 16px; height: 16px; border: 1.5px solid var(--border-strong); border-radius: 4px; flex-shrink: 0; margin-top: 1px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .task-check { width: 16px; height: 16px; border: 1.5px solid var(--border-strong); border-radius: 4px; flex-shrink: 0; margin-top: 1px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
   .task-check.done { background: var(--green-bg); border-color: var(--green); }
   .task-check.done::after { content: ''; display: block; width: 4px; height: 7px; border: 1.5px solid var(--green); border-top: none; border-left: none; transform: rotate(45deg) translate(-1px,-1px); }
   .task-text { font-size: 13px; }
   .task-text.done { text-decoration: line-through; color: var(--text-tertiary); }
   .task-eng { font-size: 11px; color: var(--blue); margin-top: 2px; }
   .empty-state { padding: 24px 16px; text-align: center; color: var(--text-tertiary); font-size: 13px; }
-
-  /* ---------- ENGAGEMENT CARDS ---------- */
   .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
-
-  .eng-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 1.1rem 1.25rem;
-    box-shadow: var(--shadow);
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
+  .eng-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.1rem 1.25rem; box-shadow: var(--shadow); display: flex; flex-direction: column; }
+  .eng-card.prospective { border-left: 3px solid var(--purple); }
   .eng-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
   .eng-name { font-size: 15px; font-weight: 600; color: var(--navy); }
   .eng-type { font-size: 11px; color: var(--text-tertiary); margin-top: 2px; }
+  .eng-contact { font-size: 12px; color: var(--text-secondary); margin-top: 3px; }
   .status-pill { font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; margin-left: 8px; }
   .s-active { background: var(--green-bg); color: var(--green); }
   .s-waiting { background: var(--blue-light); color: var(--blue); }
   .s-stalled { background: var(--amber-bg); color: var(--amber); }
   .s-paused { background: #f1efe8; color: #5f5e5a; }
-
+  .s-prospective { background: var(--purple-bg); color: var(--purple); }
   .eng-section { margin-bottom: 10px; }
   .eng-label { font-size: 10px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 3px; }
   .eng-value { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
   .eng-next { font-size: 13px; color: var(--text); line-height: 1.5; }
   .eng-deadline { font-size: 12px; color: var(--amber); margin-top: 4px; }
-
-  .eng-footer { display: flex; gap: 6px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border); }
+  .eng-tasks-count { font-size: 11px; color: var(--text-tertiary); margin-top: 6px; }
+  .eng-footer { display: flex; gap: 6px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border); flex-wrap: wrap; }
   .eng-btn { font-size: 12px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 6px; background: transparent; color: var(--text-secondary); cursor: pointer; transition: all 0.15s; }
   .eng-btn:hover { background: var(--bg); border-color: var(--border-strong); color: var(--text); }
+  .eng-btn.drive { color: var(--blue); border-color: var(--blue-mid); }
+  .eng-btn.drive:hover { background: var(--blue-light); }
   .eng-btn.danger { margin-left: auto; color: var(--red); border-color: transparent; }
   .eng-btn.danger:hover { background: var(--red-bg); border-color: var(--red); }
-
-  .add-card {
-    background: var(--surface);
-    border: 1px dashed var(--border-strong);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 140px;
-    cursor: pointer;
-    color: var(--text-tertiary);
-    font-size: 13px;
-    transition: all 0.15s;
-  }
+  .add-card { background: var(--surface); border: 1px dashed var(--border-strong); border-radius: 10px; display: flex; align-items: center; justify-content: center; min-height: 140px; cursor: pointer; color: var(--text-tertiary); font-size: 13px; transition: all 0.15s; }
   .add-card:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
-
-  /* ---------- TASKS VIEW ---------- */
   .task-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; gap: 12px; flex-wrap: wrap; }
   .filter-pills { display: flex; gap: 6px; flex-wrap: wrap; }
   .filter-pill { font-size: 12px; padding: 4px 12px; border-radius: 20px; border: 1px solid var(--border); background: transparent; color: var(--text-secondary); cursor: pointer; transition: all 0.15s; }
   .filter-pill.active { background: var(--navy); color: #fff; border-color: var(--navy); }
   .add-task-btn { font-size: 13px; padding: 6px 14px; border: 1px solid var(--navy); border-radius: 7px; background: transparent; color: var(--navy); cursor: pointer; font-weight: 500; transition: all 0.15s; white-space: nowrap; }
   .add-task-btn:hover { background: var(--navy); color: #fff; }
-
   .task-group { margin-bottom: 1.5rem; }
   .task-group-header { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
-
-  .task-row {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 9px 12px;
-    border-radius: 8px;
-    border: 1px solid transparent;
-    transition: all 0.12s;
-    margin-bottom: 2px;
-  }
+  .task-row { display: flex; align-items: flex-start; gap: 10px; padding: 9px 12px; border-radius: 8px; border: 1px solid transparent; transition: all 0.12s; margin-bottom: 2px; }
   .task-row:hover { background: var(--surface); border-color: var(--border); }
   .task-body { flex: 1; }
   .task-title { font-size: 14px; line-height: 1.4; }
@@ -306,95 +126,54 @@
   .task-del { opacity: 0; font-size: 11px; padding: 2px 8px; border: 1px solid var(--border); border-radius: 5px; background: transparent; color: var(--text-secondary); cursor: pointer; transition: opacity 0.15s; }
   .task-row:hover .task-del { opacity: 1; }
   .task-del:hover { background: var(--red-bg); color: var(--red); border-color: var(--red); }
-
-  /* ---------- MODAL ---------- */
-  .modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(26,26,46,0.45);
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    padding-top: 80px;
-    z-index: 200;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.15s;
-  }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(26,26,46,0.45); display: flex; align-items: flex-start; justify-content: center; padding: 50px 1rem 2rem; z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.15s; overflow-y: auto; }
   .modal-overlay.open { opacity: 1; pointer-events: all; }
-  .modal {
-    background: var(--surface);
-    border-radius: 12px;
-    padding: 1.75rem;
-    width: 100%;
-    max-width: 460px;
-    box-shadow: 0 8px 30px rgba(26,26,46,0.18);
-    transform: translateY(-8px);
-    transition: transform 0.15s;
-  }
+  .modal { background: var(--surface); border-radius: 12px; padding: 1.75rem; width: 100%; max-width: 520px; box-shadow: 0 8px 30px rgba(26,26,46,0.18); transform: translateY(-8px); transition: transform 0.15s; margin: auto; flex-shrink: 0; }
   .modal-overlay.open .modal { transform: translateY(0); }
-  .modal h2 { font-size: 16px; font-weight: 600; color: var(--navy); margin-bottom: 1.25rem; }
+  .modal h2 { font-size: 16px; font-weight: 600; color: var(--navy); margin-bottom: 4px; }
+  .modal-subtitle { font-size: 13px; color: var(--text-secondary); margin-bottom: 1rem; }
   .field { margin-bottom: 12px; }
   .field label { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary); display: block; margin-bottom: 4px; }
-  .field input, .field select, .field textarea {
-    width: 100%;
-    padding: 9px 11px;
-    border: 1px solid var(--border-strong);
-    border-radius: 7px;
-    font-size: 14px;
-    font-family: inherit;
-    color: var(--text);
-    background: var(--bg);
-    outline: none;
-  }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .field input, .field select, .field textarea { width: 100%; padding: 9px 11px; border: 1px solid var(--border-strong); border-radius: 7px; font-size: 14px; font-family: inherit; color: var(--text); background: var(--bg); outline: none; }
   .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--blue); }
   .field textarea { min-height: 64px; resize: vertical; }
-  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1rem; }
+  .opt { font-size: 10px; color: var(--text-tertiary); font-weight: 400; margin-left: 4px; text-transform: none; letter-spacing: 0; }
+  .section-divider { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-tertiary); margin: 1.25rem 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1.25rem; }
   .btn-cancel { padding: 8px 16px; border: 1px solid var(--border-strong); border-radius: 7px; background: transparent; color: var(--text-secondary); cursor: pointer; font-size: 13px; }
   .btn-cancel:hover { background: var(--bg); }
   .btn-save { padding: 8px 20px; border: none; border-radius: 7px; background: var(--navy); color: #fff; font-size: 13px; font-weight: 500; cursor: pointer; }
   .btn-save:hover { background: var(--blue); }
-
-  /* ---------- LOADING ---------- */
+  .btn-save:disabled { opacity: 0.5; cursor: not-allowed; }
+  .type-toggle { display: flex; border: 1px solid var(--border-strong); border-radius: 7px; overflow: hidden; margin-bottom: 1.25rem; }
+  .type-toggle button { flex: 1; padding: 9px; border: none; background: transparent; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text-secondary); transition: all 0.15s; }
+  .type-toggle button.active { background: var(--navy); color: #fff; }
+  .progress-bar { display: flex; gap: 6px; margin-bottom: 1.25rem; }
+  .progress-step { flex: 1; height: 3px; border-radius: 2px; background: var(--border); }
+  .progress-step.done { background: var(--navy); }
+  .progress-step.active { background: var(--blue); }
+  .drive-status { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-tertiary); margin-top: 10px; padding: 8px 12px; background: var(--bg); border-radius: 6px; }
+  .drive-status.ok { color: var(--green); }
+  .drive-status.err { color: var(--red); }
   #loading { display: flex; align-items: center; justify-content: center; min-height: 100vh; flex-direction: column; gap: 12px; }
   .spinner { width: 24px; height: 24px; border: 2px solid var(--border); border-top-color: var(--navy); border-radius: 50%; animation: spin 0.7s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
   #loading p { font-size: 13px; color: var(--text-tertiary); }
-
-  .toast {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    background: var(--navy);
-    color: #fff;
-    font-size: 13px;
-    padding: 10px 16px;
-    border-radius: 8px;
-    opacity: 0;
-    transform: translateY(8px);
-    transition: all 0.2s;
-    pointer-events: none;
-    z-index: 300;
-  }
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--navy); color: #fff; font-size: 13px; padding: 10px 16px; border-radius: 8px; opacity: 0; transform: translateY(8px); transition: all 0.2s; pointer-events: none; z-index: 300; max-width: 320px; line-height: 1.5; }
   .toast.show { opacity: 1; transform: translateY(0); }
 </style>
 </head>
 <body>
 
-<!-- LOADING -->
-<div id="loading">
-  <div class="spinner"></div>
-  <p>Loading…</p>
-</div>
+<div id="loading"><div class="spinner"></div><p>Loading…</p></div>
 
-<!-- AUTH / CONFIG SCREEN -->
 <div id="auth-screen" style="display:none">
   <div class="auth-card">
     <div class="auth-logo">Ashvaren</div>
     <div class="auth-tagline">Clarity. Structure. Growth.</div>
     <h2>Work tracker</h2>
     <p>Enter your credentials to get started. These are stored only in your browser's local storage.</p>
-
     <div class="config-section">
       <label>Google OAuth client ID</label>
       <input type="text" id="cfg-client-id" placeholder="xxxx.apps.googleusercontent.com" />
@@ -406,17 +185,13 @@
       <div class="hint">Your Cloudflare Worker URL</div>
     </div>
     <button class="btn-primary" onclick="saveConfigAndAuth()">Connect with Google →</button>
-    <p class="auth-note">You will be redirected to Google to grant access to Drive and Calendar. Your Anthropic key is stored securely in Cloudflare and never touches this app.</p>
+    <p class="auth-note">You will be redirected to Google to grant access to Drive and Calendar. Your Anthropic key is stored securely in Cloudflare.</p>
   </div>
 </div>
 
-<!-- MAIN APP -->
 <div id="app">
   <header>
-    <div class="header-left">
-      <span class="logo">Ashvaren</span>
-      <span class="logo-tag">Work tracker</span>
-    </div>
+    <div class="header-left"><span class="logo">Ashvaren</span><span class="logo-tag">Work tracker</span></div>
     <div class="header-right">
       <span class="sync-status" id="sync-status"></span>
       <button class="sync-btn" onclick="saveToD()">Save to Drive</button>
@@ -424,25 +199,20 @@
       <button class="sync-btn" onclick="signOut()">Sign out</button>
     </div>
   </header>
-
   <div class="nav-bar">
-    <button class="nav-tab active" onclick="showView('today', this)">Today</button>
-    <button class="nav-tab" onclick="showView('engagements', this)">Engagements</button>
-    <button class="nav-tab" onclick="showView('tasks', this)">Tasks</button>
+    <button class="nav-tab active" onclick="showView('today',this)">Today</button>
+    <button class="nav-tab" onclick="showView('engagements',this)">Engagements</button>
+    <button class="nav-tab" onclick="showView('tasks',this)">Tasks</button>
   </div>
-
   <main>
-    <!-- AI BAR -->
     <div class="ai-bar">
       <div class="ai-bar-label">AI update</div>
       <div class="ai-bar-row">
-        <input type="text" id="ai-input" placeholder="e.g. Salt Creek model sent, waiting on David to review. Next step is investor deck outline." />
+        <input type="text" id="ai-input" placeholder="e.g. New engagement with Selka Health — Dr Sarah Bond, reviewing SpineNet licence from Oxford Uni. Sending report tonight." />
         <button class="ai-send" id="ai-send-btn" onclick="sendToAI()">Update ↗</button>
       </div>
       <div class="ai-response" id="ai-response"></div>
     </div>
-
-    <!-- TODAY VIEW -->
     <div id="view-today">
       <div class="today-grid">
         <div class="panel">
@@ -461,13 +231,7 @@
         </div>
       </div>
     </div>
-
-    <!-- ENGAGEMENTS VIEW -->
-    <div id="view-engagements" style="display:none">
-      <div class="cards-grid" id="cards-grid"></div>
-    </div>
-
-    <!-- TASKS VIEW -->
+    <div id="view-engagements" style="display:none"><div class="cards-grid" id="cards-grid"></div></div>
     <div id="view-tasks" style="display:none">
       <div class="task-toolbar">
         <div class="filter-pills" id="filter-pills"></div>
@@ -478,24 +242,88 @@
   </main>
 </div>
 
-<!-- ENGAGEMENT MODAL -->
+<!-- ONBOARDING MODAL -->
+<div class="modal-overlay" id="onboard-modal">
+  <div class="modal">
+    <h2 id="ob-title">New client onboarding</h2>
+    <p class="modal-subtitle" id="ob-subtitle"></p>
+    <div class="progress-bar">
+      <div class="progress-step active" id="ps0"></div>
+      <div class="progress-step" id="ps1"></div>
+      <div class="progress-step" id="ps2"></div>
+    </div>
+
+    <!-- Step 0 -->
+    <div id="ob-s0">
+      <div class="type-toggle">
+        <button class="active" id="tt-confirmed" onclick="setObType('confirmed')">Confirmed engagement</button>
+        <button id="tt-prospective" onclick="setObType('prospective')">Prospective client</button>
+      </div>
+      <div class="field"><label>Client trading name</label><input type="text" id="ob-name" placeholder="e.g. Selka Health" /></div>
+      <div class="field"><label>Client legal name <span class="opt">if different</span></label><input type="text" id="ob-legal" placeholder="e.g. Selka Health Ltd" /></div>
+      <div class="field-row">
+        <div class="field"><label>Company number <span class="opt">optional</span></label><input type="text" id="ob-conum" placeholder="12345678" /></div>
+        <div class="field"><label>How introduced</label>
+          <select id="ob-intro"><option value="">Select…</option><option>Referral</option><option>Inbound</option><option>Prior relationship</option><option>Conference / event</option><option>Other</option></select>
+        </div>
+      </div>
+      <div class="field"><label>Conflict of interest check <span class="opt">optional</span></label><input type="text" id="ob-conflict" placeholder="e.g. previously advised a competitor" /></div>
+    </div>
+
+    <!-- Step 1 -->
+    <div id="ob-s1" style="display:none">
+      <div class="section-divider">Client contact</div>
+      <div class="field-row">
+        <div class="field"><label>Contact name</label><input type="text" id="ob-cname" placeholder="e.g. Dr Sarah Bond" /></div>
+        <div class="field"><label>Contact email <span class="opt">optional</span></label><input type="text" id="ob-cemail" placeholder="sarah@selkahealth.com" /></div>
+      </div>
+      <div class="field"><label>Decision-maker <span class="opt">if not the contact</span></label><input type="text" id="ob-dm" placeholder="e.g. CEO — John Smith" /></div>
+      <div class="section-divider" id="ob-scope-hdr">Scope &amp; fees</div>
+      <div class="field"><label id="ob-scope-lbl">Scope summary</label><textarea id="ob-scope" placeholder="One or two sentences — becomes the recital in the engagement letter."></textarea></div>
+      <div id="ob-confirmed-fields">
+        <div class="field-row">
+          <div class="field"><label>Fee structure <span class="opt">optional</span></label>
+            <select id="ob-fee"><option value="">TBD</option><option>Day rate (£1,500)</option><option>Half-day (£800)</option><option>Hourly (£250)</option><option>Fixed fee</option><option>Retainer</option></select>
+          </div>
+          <div class="field"><label>NDA</label>
+            <select id="ob-nda"><option value="ashvaren">Yes — Ashvaren NDA</option><option value="client">Yes — client's own</option><option value="none">No NDA needed</option></select>
+          </div>
+        </div>
+        <div class="field"><label>Billing contact <span class="opt">if different</span></label><input type="text" id="ob-billing" placeholder="Name and email" /></div>
+      </div>
+      <div id="ob-prosp-fields" style="display:none">
+        <div class="field"><label>Problem statement</label><textarea id="ob-problem" placeholder="What are they trying to solve? What is driving their approach?"></textarea></div>
+        <div class="field"><label>Budget conversation <span class="opt">optional</span></label><input type="text" id="ob-budget" placeholder="Has budget been discussed?" /></div>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div id="ob-s2" style="display:none">
+      <div id="ob-summary"></div>
+      <div class="drive-status" id="ob-drive-status" style="display:none">
+        <div class="spinner" style="width:14px;height:14px;border-width:1.5px;" id="ob-drive-spinner"></div>
+        <span id="ob-drive-msg">Creating Drive folder…</span>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" id="ob-back" onclick="obBack()" style="display:none">← Back</button>
+      <button class="btn-cancel" onclick="closeOnboard()">Cancel</button>
+      <button class="btn-save" id="ob-next" onclick="obNext()">Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ENGAGEMENT EDIT MODAL -->
 <div class="modal-overlay" id="eng-modal">
   <div class="modal">
-    <h2 id="eng-modal-title">New engagement</h2>
-    <div class="field"><label>Name</label><input type="text" id="em-name" placeholder="e.g. Salt Creek" /></div>
-    <div class="field"><label>Type</label>
-      <select id="em-type">
-        <option>Advisory</option><option>Fractional CFO/COO</option><option>Workshop</option><option>Personal</option><option>Internal</option>
-      </select>
-    </div>
-    <div class="field"><label>Status</label>
-      <select id="em-status">
-        <option value="active">Active</option><option value="waiting">Waiting on client</option><option value="stalled">Stalled</option><option value="paused">Paused</option>
-      </select>
-    </div>
-    <div class="field"><label>Last action</label><input type="text" id="em-last" placeholder="What happened most recently?" /></div>
-    <div class="field"><label>Next step</label><input type="text" id="em-next" placeholder="What needs to happen next?" /></div>
-    <div class="field"><label>Deadline (optional)</label><input type="text" id="em-deadline" placeholder="e.g. 10 April" /></div>
+    <h2 id="eng-modal-title">Edit engagement</h2>
+    <div class="field"><label>Name</label><input type="text" id="em-name" /></div>
+    <div class="field"><label>Type</label><select id="em-type"><option>Advisory</option><option>Fractional CFO/COO</option><option>Workshop</option><option>Personal</option><option>Internal</option></select></div>
+    <div class="field"><label>Status</label><select id="em-status"><option value="active">Active</option><option value="waiting">Waiting on client</option><option value="stalled">Stalled</option><option value="paused">Paused</option><option value="prospective">Prospective</option></select></div>
+    <div class="field"><label>Last action</label><input type="text" id="em-last" /></div>
+    <div class="field"><label>Next step</label><input type="text" id="em-next" /></div>
+    <div class="field"><label>Deadline <span class="opt">optional</span></label><input type="text" id="em-deadline" /></div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeEngModal()">Cancel</button>
       <button class="btn-save" onclick="saveEngagement()">Save</button>
@@ -509,11 +337,7 @@
     <h2>New task</h2>
     <div class="field"><label>Task</label><input type="text" id="tm-title" placeholder="What needs to be done?" /></div>
     <div class="field"><label>Engagement</label><select id="tm-engagement"></select></div>
-    <div class="field"><label>When</label>
-      <select id="tm-due">
-        <option value="today">Today</option><option value="tomorrow">Tomorrow</option><option value="this-week">This week</option><option value="later">Later</option>
-      </select>
-    </div>
+    <div class="field"><label>When</label><select id="tm-due"><option value="today">Today</option><option value="tomorrow">Tomorrow</option><option value="this-week">This week</option><option value="later">Later</option></select></div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeTaskModal()">Cancel</button>
       <button class="btn-save" onclick="saveTask()">Save</button>
@@ -525,15 +349,9 @@
 <div class="modal-overlay" id="settings-modal">
   <div class="modal">
     <h2>Settings</h2>
-    <div class="field">
-      <label>Google OAuth client ID</label>
-      <input type="text" id="s-client-id" placeholder="xxxx.apps.googleusercontent.com" />
-    </div>
-    <div class="field">
-      <label>AI proxy URL</label>
-      <input type="text" id="s-proxy-url" placeholder="https://ashvaren-ai-proxy.xxx.workers.dev" />
-    </div>
-    <p style="font-size:12px;color:var(--text-tertiary);margin-bottom:1rem;line-height:1.6;">Updating the proxy URL takes effect immediately. Updating the OAuth client ID will trigger a new Google sign-in.</p>
+    <div class="field"><label>Google OAuth client ID</label><input type="text" id="s-client-id" /></div>
+    <div class="field"><label>AI proxy URL</label><input type="text" id="s-proxy-url" /></div>
+    <p style="font-size:12px;color:var(--text-tertiary);margin-bottom:1rem;line-height:1.6;">Updating the proxy URL takes effect immediately. Updating the OAuth client ID triggers a new Google sign-in.</p>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeSettings()">Cancel</button>
       <button class="btn-save" onclick="saveSettings()">Save</button>
@@ -544,44 +362,31 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// ─── CONFIG ───────────────────────────────────────────────────────────────────
 const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/calendar.readonly';
-const DRIVE_FILE_NAME = 'ashvaren-tracker-state.json';
-const DRIVE_FOLDER_PATH = 'Ashvaren/Tracker';
+const DRIVE_FILE = 'ashvaren-tracker-state.json';
 const WORK_CAL = 'mike@ashvaren.com';
 const FAMILY_CAL = 'mikeandlucyw@gmail.com';
 
-let cfg = { clientId: '', proxyUrl: '' };
-let token = null;
-let driveFileId = null;
-let editingEngId = null;
-let taskFilterEngId = 'all';
+let cfg = { clientId:'', proxyUrl:'' };
+let token = null, driveFileId = null, editEngId = null, taskFilter = 'all';
+let obStep = 0, obType = 'confirmed';
+let calEvents = { today:[], tomorrow:[] };
+let state = { engagements:[], tasks:[] };
 
-let state = {
-  engagements: [],
-  tasks: []
-};
-
-// ─── INIT ─────────────────────────────────────────────────────────────────────
+// ── INIT ──────────────────────────────────────────────────────────────────────
 window.onload = async () => {
   cfg.clientId = localStorage.getItem('cfg_client_id') || '';
   cfg.proxyUrl = localStorage.getItem('cfg_proxy_url') || '';
-
-  // Handle OAuth redirect
   const hash = window.location.hash;
   if (hash.includes('access_token')) {
-    const params = new URLSearchParams(hash.replace('#', '?'));
-    token = params.get('access_token');
+    token = new URLSearchParams(hash.replace('#','?')).get('access_token');
     localStorage.setItem('goog_token', token);
     window.location.hash = '';
-    await startApp();
-    return;
+    await boot(); return;
   }
-
   token = localStorage.getItem('goog_token');
-  if (token && cfg.clientId && cfg.proxyUrl) {
-    await startApp();
-  } else {
+  if (token && cfg.clientId && cfg.proxyUrl) { await boot(); }
+  else {
     document.getElementById('loading').style.display = 'none';
     if (cfg.clientId) document.getElementById('cfg-client-id').value = cfg.clientId;
     if (cfg.proxyUrl) document.getElementById('cfg-proxy-url').value = cfg.proxyUrl;
@@ -591,468 +396,424 @@ window.onload = async () => {
 
 function saveConfigAndAuth() {
   cfg.clientId = document.getElementById('cfg-client-id').value.trim();
-  cfg.proxyUrl = document.getElementById('cfg-proxy-url').value.trim().replace(/\/$/, '');
+  cfg.proxyUrl = document.getElementById('cfg-proxy-url').value.trim().replace(/\/$/,'');
   if (!cfg.clientId || !cfg.proxyUrl) { alert('Both fields are required.'); return; }
   localStorage.setItem('cfg_client_id', cfg.clientId);
   localStorage.setItem('cfg_proxy_url', cfg.proxyUrl);
-  redirectToGoogle();
+  goGoogle();
 }
-
-function redirectToGoogle() {
-  const redirect = window.location.origin + window.location.pathname;
-  const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(cfg.clientId)}&redirect_uri=${encodeURIComponent(redirect)}&response_type=token&scope=${encodeURIComponent(SCOPES)}&prompt=consent`;
-  window.location.href = url;
+function goGoogle() {
+  const r = window.location.origin + window.location.pathname;
+  window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(cfg.clientId)}&redirect_uri=${encodeURIComponent(r)}&response_type=token&scope=${encodeURIComponent(SCOPES)}&prompt=consent`;
 }
-
-function signOut() {
-  localStorage.removeItem('goog_token');
-  token = null;
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('auth-screen').style.display = 'flex';
-}
-
-function openSettings() {
-  document.getElementById('s-client-id').value = cfg.clientId;
-  document.getElementById('s-proxy-url').value = cfg.proxyUrl;
-  document.getElementById('settings-modal').classList.add('open');
-}
-
-function closeSettings() {
-  document.getElementById('settings-modal').classList.remove('open');
-}
-
+function signOut() { localStorage.removeItem('goog_token'); token=null; document.getElementById('app').style.display='none'; document.getElementById('auth-screen').style.display='flex'; }
+function openSettings() { document.getElementById('s-client-id').value=cfg.clientId; document.getElementById('s-proxy-url').value=cfg.proxyUrl; document.getElementById('settings-modal').classList.add('open'); }
+function closeSettings() { document.getElementById('settings-modal').classList.remove('open'); }
 function saveSettings() {
-  const newClientId = document.getElementById('s-client-id').value.trim();
-  const newProxy = document.getElementById('s-proxy-url').value.trim().replace(/\/$/, '');
-  if (!newClientId || !newProxy) { alert('Both fields are required.'); return; }
-  const clientIdChanged = newClientId !== cfg.clientId;
-  cfg.clientId = newClientId;
-  cfg.proxyUrl = newProxy;
-  localStorage.setItem('cfg_client_id', cfg.clientId);
-  localStorage.setItem('cfg_proxy_url', cfg.proxyUrl);
-  closeSettings();
-  if (clientIdChanged) {
-    toast('Client ID updated — re-authenticating with Google…');
-    setTimeout(() => redirectToGoogle(), 1200);
-  } else {
-    toast('Settings saved');
-  }
+  const id=document.getElementById('s-client-id').value.trim(), px=document.getElementById('s-proxy-url').value.trim().replace(/\/$/,'');
+  if(!id||!px){alert('Both fields required.');return;}
+  const changed=id!==cfg.clientId; cfg.clientId=id; cfg.proxyUrl=px;
+  localStorage.setItem('cfg_client_id',id); localStorage.setItem('cfg_proxy_url',px);
+  closeSettings(); if(changed){toast('Re-authenticating…');setTimeout(goGoogle,1200);}else toast('Settings saved');
 }
 
-async function startApp() {
-  document.getElementById('loading').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  document.getElementById('cal-date').textContent = new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' });
-  await loadFromDrive();
-  await loadCalendar();
-  render();
+async function boot() {
+  document.getElementById('loading').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('cal-date').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+  await loadFromDrive(); await loadCalendar(); render();
 }
 
-// ─── DRIVE ────────────────────────────────────────────────────────────────────
-async function gapi(url, options = {}) {
-  const res = await fetch(url, {
-    ...options,
-    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json', ...(options.headers || {}) }
-  });
-  if (res.status === 401) {
-    localStorage.removeItem('goog_token');
-    redirectToGoogle();
-    return null;
-  }
+// ── DRIVE ─────────────────────────────────────────────────────────────────────
+async function gapi(url, opts={}) {
+  const res = await fetch(url,{...opts,headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json',...(opts.headers||{})}});
+  if(res.status===401){localStorage.removeItem('goog_token');goGoogle();return null;}
   return res;
 }
-
-async function findOrCreateFolder(parentId, name) {
-  const q = `name='${name}' and mimeType='application/vnd.google-apps.folder' and '${parentId}' in parents and trashed=false`;
-  const res = await gapi(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id,name)`);
-  const data = await res.json();
-  if (data.files && data.files.length > 0) return data.files[0].id;
-  const create = await gapi('https://www.googleapis.com/drive/v3/files', {
-    method: 'POST',
-    body: JSON.stringify({ name, mimeType: 'application/vnd.google-apps.folder', parents: [parentId] })
-  });
-  const folder = await create.json();
-  return folder.id;
+async function mkFolder(parentId, name) {
+  const q=`name='${name}' and mimeType='application/vnd.google-apps.folder' and '${parentId}' in parents and trashed=false`;
+  const r=await gapi(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id)`);
+  if(!r)return null; const d=await r.json();
+  if(d.files&&d.files.length)return d.files[0].id;
+  const c=await gapi('https://www.googleapis.com/drive/v3/files',{method:'POST',body:JSON.stringify({name,mimeType:'application/vnd.google-apps.folder',parents:[parentId]})});
+  if(!c)return null; const f=await c.json(); return f.id;
 }
+async function ensurePath(parts) { let p='root'; for(const n of parts){p=await mkFolder(p,n);if(!p)return null;} return p; }
 
-async function ensureFolderPath() {
-  let parentId = 'root';
-  for (const part of DRIVE_FOLDER_PATH.split('/')) {
-    parentId = await findOrCreateFolder(parentId, part);
-  }
-  return parentId;
+async function createClientFolder(name, isProsp) {
+  return await ensurePath(['Ashvaren', isProsp?'Prospects':'Clients', name]);
 }
 
 async function loadFromDrive() {
-  setSyncStatus('Loading from Drive…');
+  setSS('Loading…');
   try {
-    const folderId = await ensureFolderPath();
-    const q = `name='${DRIVE_FILE_NAME}' and '${folderId}' in parents and trashed=false`;
-    const res = await gapi(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id,name)`);
-    const data = await res.json();
-    if (data.files && data.files.length > 0) {
-      driveFileId = data.files[0].id;
-      const fileRes = await gapi(`https://www.googleapis.com/drive/v3/files/${driveFileId}?alt=media`);
-      const json = await fileRes.json();
-      if (json.engagements) state = json;
+    const fid=await ensurePath(['Ashvaren','Tracker']); if(!fid){setSS('Drive error');return;}
+    const q=`name='${DRIVE_FILE}' and '${fid}' in parents and trashed=false`;
+    const r=await gapi(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id)`);
+    if(!r)return; const d=await r.json();
+    if(d.files&&d.files.length){
+      driveFileId=d.files[0].id;
+      const fr=await gapi(`https://www.googleapis.com/drive/v3/files/${driveFileId}?alt=media`);
+      if(fr){const j=await fr.json();if(j.engagements)state=j;}
     } else {
-      // Seed with starter data
-      state = {
-        engagements: [
-          { id: 'e1', name: 'Salt Creek', type: 'Advisory', status: 'active', last: 'Three-statement model delivered to Nik and David', next: 'Investor deck outline', deadline: '' },
-          { id: 'e2', name: 'Office Test / Ultra HR', type: 'Advisory', status: 'active', last: 'Strategy, scope and go-to-market paper iterated', next: 'Follow-up call to confirm launch priorities', deadline: '' },
-          { id: 'e3', name: 'Ashvaren internal', type: 'Internal', status: 'active', last: 'Transcription pipeline and file organisation system built', next: 'Business development outreach', deadline: '' },
-        ],
-        tasks: [
-          { id: 't1', title: 'Investor deck outline for Salt Creek', engagement: 'e1', due: 'this-week', done: false },
-          { id: 't2', title: 'Follow-up call with Office Test', engagement: 'e2', due: 'today', done: false },
-          { id: 't3', title: 'BD outreach — two warm contacts', engagement: 'e3', due: 'this-week', done: false },
-        ]
-      };
-      await saveToDocsFolder(folderId);
+      state={engagements:[
+        {id:'e1',name:'Salt Creek',type:'Advisory',status:'active',last:'Three-statement model delivered to Nik and David',next:'Investor deck outline',deadline:'',contactName:'',contactEmail:'',driveFolder:null,isProspective:false},
+        {id:'e2',name:'Office Test / Ultra HR',type:'Advisory',status:'active',last:'Strategy, scope and go-to-market paper iterated',next:'Follow-up call to confirm launch priorities',deadline:'',contactName:'',contactEmail:'',driveFolder:null,isProspective:false},
+        {id:'e3',name:'Ashvaren internal',type:'Internal',status:'active',last:'Transcription pipeline built',next:'Business development outreach',deadline:'',contactName:'',contactEmail:'',driveFolder:null,isProspective:false},
+      ],tasks:[
+        {id:'t1',title:'Investor deck outline for Salt Creek',engagement:'e1',due:'this-week',done:false},
+        {id:'t2',title:'Follow-up call with Office Test',engagement:'e2',due:'today',done:false},
+        {id:'t3',title:'BD outreach — two warm contacts',engagement:'e3',due:'this-week',done:false},
+      ]};
+      await saveToD();
     }
-    setSyncStatus('Loaded');
-  } catch(e) {
-    setSyncStatus('Drive error');
-    console.error(e);
-  }
+    setSS('');
+  } catch(e){setSS('Drive error');console.error(e);}
 }
 
-async function saveToDocsFolder(folderId) {
-  if (!folderId) {
-    folderId = await ensureFolderPath();
-  }
-  const body = JSON.stringify(state, null, 2);
-  if (driveFileId) {
-    await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`, {
-      method: 'PATCH',
-      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body
-    });
-  } else {
-    const meta = await gapi('https://www.googleapis.com/drive/v3/files', {
-      method: 'POST',
-      body: JSON.stringify({ name: DRIVE_FILE_NAME, mimeType: 'application/json', parents: [folderId] })
-    });
-    const file = await meta.json();
-    driveFileId = file.id;
-    await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`, {
-      method: 'PATCH',
-      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body
-    });
-  }
-}
-
-async function saveToDoive() {
-  setSyncStatus('Saving…');
-  await saveToDocsFolder(null);
-  setSyncStatus('Saved ✓');
-  toast('Saved to Drive');
-  setTimeout(() => setSyncStatus(''), 3000);
-}
-
-// expose as saveToDorive alias
-window.saveToDorive = saveToDoive;
-
-async function saveToDoive_exported() { await saveToDoive(); }
-window.saveToDoive = saveToDoive;
-// fix naming
-async function saveToDoive2() { await saveToDoive(); }
-
-function setSyncStatus(msg) { document.getElementById('sync-status').textContent = msg; }
-
-// Fix the button binding
 async function saveToD() {
-  setSyncStatus('Saving…');
+  setSS('Saving…');
   try {
-    await saveToDocsFolder(null);
-    setSyncStatus('Saved ✓');
-    toast('Saved to Drive');
-    setTimeout(() => setSyncStatus(''), 3000);
-  } catch(e) {
-    setSyncStatus('Save failed');
-  }
+    const fid=await ensurePath(['Ashvaren','Tracker']); if(!fid){setSS('Save failed');return;}
+    const body=JSON.stringify(state,null,2);
+    if(driveFileId){
+      await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`,{method:'PATCH',headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},body});
+    } else {
+      const m=await gapi('https://www.googleapis.com/drive/v3/files',{method:'POST',body:JSON.stringify({name:DRIVE_FILE,mimeType:'application/json',parents:[fid]})});
+      if(m){const f=await m.json();driveFileId=f.id;await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`,{method:'PATCH',headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},body});}
+    }
+    setSS('Saved ✓'); setTimeout(()=>setSS(''),3000);
+  } catch(e){setSS('Save failed');}
 }
-window.saveToDoive = saveToD;
-// make header button work
-document.querySelector('.sync-btn').onclick = saveToD;
+function setSS(m){document.getElementById('sync-status').textContent=m;}
 
-// ─── CALENDAR ─────────────────────────────────────────────────────────────────
-let calEvents = { today: [], tomorrow: [] };
-
+// ── CALENDAR ──────────────────────────────────────────────────────────────────
 async function loadCalendar() {
-  const now = new Date();
-  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
-  const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59).toISOString();
-  const tomorrowStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).toISOString();
-  const tomorrowEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 23, 59, 59).toISOString();
-
-  calEvents = { today: [], tomorrow: [] };
-
-  for (const cal of [WORK_CAL, FAMILY_CAL]) {
-    const label = cal === WORK_CAL ? 'work' : 'family';
-    try {
-      const tRes = await gapi(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(cal)}/events?timeMin=${todayStart}&timeMax=${todayEnd}&singleEvents=true&orderBy=startTime`);
-      if (tRes) {
-        const tData = await tRes.json();
-        (tData.items || []).forEach(ev => calEvents.today.push({ ...ev, _cal: label }));
-      }
-      const tmRes = await gapi(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(cal)}/events?timeMin=${tomorrowStart}&timeMax=${tomorrowEnd}&singleEvents=true&orderBy=startTime`);
-      if (tmRes) {
-        const tmData = await tmRes.json();
-        (tmData.items || []).forEach(ev => calEvents.tomorrow.push({ ...ev, _cal: label }));
-      }
-    } catch(e) { console.warn('Calendar fetch error', cal, e); }
+  const now=new Date();
+  const s=(off,h,m,s)=>{const d=new Date(now.getFullYear(),now.getMonth(),now.getDate()+off,h,m,s);return d.toISOString();};
+  calEvents={today:[],tomorrow:[]};
+  for(const [cal,lbl] of [[WORK_CAL,'work'],[FAMILY_CAL,'family']]){
+    for(const [key,off] of [['today',0],['tomorrow',1]]){
+      try{
+        const r=await gapi(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(cal)}/events?timeMin=${s(off,0,0,0)}&timeMax=${s(off,23,59,59)}&singleEvents=true&orderBy=startTime`);
+        if(r){const d=await r.json();(d.items||[]).forEach(ev=>calEvents[key].push({...ev,_cal:lbl}));}
+      }catch(e){}
+    }
   }
-  calEvents.today.sort((a,b) => (a.start.dateTime||a.start.date) > (b.start.dateTime||b.start.date) ? 1 : -1);
-  calEvents.tomorrow.sort((a,b) => (a.start.dateTime||a.start.date) > (b.start.dateTime||b.start.date) ? 1 : -1);
+  for(const k of['today','tomorrow']) calEvents[k].sort((a,b)=>(a.start.dateTime||a.start.date)>(b.start.dateTime||b.start.date)?1:-1);
 }
 
-function formatCalTime(ev) {
-  if (ev.start.date) return 'all day';
-  const t = new Date(ev.start.dateTime);
-  return t.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+function fmtTime(ev){if(ev.start.date)return'all day';return new Date(ev.start.dateTime).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});}
+
+function renderCalPanel(evs,id){
+  const el=document.getElementById(id);
+  if(!evs.length){el.innerHTML='<div class="empty-state">Nothing scheduled</div>';return;}
+  el.innerHTML=evs.map(ev=>`<div class="cal-event"><div class="cal-dot dot-${ev._cal}"></div><div class="cal-time">${fmtTime(ev)}</div><div><div class="cal-title">${ev.summary||'(no title)'}</div>${ev.location?`<div class="cal-cal">${ev.location}</div>`:''}</div></div>`).join('');
 }
 
-function renderCalPanel(events, containerId) {
-  const el = document.getElementById(containerId);
-  if (!events.length) { el.innerHTML = '<div class="empty-state">Nothing scheduled</div>'; return; }
-  el.innerHTML = events.map(ev => `
-    <div class="cal-event">
-      <div class="cal-dot dot-${ev._cal}"></div>
-      <div class="cal-time">${formatCalTime(ev)}</div>
-      <div>
-        <div class="cal-title">${ev.summary || '(no title)'}</div>
-        ${ev.location ? `<div class="cal-cal">${ev.location}</div>` : ''}
-      </div>
-    </div>
-  `).join('');
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function render(){
+  renderCalPanel(calEvents.today,'cal-today');
+  renderCalPanel(calEvents.tomorrow,'cal-tomorrow');
+  renderTodayTasks(); renderCards(); renderTasks();
+}
+function eName(id){const e=state.engagements.find(x=>x.id===id);return e?e.name:'';}
+function sLabel(s){return{active:'Active',waiting:'Waiting',stalled:'Stalled',paused:'Paused',prospective:'Prospective'}[s]||s;}
+function sClass(s){return{active:'s-active',waiting:'s-waiting',stalled:'s-stalled',paused:'s-paused',prospective:'s-prospective'}[s]||'';}
+
+function renderTodayTasks(){
+  const el=document.getElementById('today-tasks');
+  const items=state.tasks.filter(t=>t.due==='today'||t.due==='tomorrow');
+  if(!items.length){el.innerHTML='<div class="empty-state">No tasks for today or tomorrow</div>';return;}
+  el.innerHTML=items.map(t=>`<div class="today-task"><div class="task-check ${t.done?'done':''}" onclick="toggleTask('${t.id}')"></div><div><div class="task-text ${t.done?'done':''}">${t.title}</div><div class="task-eng">${eName(t.engagement)}</div></div></div>`).join('');
 }
 
-// ─── RENDER ───────────────────────────────────────────────────────────────────
-function render() {
-  renderCalPanel(calEvents.today, 'cal-today');
-  renderCalPanel(calEvents.tomorrow, 'cal-tomorrow');
-  renderTodayTasks();
-  renderCards();
-  renderTasks();
-}
-
-function engName(id) {
-  const e = state.engagements.find(x => x.id === id);
-  return e ? e.name : '';
-}
-
-function renderTodayTasks() {
-  const el = document.getElementById('today-tasks');
-  const items = state.tasks.filter(t => t.due === 'today' || t.due === 'tomorrow');
-  if (!items.length) { el.innerHTML = '<div class="empty-state">No tasks for today or tomorrow</div>'; return; }
-  el.innerHTML = items.map(t => `
-    <div class="today-task">
-      <div class="task-check ${t.done ? 'done' : ''}" onclick="toggleTask('${t.id}')"></div>
-      <div>
-        <div class="task-text ${t.done ? 'done' : ''}">${t.title}</div>
-        <div class="task-eng">${engName(t.engagement)}</div>
-      </div>
-    </div>
-  `).join('');
-}
-
-function statusLabel(s) { return { active: 'Active', waiting: 'Waiting', stalled: 'Stalled', paused: 'Paused' }[s] || s; }
-function statusClass(s) { return { active: 's-active', waiting: 's-waiting', stalled: 's-stalled', paused: 's-paused' }[s] || ''; }
-
-function renderCards() {
-  const grid = document.getElementById('cards-grid');
-  grid.innerHTML = state.engagements.map(e => `
-    <div class="eng-card">
+function renderCards(){
+  const tc=eid=>state.tasks.filter(t=>t.engagement===eid&&!t.done).length;
+  document.getElementById('cards-grid').innerHTML=state.engagements.map(e=>`
+    <div class="eng-card ${e.isProspective?'prospective':''}">
       <div class="eng-card-top">
         <div>
           <div class="eng-name">${e.name}</div>
           <div class="eng-type">${e.type}</div>
+          ${e.contactName?`<div class="eng-contact">${e.contactName}${e.contactEmail?' &mdash; '+e.contactEmail:''}</div>`:''}
         </div>
-        <span class="status-pill ${statusClass(e.status)}">${statusLabel(e.status)}</span>
+        <span class="status-pill ${sClass(e.status)}">${sLabel(e.status)}</span>
       </div>
-      <div class="eng-section">
-        <div class="eng-label">Last action</div>
-        <div class="eng-value">${e.last || '—'}</div>
-      </div>
-      <div class="eng-section">
-        <div class="eng-label">Next step</div>
-        <div class="eng-next">${e.next || '—'}</div>
-      </div>
-      ${e.deadline ? `<div class="eng-deadline">Due: ${e.deadline}</div>` : ''}
+      <div class="eng-section"><div class="eng-label">Last action</div><div class="eng-value">${e.last||'—'}</div></div>
+      <div class="eng-section"><div class="eng-label">Next step</div><div class="eng-next">${e.next||'—'}</div></div>
+      ${e.deadline?`<div class="eng-deadline">Due: ${e.deadline}</div>`:''}
+      ${tc(e.id)>0?`<div class="eng-tasks-count">${tc(e.id)} open task${tc(e.id)!==1?'s':''}</div>`:''}
       <div class="eng-footer">
-        <button class="eng-btn" onclick="openEditEngModal('${e.id}')">Edit</button>
-        <button class="eng-btn" onclick="quickAddTask('${e.id}')">+ Task</button>
-        <button class="eng-btn danger" onclick="deleteEngagement('${e.id}')">Remove</button>
+        <button class="eng-btn" onclick="openEditEng('${e.id}')">Edit</button>
+        <button class="eng-btn" onclick="quickTask('${e.id}')">+ Task</button>
+        ${e.driveFolder?`<button class="eng-btn drive" onclick="openDrive('${e.driveFolder}')">Drive ↗</button>`:''}
+        <button class="eng-btn danger" onclick="deleteEng('${e.id}')">Remove</button>
       </div>
-    </div>
-  `).join('') + `<div class="add-card" onclick="openNewEngModal()">+ New engagement</div>`;
+    </div>`).join('')+`<div class="add-card" onclick="openOnboard()">+ New engagement</div>`;
 }
 
-function renderTasks() {
-  const pills = document.getElementById('filter-pills');
-  pills.innerHTML = [{ id: 'all', name: 'All' }, ...state.engagements.map(e => ({ id: e.id, name: e.name }))].map(e =>
-    `<button class="filter-pill ${taskFilterEngId === e.id ? 'active' : ''}" onclick="setTaskFilter('${e.id}')">${e.name}</button>`
-  ).join('');
-
-  const groups = { today: [], tomorrow: [], 'this-week': [], later: [], done: [] };
-  state.tasks.forEach(t => {
-    if (taskFilterEngId !== 'all' && t.engagement !== taskFilterEngId) return;
-    if (t.done) groups.done.push(t);
-    else (groups[t.due] || groups.later).push(t);
-  });
-
-  const labels = { today: 'Today', tomorrow: 'Tomorrow', 'this-week': 'This week', later: 'Later', done: 'Done' };
-  const list = document.getElementById('task-list');
-  list.innerHTML = Object.entries(groups).map(([key, tasks]) => {
-    if (!tasks.length) return '';
-    return `<div class="task-group">
-      <div class="task-group-header">${labels[key]} (${tasks.length})</div>
-      ${tasks.map(t => `
-        <div class="task-row">
-          <div class="task-check ${t.done ? 'done' : ''}" onclick="toggleTask('${t.id}')"></div>
-          <div class="task-body">
-            <div class="task-title ${t.done ? 'done' : ''}">${t.title}</div>
-            <div class="task-meta">
-              ${engName(t.engagement) ? `<span class="meta-eng">${engName(t.engagement)}</span>` : ''}
-              <span class="meta-due">${labels[t.due] || t.due}</span>
-            </div>
-          </div>
-          <button class="task-del" onclick="deleteTask('${t.id}')">Remove</button>
-        </div>
-      `).join('')}
-    </div>`;
+function renderTasks(){
+  document.getElementById('filter-pills').innerHTML=[{id:'all',name:'All'},...state.engagements.map(e=>({id:e.id,name:e.name}))].map(e=>`<button class="filter-pill ${taskFilter===e.id?'active':''}" onclick="setTF('${e.id}')">${e.name}</button>`).join('');
+  const g={today:[],tomorrow:[],'this-week':[],later:[],done:[]};
+  state.tasks.forEach(t=>{if(taskFilter!=='all'&&t.engagement!==taskFilter)return;if(t.done)g.done.push(t);else(g[t.due]||g.later).push(t);});
+  const lbl={today:'Today',tomorrow:'Tomorrow','this-week':'This week',later:'Later',done:'Done'};
+  document.getElementById('task-list').innerHTML=Object.entries(g).map(([k,ts])=>{
+    if(!ts.length)return'';
+    return`<div class="task-group"><div class="task-group-header">${lbl[k]} (${ts.length})</div>${ts.map(t=>`<div class="task-row"><div class="task-check ${t.done?'done':''}" onclick="toggleTask('${t.id}')"></div><div class="task-body"><div class="task-title ${t.done?'done':''}">${t.title}</div><div class="task-meta">${eName(t.engagement)?`<span class="meta-eng">${eName(t.engagement)}</span>`:''}<span class="meta-due">${lbl[t.due]||t.due}</span></div></div><button class="task-del" onclick="delTask('${t.id}')">Remove</button></div>`).join('')}</div>`;
   }).join('');
 }
 
-// ─── VIEWS ────────────────────────────────────────────────────────────────────
-function showView(name, btn) {
-  ['today', 'engagements', 'tasks'].forEach(v => document.getElementById('view-' + v).style.display = 'none');
-  document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active'));
-  document.getElementById('view-' + name).style.display = 'block';
-  btn.classList.add('active');
+function showView(n,btn){['today','engagements','tasks'].forEach(v=>document.getElementById('view-'+v).style.display='none');document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));document.getElementById('view-'+n).style.display='block';btn.classList.add('active');}
+function openDrive(id){window.open(`https://drive.google.com/drive/folders/${id}`,'_blank');}
+
+// ── ONBOARDING ────────────────────────────────────────────────────────────────
+function openOnboard(pre){
+  obStep=0; obType='confirmed';
+  ['ob-name','ob-legal','ob-conum','ob-conflict','ob-cname','ob-cemail','ob-dm','ob-scope','ob-billing','ob-problem','ob-budget'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('ob-intro').value=''; document.getElementById('ob-fee').value=''; document.getElementById('ob-nda').value='ashvaren';
+  document.getElementById('tt-confirmed').classList.add('active'); document.getElementById('tt-prospective').classList.remove('active');
+  if(pre){
+    if(pre.name)document.getElementById('ob-name').value=pre.name;
+    if(pre.contactName)document.getElementById('ob-cname').value=pre.contactName;
+    if(pre.scope)document.getElementById('ob-scope').value=pre.scope;
+    if(pre.type==='prospective'){obType='prospective';document.getElementById('tt-prospective').classList.add('active');document.getElementById('tt-confirmed').classList.remove('active');}
+  }
+  updateOb(); document.getElementById('onboard-modal').classList.add('open');
+}
+function closeOnboard(){document.getElementById('onboard-modal').classList.remove('open');}
+
+function setObType(t){
+  obType=t;
+  document.getElementById('tt-confirmed').classList.toggle('active',t==='confirmed');
+  document.getElementById('tt-prospective').classList.toggle('active',t==='prospective');
 }
 
-// ─── ENGAGEMENT MODAL ─────────────────────────────────────────────────────────
-function openNewEngModal() { editingEngId = null; document.getElementById('eng-modal-title').textContent = 'New engagement'; ['em-name','em-last','em-next','em-deadline'].forEach(id => document.getElementById(id).value = ''); document.getElementById('em-status').value = 'active'; document.getElementById('eng-modal').classList.add('open'); }
-function openEditEngModal(id) { editingEngId = id; const e = state.engagements.find(x => x.id === id); if (!e) return; document.getElementById('eng-modal-title').textContent = 'Edit engagement'; document.getElementById('em-name').value = e.name; document.getElementById('em-type').value = e.type; document.getElementById('em-status').value = e.status; document.getElementById('em-last').value = e.last; document.getElementById('em-next').value = e.next; document.getElementById('em-deadline').value = e.deadline || ''; document.getElementById('eng-modal').classList.add('open'); }
-function closeEngModal() { document.getElementById('eng-modal').classList.remove('open'); }
+function updateOb(){
+  [0,1,2].forEach(i=>{
+    document.getElementById('ob-s'+i).style.display=i===obStep?'block':'none';
+    const ps=document.getElementById('ps'+i);
+    ps.className='progress-step'+(i<obStep?' done':i===obStep?' active':'');
+  });
+  document.getElementById('ob-back').style.display=obStep>0?'block':'none';
+  document.getElementById('ob-next').textContent=obStep===2?'Create ✓':'Next →';
+  document.getElementById('ob-next').disabled=false;
+  const titles=['Client details','Contact & scope','Review & create'];
+  document.getElementById('ob-title').textContent=titles[obStep];
+  if(obStep===1){
+    const isp=obType==='prospective';
+    document.getElementById('ob-scope-hdr').textContent=isp?'Background':'Scope & fees';
+    document.getElementById('ob-scope-lbl').textContent=isp?'Problem statement':'Scope summary';
+    document.getElementById('ob-scope').placeholder=isp?'What are they trying to solve?':'One or two sentences — becomes the recital in the engagement letter.';
+    document.getElementById('ob-confirmed-fields').style.display=isp?'none':'block';
+    document.getElementById('ob-prosp-fields').style.display=isp?'block':'none';
+  }
+  if(obStep===2)renderObSummary();
+}
 
-function saveEngagement() {
-  const d = { name: document.getElementById('em-name').value.trim(), type: document.getElementById('em-type').value, status: document.getElementById('em-status').value, last: document.getElementById('em-last').value.trim(), next: document.getElementById('em-next').value.trim(), deadline: document.getElementById('em-deadline').value.trim() };
-  if (!d.name) return;
-  if (editingEngId) { const i = state.engagements.findIndex(e => e.id === editingEngId); if (i > -1) state.engagements[i] = { ...state.engagements[i], ...d }; }
-  else state.engagements.push({ id: 'e' + Date.now(), ...d });
+function renderObSummary(){
+  const v=id=>document.getElementById(id).value;
+  const name=v('ob-name')||'(no name)', isp=obType==='prospective';
+  const rows=[
+    ['Type',isp?'Prospective client':'Confirmed engagement'],
+    ['Client',name+(v('ob-legal')?` (${v('ob-legal')})`:'')],
+    v('ob-conum')?['Company no.',v('ob-conum')]:null,
+    v('ob-intro')?['Introduced via',v('ob-intro')]:null,
+    v('ob-conflict')?['Conflict check',v('ob-conflict')]:null,
+    v('ob-cname')?['Contact',v('ob-cname')+(v('ob-cemail')?` — ${v('ob-cemail')}`:'')] :null,
+    v('ob-dm')?['Decision-maker',v('ob-dm')]:null,
+    v('ob-scope')?['Scope',v('ob-scope')]:null,
+    !isp&&v('ob-fee')?['Fee',v('ob-fee')]:null,
+    !isp?['NDA',{ashvaren:'Ashvaren NDA',client:"Client's own",none:'No NDA'}[v('ob-nda')]||'']:null,
+    isp&&v('ob-budget')?['Budget',v('ob-budget')]:null,
+    ['Drive folder',`will create: Ashvaren/${isp?'Prospects':'Clients'}/${name}/`],
+  ].filter(Boolean);
+  const nda=v('ob-nda');
+  const tasks=isp
+    ?[`Follow up with ${v('ob-cname')||'contact'} at ${name}`,`Prepare capability overview for ${name}`]
+    :[
+      nda!=='none'?`Draft NDA for ${name} (Ashvaren Claude project)`:null,
+      `Draft engagement letter for ${name} (Ashvaren Claude project)`,
+      `Send NDA to ${v('ob-cname')||'client'}`,
+      `Send engagement letter to ${v('ob-cname')||'client'}`,
+      `Arrange kick-off call with ${v('ob-cname')||'client'}`,
+    ].filter(Boolean);
+  document.getElementById('ob-summary').innerHTML=`
+    <div style="background:var(--bg);border-radius:8px;padding:1rem;margin-bottom:1rem;">
+      <table style="width:100%;font-size:13px;border-collapse:collapse;">
+        ${rows.map(([l,vl])=>`<tr><td style="color:var(--text-tertiary);padding:4px 0;width:38%;vertical-align:top;padding-right:12px;">${l}</td><td style="padding:4px 0;">${vl}</td></tr>`).join('')}
+      </table>
+    </div>
+    <div style="font-size:11px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:8px;">Tasks that will be created</div>
+    <ul style="font-size:13px;color:var(--text-secondary);padding-left:1.25rem;line-height:1.9;">${tasks.map(t=>`<li>${t}</li>`).join('')}</ul>`;
+  document.getElementById('ob-drive-status').style.display='none';
+}
+
+function obBack(){if(obStep>0){obStep--;updateOb();}}
+
+async function obNext(){
+  if(obStep===0){
+    if(!document.getElementById('ob-name').value.trim()){toast('Please enter a client name');return;}
+    obStep=1;updateOb();
+  } else if(obStep===1){
+    if(!document.getElementById('ob-cname').value.trim()){toast('Please enter a contact name');return;}
+    obStep=2;updateOb();
+  } else {
+    await doCreate();
+  }
+}
+
+async function doCreate(){
+  const btn=document.getElementById('ob-next');
+  btn.disabled=true; btn.textContent='Creating…';
+  const ds=document.getElementById('ob-drive-status');
+  const dm=document.getElementById('ob-drive-msg');
+  ds.style.display='flex'; ds.className='drive-status'; dm.textContent='Creating Drive folder…';
+  document.getElementById('ob-drive-spinner').style.display='block';
+
+  const v=id=>document.getElementById(id).value.trim();
+  const name=v('ob-name'), isp=obType==='prospective';
+  const nda=v('ob-nda');
+  const cname=v('ob-cname');
+
+  let driveFolder=null;
+  try {
+    driveFolder=await createClientFolder(name,isp);
+    document.getElementById('ob-drive-spinner').style.display='none';
+    ds.className='drive-status ok';
+    dm.textContent=`Folder created: Ashvaren/${isp?'Prospects':'Clients'}/${name}/`;
+  } catch(e){
+    document.getElementById('ob-drive-spinner').style.display='none';
+    ds.className='drive-status err'; dm.textContent='Folder creation failed — create manually in Drive.';
+  }
+
+  const eid='e'+Date.now();
+  const eng={
+    id:eid, name, type:'Advisory',
+    status:isp?'prospective':'active',
+    last:isp?`Prospect identified — ${cname}`:`Engagement opened — ${cname}`,
+    next:isp?'Initial follow-up':'Draft NDA and engagement letter',
+    deadline:'', contactName:cname, contactEmail:v('ob-cemail'),
+    scope:v('ob-scope')||v('ob-problem'),
+    notes:[v('ob-legal')?`Legal: ${v('ob-legal')}`:'',v('ob-conum')?`Co.No.: ${v('ob-conum')}`:'',v('ob-intro')?`Via: ${v('ob-intro')}`:'',v('ob-conflict')?`Conflict: ${v('ob-conflict')}`:'',v('ob-dm')?`DM: ${v('ob-dm')}`:'',!isp&&v('ob-fee')?`Fee: ${v('ob-fee')}`:'',!isp&&v('ob-billing')?`Billing: ${v('ob-billing')}`:'',!isp?`NDA: ${nda}`:'',isp&&v('ob-budget')?`Budget: ${v('ob-budget')}`:''].filter(Boolean).join(' | '),
+    driveFolder, isProspective:isp,
+  };
+  state.engagements.push(eng);
+
+  const tasks=isp
+    ?[{title:`Follow up with ${cname} at ${name}`,due:'this-week'},{title:`Prepare capability overview for ${name}`,due:'later'}]
+    :[
+      nda!=='none'?{title:`Draft NDA for ${name} (Ashvaren Claude project)`,due:'today'}:null,
+      {title:`Draft engagement letter for ${name} (Ashvaren Claude project)`,due:'today'},
+      {title:`Send NDA to ${cname||name}`,due:'this-week'},
+      {title:`Send engagement letter to ${cname||name}`,due:'this-week'},
+      {title:`Arrange kick-off call with ${cname}`,due:'this-week'},
+    ].filter(Boolean);
+
+  tasks.forEach(t=>state.tasks.push({id:'t'+Date.now()+Math.random(),title:t.title,engagement:eid,due:t.due,done:false}));
+
+  await saveToD(); render();
+  setTimeout(()=>{
+    closeOnboard();
+    toast(`${name} created — ${tasks.length} tasks added`);
+    showView('engagements',document.querySelectorAll('.nav-tab')[1]);
+  },1200);
+}
+
+// ── ENG EDIT ──────────────────────────────────────────────────────────────────
+function openEditEng(id){
+  editEngId=id; const e=state.engagements.find(x=>x.id===id); if(!e)return;
+  document.getElementById('eng-modal-title').textContent='Edit engagement';
+  document.getElementById('em-name').value=e.name; document.getElementById('em-type').value=e.type;
+  document.getElementById('em-status').value=e.status; document.getElementById('em-last').value=e.last;
+  document.getElementById('em-next').value=e.next; document.getElementById('em-deadline').value=e.deadline||'';
+  document.getElementById('eng-modal').classList.add('open');
+}
+function closeEngModal(){document.getElementById('eng-modal').classList.remove('open');}
+function saveEngagement(){
+  const d={name:document.getElementById('em-name').value.trim(),type:document.getElementById('em-type').value,status:document.getElementById('em-status').value,last:document.getElementById('em-last').value.trim(),next:document.getElementById('em-next').value.trim(),deadline:document.getElementById('em-deadline').value.trim()};
+  if(!d.name)return; const i=state.engagements.findIndex(e=>e.id===editEngId); if(i>-1)state.engagements[i]={...state.engagements[i],...d};
   closeEngModal(); saveAndRender();
 }
+function deleteEng(id){if(!confirm('Remove this engagement?'))return;state.engagements=state.engagements.filter(e=>e.id!==id);saveAndRender();}
 
-function deleteEngagement(id) { if (!confirm('Remove this engagement?')) return; state.engagements = state.engagements.filter(e => e.id !== id); saveAndRender(); }
-
-// ─── TASK MODAL ───────────────────────────────────────────────────────────────
-function openTaskModal(preEngId) {
-  const sel = document.getElementById('tm-engagement');
-  sel.innerHTML = '<option value="">No engagement</option>' + state.engagements.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
-  if (preEngId) sel.value = preEngId;
-  document.getElementById('tm-title').value = '';
+// ── TASKS ─────────────────────────────────────────────────────────────────────
+function openTaskModal(pre){
+  const sel=document.getElementById('tm-engagement');
+  sel.innerHTML='<option value="">No engagement</option>'+state.engagements.map(e=>`<option value="${e.id}">${e.name}</option>`).join('');
+  if(pre)sel.value=pre; document.getElementById('tm-title').value='';
   document.getElementById('task-modal').classList.add('open');
 }
-function quickAddTask(id) { openTaskModal(id); }
-function closeTaskModal() { document.getElementById('task-modal').classList.remove('open'); }
-
-function saveTask() {
-  const t = { id: 'task' + Date.now(), title: document.getElementById('tm-title').value.trim(), engagement: document.getElementById('tm-engagement').value, due: document.getElementById('tm-due').value, done: false };
-  if (!t.title) return;
-  state.tasks.push(t);
-  closeTaskModal(); saveAndRender();
+function quickTask(id){openTaskModal(id);}
+function closeTaskModal(){document.getElementById('task-modal').classList.remove('open');}
+function saveTask(){
+  const t={id:'t'+Date.now(),title:document.getElementById('tm-title').value.trim(),engagement:document.getElementById('tm-engagement').value,due:document.getElementById('tm-due').value,done:false};
+  if(!t.title)return; state.tasks.push(t); closeTaskModal(); saveAndRender();
 }
+function toggleTask(id){const t=state.tasks.find(x=>x.id===id);if(t){t.done=!t.done;saveAndRender();}}
+function delTask(id){state.tasks=state.tasks.filter(t=>t.id!==id);saveAndRender();}
+function setTF(id){taskFilter=id;renderTasks();}
+function saveAndRender(){render();saveToD();}
 
-function toggleTask(id) { const t = state.tasks.find(x => x.id === id); if (t) { t.done = !t.done; saveAndRender(); } }
-function deleteTask(id) { state.tasks = state.tasks.filter(t => t.id !== id); saveAndRender(); }
-function setTaskFilter(id) { taskFilterEngId = id; renderTasks(); }
-
-function saveAndRender() { render(); saveToD(); }
-
-// ─── MODAL CLOSE ON BACKDROP ──────────────────────────────────────────────────
-['eng-modal', 'task-modal', 'settings-modal'].forEach(id => {
-  document.getElementById(id).addEventListener('click', e => { if (e.target.id === id) document.getElementById(id).classList.remove('open'); });
-});
-
-// ─── AI LAYER ─────────────────────────────────────────────────────────────────
-async function sendToAI() {
-  const input = document.getElementById('ai-input');
-  const text = input.value.trim();
-  if (!text) return;
-  const resp = document.getElementById('ai-response');
-  const btn = document.getElementById('ai-send-btn');
-  resp.className = 'ai-response visible';
-  resp.innerHTML = '<span class="ai-thinking">Thinking…</span>';
-  btn.disabled = true;
-  input.disabled = true;
-
-  const context = JSON.stringify({ engagements: state.engagements, tasks: state.tasks });
-
+// ── AI LAYER ──────────────────────────────────────────────────────────────────
+async function sendToAI(){
+  const input=document.getElementById('ai-input'), text=input.value.trim(); if(!text)return;
+  const resp=document.getElementById('ai-response'), btn=document.getElementById('ai-send-btn');
+  resp.className='ai-response visible'; resp.innerHTML='<span class="ai-thinking">Thinking…</span>';
+  btn.disabled=true; input.disabled=true;
+  const ctx=JSON.stringify({engagements:state.engagements.map(e=>({id:e.id,name:e.name,status:e.status,last:e.last,next:e.next})),tasks:state.tasks});
   try {
-    const r = await fetch(cfg.proxyUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-5',
-        max_tokens: 1000,
-        system: `You are the AI layer of a work tracker for Mike Warriner, a corporate and commercial lawyer, accountant, CFO and COO operating through Ashvaren Advisory in London. Mike advises creative and IP-rich businesses.
+    const r=await fetch(cfg.proxyUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      model:'claude-sonnet-4-5',max_tokens:1000,
+      system:`You are the AI layer of a work tracker for Mike Warriner at Ashvaren Advisory, London. Mike is a corporate lawyer, accountant, CFO and COO advising creative and IP-rich businesses.
 
 Current tracker state:
-${context}
+${ctx}
 
-When Mike gives you an update, respond with two things:
+Analyse the update and respond with exactly two parts on separate lines:
 
-1. A JSON block on a single line starting with "UPDATES:" containing state changes. Format:
-UPDATES: {"engagements":[{"id":"...","field":"...","value":"..."}],"tasks":[{"action":"add","title":"...","engagement":"...","due":"today|tomorrow|this-week|later"}]}
-Use empty arrays if nothing changed. Only include genuine changes.
+1. UPDATES line (always present):
+UPDATES: {"engagements":[{"id":"...","field":"...","value":"..."}],"tasks":[{"action":"add","title":"...","engagement":"...","due":"today|tomorrow|this-week|later"}],"newClient":{"detected":false}}
 
-2. One or two sentences of commercially astute commentary — a useful observation, a prompt, or a flag. No filler. No "Great update!" Never say "I". Be direct and specific to Mike's context.`,
-        messages: [{ role: 'user', content: text }]
-      })
-    });
-    const data = await r.json();
-    if (!r.ok) {
-      const errMsg = data.error ? `API error ${r.status}: ${data.error.message}` : `API error ${r.status}`;
-      resp.textContent = errMsg;
-      btn.disabled = false;
-      input.disabled = false;
-      return;
+If you detect a NEW client or engagement (a name not in the engagements list, or phrases like "new engagement", "new client", "just taken on", "prospective"), set newClient to:
+{"detected":true,"name":"<name>","contactName":"<contact if mentioned>","scope":"<scope if mentioned>","type":"confirmed|prospective"}
+
+Only set detected:true for genuinely new clients not already in the tracker. "Prospective" or "potential" language means type:prospective.
+
+2. One or two sentences of direct, commercially astute commentary. No filler. No "I".`,
+      messages:[{role:'user',content:text}]
+    })});
+    const data=await r.json();
+    if(!r.ok){resp.textContent=`API error ${r.status}: ${(data.error||{}).message||'unknown'}`;btn.disabled=false;input.disabled=false;return;}
+    const raw=(data.content||[]).map(c=>c.text||'').join('');
+    let commentary=[],newClient=null;
+    for(const line of raw.split('\n')){
+      if(line.startsWith('UPDATES:')){
+        try{
+          const u=JSON.parse(line.replace('UPDATES:','').trim());
+          (u.engagements||[]).forEach(x=>{const e=state.engagements.find(e=>e.id===x.id);if(e&&x.field)e[x.field]=x.value;});
+          (u.tasks||[]).forEach(x=>{if(x.action==='add')state.tasks.push({id:'t'+Date.now()+Math.random(),title:x.title,engagement:x.engagement||'',due:x.due||'this-week',done:false});});
+          if(u.newClient&&u.newClient.detected)newClient=u.newClient;
+        }catch(e){console.warn(e);}
+      } else if(line.trim())commentary.push(line.trim());
     }
-    const raw = (data.content || []).map(c => c.text || '').join('');
-    let commentary = [];
-    for (const line of raw.split('\n')) {
-      if (line.startsWith('UPDATES:')) {
-        try {
-          const updates = JSON.parse(line.replace('UPDATES:', '').trim());
-          (updates.engagements || []).forEach(u => { const e = state.engagements.find(x => x.id === u.id); if (e && u.field) e[u.field] = u.value; });
-          (updates.tasks || []).forEach(u => { if (u.action === 'add') state.tasks.push({ id: 'task' + Date.now() + Math.random(), title: u.title, engagement: u.engagement || '', due: u.due || 'this-week', done: false }); });
-        } catch(e) {}
-      } else if (line.trim()) { commentary.push(line.trim()); }
+    resp.textContent=commentary.join(' ')||'Updated.';
+    input.value=''; saveAndRender();
+    if(newClient){
+      toast(`New client detected: ${newClient.name} — opening onboarding…`);
+      setTimeout(()=>openOnboard(newClient),1000);
     }
-    resp.textContent = commentary.join(' ') || 'Updated.';
-    input.value = '';
-    saveAndRender();
-  } catch(e) {
-    resp.textContent = `Network error: ${e.message}`;
-  }
-  btn.disabled = false;
-  input.disabled = false;
+  } catch(e){resp.textContent=`Network error: ${e.message}`;}
+  btn.disabled=false; input.disabled=false;
 }
 
-document.getElementById('ai-input').addEventListener('keydown', e => { if (e.key === 'Enter') sendToAI(); });
+document.getElementById('ai-input').addEventListener('keydown',e=>{if(e.key==='Enter')sendToAI();});
 
-// ─── TOAST ────────────────────────────────────────────────────────────────────
-function toast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 2500);
-}
+['onboard-modal','eng-modal','task-modal','settings-modal'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',e=>{if(e.target.id===id)document.getElementById(id).classList.remove('open');});
+});
+
+function toast(m){const el=document.getElementById('toast');el.textContent=m;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3500);}
 </script>
 </body>
 </html>
