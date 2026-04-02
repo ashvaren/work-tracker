@@ -998,7 +998,7 @@ async function sendToAI() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-api-key': cfg.anthropicKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-client-side-api-key-access': 'true' },
       body: JSON.stringify({
-        model: 'claude-opus-4-5-20251101',
+        model: 'claude-sonnet-4-5',
         max_tokens: 1000,
         system: `You are the AI layer of a work tracker for Mike Warriner, a corporate and commercial lawyer, accountant, CFO and COO operating through Ashvaren Advisory in London. Mike advises creative and IP-rich businesses.
 
@@ -1016,6 +1016,13 @@ Use empty arrays if nothing changed. Only include genuine changes.
       })
     });
     const data = await r.json();
+    if (!r.ok) {
+      const errMsg = data.error ? `API error ${r.status}: ${data.error.message}` : `API error ${r.status}`;
+      resp.textContent = errMsg;
+      btn.disabled = false;
+      input.disabled = false;
+      return;
+    }
     const raw = (data.content || []).map(c => c.text || '').join('');
     let commentary = [];
     for (const line of raw.split('\n')) {
@@ -1031,7 +1038,7 @@ Use empty arrays if nothing changed. Only include genuine changes.
     input.value = '';
     saveAndRender();
   } catch(e) {
-    resp.textContent = 'Could not reach the AI. Check your API key or network.';
+    resp.textContent = `Network error: ${e.message}`;
   }
   btn.disabled = false;
   input.disabled = false;
