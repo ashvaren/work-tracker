@@ -156,6 +156,44 @@
   .drive-status { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-tertiary); margin-top: 10px; padding: 8px 12px; background: var(--bg); border-radius: 6px; }
   .drive-status.ok { color: var(--green); }
   .drive-status.err { color: var(--red); }
+
+  .review-panel { background: var(--surface); border: 1px solid var(--blue-mid); border-radius: 10px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: var(--shadow); }
+  .review-panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+  .review-panel-title { font-size: 13px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--blue); }
+  .review-panel-date { font-size: 11px; color: var(--text-tertiary); }
+  .review-close { font-size: 12px; padding: 3px 10px; border: 1px solid var(--border); border-radius: 5px; background: transparent; color: var(--text-secondary); cursor: pointer; }
+  .review-section { margin-bottom: 1rem; }
+  .review-section-title { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 6px; }
+  .review-item { font-size: 13px; color: var(--text); line-height: 1.6; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .review-item:last-child { border-bottom: none; }
+  .review-item strong { color: var(--navy); font-weight: 600; }
+  .review-question { font-size: 13px; color: var(--blue); font-style: italic; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .review-question:last-child { border-bottom: none; }
+  .review-loading { font-size: 13px; color: var(--text-tertiary); font-style: italic; }
+  .attention-panel { background: var(--amber-bg); border: 1px solid rgba(133,79,11,0.2); border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 1.25rem; }
+  .attention-title { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--amber); margin-bottom: 8px; }
+  .attention-item { display: flex; align-items: flex-start; gap: 10px; padding: 7px 0; border-bottom: 1px solid rgba(133,79,11,0.12); }
+  .attention-item:last-child { border-bottom: none; }
+  .attention-name { font-size: 13px; font-weight: 600; color: var(--navy); }
+  .attention-detail { font-size: 12px; color: var(--amber); margin-top: 1px; }
+  .prospect-flag { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--amber); margin-left: 6px; vertical-align: middle; title: "Follow-up overdue"; }
+
+  .upload-bar { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-bottom: 1.5rem; box-shadow: var(--shadow); }
+  .upload-bar-label { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 6px; }
+  .upload-bar-row { display: flex; gap: 8px; align-items: center; }
+  .upload-drop-zone { flex: 1; border: 1.5px dashed var(--border-strong); border-radius: 7px; padding: 10px 14px; font-size: 13px; color: var(--text-tertiary); cursor: pointer; transition: all 0.15s; text-align: center; position: relative; }
+  .upload-drop-zone:hover, .upload-drop-zone.drag-over { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
+  .upload-drop-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .upload-eng-select { font-size: 13px; padding: 9px 11px; border: 1px solid var(--border-strong); border-radius: 7px; background: var(--bg); color: var(--text); outline: none; min-width: 180px; font-family: inherit; }
+  .upload-eng-select:focus { border-color: var(--blue); }
+  .upload-btn { padding: 9px 18px; background: var(--navy); color: #fff; border: none; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; transition: background 0.15s; }
+  .upload-btn:hover { background: var(--blue); }
+  .upload-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .upload-result { margin-top: 10px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; border-top: 1px solid var(--border); padding-top: 10px; display: none; }
+  .upload-result.visible { display: block; }
+  .upload-result .result-summary { background: var(--bg); border-radius: 7px; padding: 10px 12px; margin-bottom: 8px; font-size: 13px; line-height: 1.6; color: var(--text); }
+  .upload-result .result-tasks { font-size: 12px; color: var(--green); margin-top: 4px; }
+  .upload-result .result-drive { font-size: 12px; color: var(--blue); margin-top: 4px; }
   #loading { display: flex; align-items: center; justify-content: center; min-height: 100vh; flex-direction: column; gap: 12px; }
   .spinner { width: 24px; height: 24px; border: 2px solid var(--border); border-top-color: var(--navy); border-radius: 50%; animation: spin 0.7s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
@@ -163,6 +201,7 @@
   .toast { position: fixed; bottom: 24px; right: 24px; background: var(--navy); color: #fff; font-size: 13px; padding: 10px 16px; border-radius: 8px; opacity: 0; transform: translateY(8px); transition: all 0.2s; pointer-events: none; z-index: 300; max-width: 320px; line-height: 1.5; }
   .toast.show { opacity: 1; transform: translateY(0); }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
 </head>
 <body>
 
@@ -194,6 +233,7 @@
     <div class="header-left"><span class="logo">Ashvaren</span><span class="logo-tag">Work tracker</span></div>
     <div class="header-right">
       <span class="sync-status" id="sync-status"></span>
+      <button class="sync-btn" onclick="runWeeklyReview()">Weekly review</button>
       <button class="sync-btn" onclick="saveToD()">Save to Drive</button>
       <button class="sync-btn" onclick="openSettings()">Settings</button>
       <button class="sync-btn" onclick="signOut()">Sign out</button>
@@ -213,7 +253,33 @@
       </div>
       <div class="ai-response" id="ai-response"></div>
     </div>
+    <div class="upload-bar" id="upload-bar">
+      <div class="upload-bar-label">Upload notes</div>
+      <div class="upload-bar-row">
+        <div class="upload-drop-zone" id="upload-drop-zone">
+          <span id="upload-filename">Drop meeting notes here or click to select (.docx, .pdf, .txt)</span>
+          <input type="file" id="upload-file-input" accept=".docx,.pdf,.txt,.md" onchange="handleFileSelect(this)" />
+        </div>
+        <select class="upload-eng-select" id="upload-eng-select">
+          <option value="">Auto-detect engagement</option>
+        </select>
+        <button class="upload-btn" id="upload-btn" onclick="processUpload()" disabled>Process ↗</button>
+      </div>
+      <div class="upload-result" id="upload-result"></div>
+    </div>
     <div id="view-today">
+    <div id="review-panel" class="review-panel" style="display:none">
+      <div class="review-panel-header">
+        <span class="review-panel-title">Weekly review</span>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="review-panel-date" id="review-date"></span>
+          <button class="review-close" onclick="closeReview()">Dismiss</button>
+        </div>
+      </div>
+      <div id="review-content"><div class="review-loading">Preparing your review…</div></div>
+    </div>
+    <div id="attention-panel" style="display:none"></div>
+
       <div class="today-grid">
         <div class="panel">
           <div class="panel-header"><span class="panel-title">Today's calendar</span><span style="font-size:11px;color:var(--text-tertiary)" id="cal-date"></span></div>
@@ -245,7 +311,10 @@
 <!-- ONBOARDING MODAL -->
 <div class="modal-overlay" id="onboard-modal">
   <div class="modal">
-    <h2 id="ob-title">New client onboarding</h2>
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;">
+      <h2 id="ob-title">New client onboarding</h2>
+      <button onclick="closeOnboard()" style="font-size:18px;line-height:1;border:none;background:transparent;color:var(--text-tertiary);cursor:pointer;padding:0 0 0 12px;" title="Close">&times;</button>
+    </div>
     <p class="modal-subtitle" id="ob-subtitle"></p>
     <div class="progress-bar">
       <div class="progress-step active" id="ps0"></div>
@@ -373,6 +442,29 @@ let obStep = 0, obType = 'confirmed';
 let calEvents = { today:[], tomorrow:[] };
 let state = { engagements:[], tasks:[] };
 
+// ── STATE NORMALISATION ───────────────────────────────────────────────────────
+function normaliseState() {
+  state.engagements = state.engagements.map(e => ({
+    driveFolder: null,
+    isProspective: false,
+    lastContact: null,
+    contactName: '',
+    contactEmail: '',
+    scope: '',
+    notes: '',
+    deadline: '',
+    ...e
+  }));
+  state.tasks = state.tasks.map(t => ({
+    done: false,
+    engagement: '',
+    due: 'this-week',
+    ...t
+  }));
+}
+
+
+
 // ── INIT ──────────────────────────────────────────────────────────────────────
 window.onload = async () => {
   cfg.clientId = localStorage.getItem('cfg_client_id') || '';
@@ -422,6 +514,10 @@ async function boot() {
   document.getElementById('app').style.display='block';
   document.getElementById('cal-date').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
   await loadFromDrive(); await loadCalendar(); render();
+  checkProspectFlags();
+  if (shouldRunWeeklyReview()) {
+    setTimeout(() => runWeeklyReview(true), 800);
+  }
 }
 
 // ── DRIVE ─────────────────────────────────────────────────────────────────────
@@ -454,10 +550,10 @@ async function loadFromDrive() {
     if(d.files&&d.files.length){
       driveFileId=d.files[0].id;
       const fr=await gapi(`https://www.googleapis.com/drive/v3/files/${driveFileId}?alt=media`);
-      if(fr){const j=await fr.json();if(j.engagements)state=j;}
+      if(fr){const j=await fr.json();if(j.engagements){state=j;normaliseState();}}
     } else {
       state={engagements:[
-        {id:'e1',name:'Salt Creek',type:'Advisory',status:'active',last:'Three-statement model delivered to Nik and David',next:'Investor deck outline',deadline:'',contactName:'',contactEmail:'',driveFolder:null,isProspective:false},
+        {id:'e1',name:'Salt Creek',type:'Advisory',status:'active',last:'Three-statement model delivered to Nik and David',next:'Investor deck outline',deadline:'',contactName:'',contactEmail:'',driveFolder:null,isProspective:false,lastContact:null},
         {id:'e2',name:'Office Test / Ultra HR',type:'Advisory',status:'active',last:'Strategy, scope and go-to-market paper iterated',next:'Follow-up call to confirm launch priorities',deadline:'',contactName:'',contactEmail:'',driveFolder:null,isProspective:false},
         {id:'e3',name:'Ashvaren internal',type:'Internal',status:'active',last:'Transcription pipeline built',next:'Business development outreach',deadline:'',contactName:'',contactEmail:'',driveFolder:null,isProspective:false},
       ],tasks:[
@@ -465,6 +561,7 @@ async function loadFromDrive() {
         {id:'t2',title:'Follow-up call with Office Test',engagement:'e2',due:'today',done:false},
         {id:'t3',title:'BD outreach — two warm contacts',engagement:'e3',due:'this-week',done:false},
       ]};
+      normaliseState();
       await saveToD();
     }
     setSS('');
@@ -516,6 +613,8 @@ function render(){
   renderCalPanel(calEvents.today,'cal-today');
   renderCalPanel(calEvents.tomorrow,'cal-tomorrow');
   renderTodayTasks(); renderCards(); renderTasks();
+  checkProspectFlags();
+  updateUploadEngSelect();
 }
 function eName(id){const e=state.engagements.find(x=>x.id===id);return e?e.name:'';}
 function sLabel(s){return{active:'Active',waiting:'Waiting',stalled:'Stalled',paused:'Paused',prospective:'Prospective'}[s]||s;}
@@ -534,7 +633,7 @@ function renderCards(){
     <div class="eng-card ${e.isProspective?'prospective':''}">
       <div class="eng-card-top">
         <div>
-          <div class="eng-name">${e.name}</div>
+          <div class="eng-name">${e.name}${e.isProspective && daysSince(e.lastContact) >= FOLLOWUP_DAYS ? '<span class="prospect-flag" title="Follow-up overdue"></span>' : ''}</div>
           <div class="eng-type">${e.type}</div>
           ${e.contactName?`<div class="eng-contact">${e.contactName}${e.contactEmail?' &mdash; '+e.contactEmail:''}</div>`:''}
         </div>
@@ -547,7 +646,10 @@ function renderCards(){
       <div class="eng-footer">
         <button class="eng-btn" onclick="openEditEng('${e.id}')">Edit</button>
         <button class="eng-btn" onclick="quickTask('${e.id}')">+ Task</button>
-        ${e.driveFolder?`<button class="eng-btn drive" onclick="openDrive('${e.driveFolder}')">Drive ↗</button>`:''}
+        ${e.driveFolder
+          ? `<button class="eng-btn drive" onclick="openDrive('${e.driveFolder}')">Drive ↗</button>`
+          : `<button class="eng-btn drive" onclick="createFolderForEng('${e.id}')">+ Drive folder</button>`
+        }
         <button class="eng-btn danger" onclick="deleteEng('${e.id}')">Remove</button>
       </div>
     </div>`).join('')+`<div class="add-card" onclick="openOnboard()">+ New engagement</div>`;
@@ -567,6 +669,24 @@ function renderTasks(){
 function showView(n,btn){['today','engagements','tasks'].forEach(v=>document.getElementById('view-'+v).style.display='none');document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));document.getElementById('view-'+n).style.display='block';btn.classList.add('active');}
 function openDrive(id){window.open(`https://drive.google.com/drive/folders/${id}`,'_blank');}
 
+async function createFolderForEng(engId) {
+  const eng = state.engagements.find(e => e.id === engId);
+  if (!eng) return;
+  const btn = document.querySelector(`button[onclick="createFolderForEng('${engId}')"]`);
+  if (btn) { btn.textContent = 'Creating…'; btn.disabled = true; }
+  try {
+    const folderId = await createClientFolder(eng.name, eng.isProspective);
+    if (!folderId) throw new Error('Folder creation returned null');
+    eng.driveFolder = folderId;
+    await saveToD();
+    render();
+    toast(`Drive folder created for ${eng.name}`);
+  } catch(e) {
+    toast(`Could not create folder: ${e.message}`);
+    if (btn) { btn.textContent = '+ Drive folder'; btn.disabled = false; }
+  }
+}
+
 // ── ONBOARDING ────────────────────────────────────────────────────────────────
 function openOnboard(pre){
   obStep=0; obType='confirmed';
@@ -581,7 +701,16 @@ function openOnboard(pre){
   }
   updateOb(); document.getElementById('onboard-modal').classList.add('open');
 }
-function closeOnboard(){document.getElementById('onboard-modal').classList.remove('open');}
+function hasOnboardData() {
+  const fields = ['ob-name','ob-legal','ob-conum','ob-cname','ob-cemail','ob-scope','ob-problem'];
+  return fields.some(id => { const el = document.getElementById(id); return el && el.value.trim().length > 0; });
+}
+function closeOnboard(force) {
+  if (!force && hasOnboardData()) {
+    if (!confirm('You have unsaved onboarding data. Are you sure you want to close?')) return;
+  }
+  document.getElementById('onboard-modal').classList.remove('open');
+}
 
 function setObType(t){
   obType=t;
@@ -697,6 +826,7 @@ async function doCreate(){
     scope:v('ob-scope')||v('ob-problem'),
     notes:[v('ob-legal')?`Legal: ${v('ob-legal')}`:'',v('ob-conum')?`Co.No.: ${v('ob-conum')}`:'',v('ob-intro')?`Via: ${v('ob-intro')}`:'',v('ob-conflict')?`Conflict: ${v('ob-conflict')}`:'',v('ob-dm')?`DM: ${v('ob-dm')}`:'',!isp&&v('ob-fee')?`Fee: ${v('ob-fee')}`:'',!isp&&v('ob-billing')?`Billing: ${v('ob-billing')}`:'',!isp?`NDA: ${nda}`:'',isp&&v('ob-budget')?`Budget: ${v('ob-budget')}`:''].filter(Boolean).join(' | '),
     driveFolder, isProspective:isp,
+    lastContact: new Date().toISOString().split('T')[0],
   };
   state.engagements.push(eng);
 
@@ -797,7 +927,7 @@ Only set detected:true for genuinely new clients not already in the tracker. "Pr
       if(line.startsWith('UPDATES:')){
         try{
           const u=JSON.parse(line.replace('UPDATES:','').trim());
-          (u.engagements||[]).forEach(x=>{const e=state.engagements.find(e=>e.id===x.id);if(e&&x.fields){Object.entries(x.fields).forEach(([k,v])=>{if(k in e)e[k]=v;});}else if(e&&x.field)e[x.field]=x.value;});
+          (u.engagements||[]).forEach(x=>{const e=state.engagements.find(e=>e.id===x.id);if(e&&x.fields){Object.entries(x.fields).forEach(([k,v])=>{if(k in e)e[k]=v;});touchProspect(x.id);}else if(e&&x.field){e[x.field]=x.value;touchProspect(x.id);}});
           (u.tasks||[]).forEach(x=>{if(x.action==='add')state.tasks.push({id:'t'+Date.now()+Math.random(),title:x.title,engagement:x.engagement||'',due:x.due||'this-week',done:false});});
           if(u.newClient&&u.newClient.detected)newClient=u.newClient;
         }catch(e){console.warn(e);}
@@ -813,9 +943,396 @@ Only set detected:true for genuinely new clients not already in the tracker. "Pr
   btn.disabled=false; input.disabled=false;
 }
 
+
+// ── PROSPECT FOLLOW-UP CHASING ────────────────────────────────────────────────
+const FOLLOWUP_DAYS = 7;
+
+function daysSince(dateStr) {
+  if (!dateStr) return 999;
+  const d = new Date(dateStr);
+  const now = new Date();
+  return Math.floor((now - d) / (1000 * 60 * 60 * 24));
+}
+
+function checkProspectFlags() {
+  const overdue = state.engagements.filter(e =>
+    e.isProspective && e.status === 'prospective' && daysSince(e.lastContact) >= FOLLOWUP_DAYS
+  );
+  const panel = document.getElementById('attention-panel');
+  if (!overdue.length) { panel.style.display = 'none'; return; }
+  panel.style.display = 'block';
+  panel.innerHTML = `<div class="attention-panel">
+    <div class="attention-title">Follow-up needed (${overdue.length})</div>
+    ${overdue.map(e => {
+      const days = daysSince(e.lastContact);
+      const label = e.lastContact ? `${days} day${days!==1?'s':''} since last contact` : 'No contact date recorded';
+      return `<div class="attention-item">
+        <div>
+          <div class="attention-name">${e.name}</div>
+          <div class="attention-detail">${label} — ${e.next || 'no next step set'}</div>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+// Update lastContact when a prospect engagement is touched via AI
+function touchProspect(engId) {
+  const e = state.engagements.find(x => x.id === engId);
+  if (e && e.isProspective) e.lastContact = new Date().toISOString().split('T')[0];
+}
+
+// ── WEEKLY REVIEW ─────────────────────────────────────────────────────────────
+function shouldRunWeeklyReview() {
+  const lastRun = localStorage.getItem('last_review_date');
+  const today = new Date();
+  const isMonday = today.getDay() === 1;
+  if (!isMonday) return false;
+  if (!lastRun) return true;
+  const lastDate = new Date(lastRun);
+  const daysSinceLast = Math.floor((today - lastDate) / (1000 * 60 * 60 * 24));
+  return daysSinceLast >= 6;
+}
+
+function closeReview() {
+  document.getElementById('review-panel').style.display = 'none';
+}
+
+async function runWeeklyReview(auto) {
+  const panel = document.getElementById('review-panel');
+  const content = document.getElementById('review-content');
+  const dateEl = document.getElementById('review-date');
+  panel.style.display = 'block';
+  dateEl.textContent = new Date().toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'});
+  content.innerHTML = '<div class="review-loading">Preparing your weekly review…</div>';
+
+  // Scroll to top of today view
+  showView('today', document.querySelectorAll('.nav-tab')[0]);
+
+  const now = new Date();
+  const stalled = state.engagements.filter(e => e.status === 'stalled' || e.status === 'paused');
+  const waiting = state.engagements.filter(e => e.status === 'waiting');
+  const prospects = state.engagements.filter(e => e.isProspective);
+  const overdueProspects = prospects.filter(e => daysSince(e.lastContact) >= FOLLOWUP_DAYS);
+  const tasksByEng = {};
+  state.tasks.filter(t => !t.done).forEach(t => {
+    if (!tasksByEng[t.engagement]) tasksByEng[t.engagement] = 0;
+    tasksByEng[t.engagement]++;
+  });
+  const heavilyLoaded = Object.entries(tasksByEng)
+    .filter(([,c]) => c >= 4)
+    .map(([id,c]) => ({ name: eName(id), count: c }));
+
+  const reviewCtx = JSON.stringify({
+    date: now.toLocaleDateString('en-GB'),
+    engagements: state.engagements.map(e => ({
+      name: e.name, status: e.status, last: e.last, next: e.next,
+      isProspective: e.isProspective, lastContact: e.lastContact || null,
+      openTasks: tasksByEng[e.id] || 0
+    })),
+    stalled: stalled.map(e => e.name),
+    waiting: waiting.map(e => e.name),
+    overdueProspects: overdueProspects.map(e => ({ name: e.name, days: daysSince(e.lastContact) })),
+    heavilyLoaded
+  });
+
+  try {
+    const r = await fetch(cfg.proxyUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-5',
+        max_tokens: 1500,
+        system: `You are conducting a weekly review for Mike Warriner at Ashvaren Advisory, London. Mike is a corporate lawyer, accountant, CFO and COO running an independent advisory practice.
+
+Produce a structured weekly review in this exact JSON format (no markdown, no backticks, just raw JSON):
+{
+  "summary": "One sentence summary of where things stand overall.",
+  "flags": [{"label":"...","detail":"..."}],
+  "questions": ["...","...","..."],
+  "focus": "One specific thing Mike should do today above all else."
+}
+
+flags: Issues requiring attention — stalled engagements, overdue prospects, task pile-ups, anything that looks wrong. Be specific. Max 5.
+questions: 2-3 pointed questions to prompt Mike to think about things he might be avoiding or has not considered. Make them specific to his actual engagements, not generic.
+focus: The single most commercially important action for the week. Be direct and specific.
+
+Tone: intelligent, calm, commercial. No filler. No praise. Speak as a trusted senior adviser would.`,
+        messages: [{ role: 'user', content: `Current state:
+${reviewCtx}
+
+Produce the weekly review.` }]
+      })
+    });
+    const data = await r.json();
+    if (!r.ok) { content.innerHTML = `<div class="review-loading">Could not load review: ${r.status}</div>`; return; }
+    const raw = (data.content || []).map(c => c.text || '').join('').trim();
+    let review;
+    try {
+      const clean = raw.replace(/^```json
+?/, '').replace(/
+?```$/, '').trim();
+      review = JSON.parse(clean);
+    } catch(e) {
+      content.innerHTML = `<div style="font-size:13px;line-height:1.7;color:var(--text-secondary);">${raw}</div>`;
+      return;
+    }
+    let html = '';
+    if (review.summary) {
+      html += `<div style="font-size:14px;color:var(--text);line-height:1.6;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--border);">${review.summary}</div>`;
+    }
+    if (review.focus) {
+      html += `<div style="background:var(--navy);color:#fff;border-radius:8px;padding:10px 14px;margin-bottom:1rem;font-size:13px;line-height:1.6;"><span style="font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;opacity:0.6;display:block;margin-bottom:3px;">Focus this week</span>${review.focus}</div>`;
+    }
+    if (review.flags && review.flags.length) {
+      html += `<div class="review-section"><div class="review-section-title">Flags (${review.flags.length})</div>`;
+      html += review.flags.map(f => `<div class="review-item"><strong>${f.label}</strong> — ${f.detail}</div>`).join('');
+      html += '</div>';
+    }
+    if (review.questions && review.questions.length) {
+      html += `<div class="review-section"><div class="review-section-title">Questions to consider</div>`;
+      html += review.questions.map(q => `<div class="review-question">${q}</div>`).join('');
+      html += '</div>';
+    }
+    content.innerHTML = html || '<div class="review-loading">Nothing to flag this week.</div>';
+    localStorage.setItem('last_review_date', new Date().toISOString().split('T')[0]);
+  } catch(e) {
+    content.innerHTML = `<div class="review-loading">Network error: ${e.message}</div>`;
+  }
+  if (auto) return;
+}
+
+
+// ── FILE UPLOAD & NOTES PROCESSING ───────────────────────────────────────────
+let uploadedFile = null;
+let uploadedText = null;
+
+function updateUploadEngSelect() {
+  const sel = document.getElementById('upload-eng-select');
+  if (!sel) return;
+  const current = sel.value;
+  sel.innerHTML = '<option value="">Auto-detect engagement</option>' +
+    state.engagements.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
+  if (current) sel.value = current;
+}
+
+function handleFileSelect(input) {
+  const file = input.files[0];
+  if (!file) return;
+  uploadedFile = file;
+  uploadedText = null;
+  document.getElementById('upload-filename').textContent = file.name + ' — ready to process';
+  document.getElementById('upload-btn').disabled = false;
+  document.getElementById('upload-result').className = 'upload-result';
+}
+
+// Drag and drop support
+document.addEventListener('DOMContentLoaded', () => {
+  const zone = document.getElementById('upload-drop-zone');
+  if (!zone) return;
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0]; if (!file) return;
+    uploadedFile = file; uploadedText = null;
+    document.getElementById('upload-filename').textContent = file.name + ' — ready to process';
+    document.getElementById('upload-btn').disabled = false;
+    document.getElementById('upload-result').className = 'upload-result';
+  });
+});
+
+async function extractText(file) {
+  const name = file.name.toLowerCase();
+  if (name.endsWith('.txt') || name.endsWith('.md')) {
+    return await file.text();
+  }
+  if (name.endsWith('.docx')) {
+    const arrayBuffer = await file.arrayBuffer();
+    const result = await mammoth.extractRawText({ arrayBuffer });
+    return result.value;
+  }
+  if (name.endsWith('.pdf')) {
+    // Read PDF as text via simple extraction (works for text-based PDFs)
+    const arrayBuffer = await file.arrayBuffer();
+    const bytes = new Uint8Array(arrayBuffer);
+    let text = '';
+    for (let i = 0; i < bytes.length; i++) {
+      const c = String.fromCharCode(bytes[i]);
+      if (bytes[i] >= 32 && bytes[i] < 127) text += c;
+      else if (bytes[i] === 10 || bytes[i] === 13) text += '\n';
+    }
+    // Extract readable strings of 4+ chars
+    const readable = text.match(/[\x20-\x7E]{4,}/g) || [];
+    return readable.join(' ');
+  }
+  throw new Error('Unsupported file type');
+}
+
+async function processUpload() {
+  if (!uploadedFile) return;
+  const btn = document.getElementById('upload-btn');
+  const result = document.getElementById('upload-result');
+  btn.disabled = true; btn.textContent = 'Processing…';
+  result.className = 'upload-result visible';
+  result.innerHTML = '<span class="ai-thinking">Reading file and extracting actions…</span>';
+
+  try {
+    // Extract text
+    const text = await extractText(uploadedFile);
+    if (!text || text.trim().length < 20) {
+      result.innerHTML = '<span style="color:var(--red)">Could not extract readable text from this file. Try saving as .txt.</span>';
+      btn.disabled = false; btn.textContent = 'Process ↗'; return;
+    }
+    uploadedText = text;
+
+    // Get selected engagement or auto-detect
+    const selEngId = document.getElementById('upload-eng-select').value;
+    const engContext = JSON.stringify(state.engagements.map(e => ({ id: e.id, name: e.name, status: e.status, last: e.last, next: e.next })));
+
+    const prompt = `You are processing meeting or call notes for Mike Warriner at Ashvaren Advisory, London.
+
+Existing engagements: ${engContext}
+${selEngId ? `Pre-selected engagement ID: ${selEngId}` : 'No engagement pre-selected — detect from context.'}
+
+Notes content:
+---
+${text.slice(0, 4000)}
+---
+
+Respond with ONLY a JSON object (no markdown, no backticks):
+{
+  "engagementId": "<id from existing list, or null if new>",
+  "engagementName": "<name of engagement these notes relate to>",
+  "summary": "<3-5 sentence summary of the meeting/call — what was discussed, key decisions, overall status>",
+  "lastAction": "<one sentence for the engagement last action field — what happened in this meeting>",
+  "nextStep": "<one sentence for the engagement next step field — most important thing to do next>",
+  "statusChange": "<new status if changed: active|waiting|stalled|paused — or null>",
+  "tasks": [
+    {"title": "<specific action>", "due": "today|tomorrow|this-week|later", "notes": "<any extra context>"}
+  ]
+}
+
+Extract ALL action items, decisions requiring follow-up, and commitments made. Be specific — use names and details from the notes. tasks array can be empty if no actions. Summary should be useful as a standalone record of the meeting.`;
+
+    const r = await fetch(cfg.proxyUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-5',
+        max_tokens: 1500,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await r.json();
+    if (!r.ok) { result.innerHTML = `<span style="color:var(--red)">API error ${r.status}: ${(data.error||{}).message||'unknown'}</span>`; btn.disabled=false; btn.textContent='Process ↗'; return; }
+
+    const raw = (data.content||[]).map(c=>c.text||'').join('').trim();
+    let parsed;
+    try {
+      const clean = raw.replace(/^```json\n?/,'').replace(/\n?```$/,'').trim();
+      parsed = JSON.parse(clean);
+    } catch(e) {
+      result.innerHTML = `<span style="color:var(--red)">Could not parse AI response. Raw: ${raw.slice(0,200)}</span>`;
+      btn.disabled=false; btn.textContent='Process ↗'; return;
+    }
+
+    // Apply updates to engagement
+    const engId = selEngId || parsed.engagementId;
+    const eng = engId ? state.engagements.find(e => e.id === engId) : null;
+    if (eng) {
+      if (parsed.lastAction) eng.last = parsed.lastAction;
+      if (parsed.nextStep) eng.next = parsed.nextStep;
+      if (parsed.statusChange) eng.status = parsed.statusChange;
+    }
+
+    // Create tasks
+    const tasksCreated = [];
+    (parsed.tasks || []).forEach(t => {
+      const task = { id: 't'+Date.now()+Math.random(), title: t.title, engagement: engId||'', due: t.due||'this-week', done: false };
+      state.tasks.push(task);
+      tasksCreated.push(task);
+    });
+
+    // Save notes file and summary to Drive
+    let driveStatus = '';
+    if (eng && eng.driveFolder) {
+      try {
+        // Upload original file
+        await uploadFileToDrive(uploadedFile, eng.driveFolder, uploadedFile.name);
+        // Create and upload summary
+        const date = new Date().toLocaleDateString('en-GB');
+        const summaryContent = `Meeting notes summary — ${eng.name}
+Date: ${date}
+File: ${uploadedFile.name}
+
+${parsed.summary}
+
+Actions:
+${(parsed.tasks||[]).map((t,i) => `${i+1}. ${t.title} (${t.due})`).join('\n') || 'None recorded'}`;
+        const summaryBlob = new Blob([summaryContent], { type: 'text/plain' });
+        const summaryFile = new File([summaryBlob], `Summary — ${uploadedFile.name.replace(/\.[^.]+$/,'')} — ${date}.txt`);
+        await uploadFileToDrive(summaryFile, eng.driveFolder, summaryFile.name);
+        driveStatus = `Saved to Drive: ${eng.name} folder`;
+      } catch(e) {
+        driveStatus = 'Drive save failed — update tracker manually';
+      }
+    } else if (eng) {
+      driveStatus = 'No Drive folder linked to this engagement — file not saved';
+    }
+
+    await saveToD();
+    render();
+
+    // Build result display
+    const taskLines = tasksCreated.length
+      ? tasksCreated.map(t => `• ${t.title}`).join('<br>')
+      : 'No action items identified';
+
+    result.innerHTML = `
+      <div class="result-summary">${parsed.summary}</div>
+      ${eng ? `<div style="font-size:12px;color:var(--text-secondary);margin-bottom:4px;">Updated: <strong>${eng.name}</strong> — last action and next step</div>` : ''}
+      <div class="result-tasks">${tasksCreated.length} task${tasksCreated.length!==1?'s':''} created: ${taskLines}</div>
+      ${driveStatus ? `<div class="result-drive">${driveStatus}</div>` : ''}
+    `;
+
+    // Reset file input
+    uploadedFile = null;
+    document.getElementById('upload-file-input').value = '';
+    document.getElementById('upload-filename').textContent = 'Drop meeting notes here or click to select (.docx, .pdf, .txt)';
+
+  } catch(e) {
+    result.innerHTML = `<span style="color:var(--red)">Error: ${e.message}</span>`;
+  }
+
+  btn.disabled = false; btn.textContent = 'Process ↗';
+}
+
+async function uploadFileToDrive(file, folderId, fileName) {
+  // Step 1: Create file metadata
+  const meta = await fetch('https://www.googleapis.com/drive/v3/files', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: fileName, parents: [folderId] })
+  });
+  const metaData = await meta.json();
+  const fileId = metaData.id;
+  // Step 2: Upload content
+  const arrayBuffer = await file.arrayBuffer();
+  await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
+    method: 'PATCH',
+    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': file.type || 'application/octet-stream' },
+    body: arrayBuffer
+  });
+  return fileId;
+}
+
 document.getElementById('ai-input').addEventListener('keydown',e=>{if(e.key==='Enter')sendToAI();});
 
-['onboard-modal','eng-modal','task-modal','settings-modal'].forEach(id=>{
+// Onboarding modal does NOT close on backdrop click — data loss prevention
+// Other modals close on backdrop click as before
+['eng-modal','task-modal','settings-modal'].forEach(id=>{
   document.getElementById(id).addEventListener('click',e=>{if(e.target.id===id)document.getElementById(id).classList.remove('open');});
 });
 
