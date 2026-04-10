@@ -1,1237 +1,1620 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Ashvaren">
-<title>Ashvaren Assistant</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
-
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ashvaren — Work Tracker</title>
 <style>
-  :root {
-    /* Ashvaren palette — navy base, blue accent */
-    --bg:        #080c14;
-    --surface:   #0e1420;
-    --surface-2: #131b2b;
-    --border:    #1e2a3d;
-    --muted:     #2e3f5c;
-    --text-dim:  #5d7494;
-    --text:      #a8bdd4;
-    --text-hi:   #dde8f2;
-    --accent:    #2e6fc4;
-    --accent-hi: #4a8fd9;
-    --accent-lo: rgba(46, 111, 196, 0.12);
-    --accent-md: rgba(46, 111, 196, 0.25);
-    --gold:      #b89a5a;
-    --gold-lo:   rgba(184, 154, 90, 0.12);
-    --danger:    #c0404a;
-    --success:   #3a9e74;
-    --warn:      #b8864a;
-    --radius:    10px;
-    --mono:      'DM Mono', monospace;
-    --display:   'Cormorant Garamond', Georgia, serif;
-    --sans:      'Jost', system-ui, sans-serif;
-  }
-
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  html, body {
-    height: 100%;
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--sans);
-    -webkit-font-smoothing: antialiased;
-    overflow: hidden;
+  :root {
+    --navy: #1A1A2E; --blue: #2C5F8A; --blue-light: #e8f0f8; --blue-mid: #b8cfe3;
+    --text: #1a1a2e; --text-secondary: #5a6272; --text-tertiary: #9aa0ad;
+    --bg: #f7f8fa; --surface: #ffffff;
+    --border: rgba(26,26,46,0.12); --border-strong: rgba(26,26,46,0.22);
+    --amber: #854F0B; --amber-bg: #FAEEDA;
+    --green: #3B6D11; --green-bg: #EAF3DE;
+    --red: #A32D2D; --red-bg: #FCEBEB;
+    --purple: #5B3FA0; --purple-bg: #EEE8FA;
+    --shadow: 0 1px 3px rgba(26,26,46,0.08), 0 1px 2px rgba(26,26,46,0.04);
   }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; min-height: 100vh; }
+  #auth-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 2rem; }
+  .auth-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 2.5rem; max-width: 420px; width: 100%; box-shadow: var(--shadow); text-align: center; }
+  .auth-logo { font-size: 13px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--navy); margin-bottom: 6px; }
+  .auth-tagline { font-size: 11px; color: var(--text-tertiary); letter-spacing: 0.08em; margin-bottom: 2rem; }
+  .auth-card h2 { font-size: 18px; font-weight: 600; color: var(--navy); margin-bottom: 8px; }
+  .auth-card p { font-size: 13px; color: var(--text-secondary); margin-bottom: 1.5rem; line-height: 1.6; }
+  .config-section { text-align: left; margin-bottom: 1.25rem; }
+  .config-section label { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary); display: block; margin-bottom: 5px; }
+  .config-section input { width: 100%; padding: 9px 12px; border: 1px solid var(--border-strong); border-radius: 7px; font-size: 13px; font-family: inherit; color: var(--text); background: var(--bg); outline: none; }
+  .config-section input:focus { border-color: var(--blue); }
+  .config-section .hint { font-size: 11px; color: var(--text-tertiary); margin-top: 4px; }
+  .btn-primary { display: block; width: 100%; padding: 10px; background: var(--navy); color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; margin-top: 1rem; transition: background 0.15s; }
+  .btn-primary:hover { background: var(--blue); }
+  .auth-note { font-size: 11px; color: var(--text-tertiary); margin-top: 1rem; line-height: 1.6; }
+  #app { display: none; min-height: 100vh; }
+  header { background: var(--navy); color: #fff; padding: 0 2rem; height: 54px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 50; }
+  .header-left { display: flex; align-items: baseline; gap: 16px; }
+  .logo { font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: #fff; }
+  .logo-tag { font-size: 10px; color: rgba(255,255,255,0.45); letter-spacing: 0.06em; }
+  .header-right { display: flex; align-items: center; gap: 8px; }
+  .sync-btn { font-size: 12px; padding: 5px 12px; border: 1px solid rgba(255,255,255,0.2); border-radius: 6px; background: transparent; color: rgba(255,255,255,0.75); cursor: pointer; transition: all 0.15s; }
+  .sync-btn:hover { background: rgba(255,255,255,0.08); color: #fff; }
+  .sync-status { font-size: 11px; color: rgba(255,255,255,0.4); }
+  .nav-bar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 2rem; display: flex; }
+  .nav-tab { padding: 12px 18px; font-size: 13px; font-weight: 500; color: var(--text-secondary); cursor: pointer; border: none; background: transparent; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
+  .nav-tab:hover { color: var(--text); }
+  .nav-tab.active { color: var(--navy); border-bottom-color: var(--navy); }
+  main { padding: 1.75rem 2rem; max-width: 1100px; }
+  .ai-bar { background: var(--surface); border: 1px solid var(--blue-mid); border-radius: 10px; padding: 12px 14px; margin-bottom: 1.5rem; box-shadow: var(--shadow); }
+  .ai-bar-label { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue); margin-bottom: 6px; }
+  .ai-bar-row { display: flex; gap: 8px; }
+  .ai-bar-row input { flex: 1; padding: 9px 12px; border: 1px solid var(--border); border-radius: 7px; font-size: 14px; font-family: inherit; color: var(--text); background: var(--bg); outline: none; }
+  .ai-bar-row input:focus { border-color: var(--blue); }
+  .ai-bar-row input::placeholder { color: var(--text-tertiary); }
+  .ai-send { padding: 9px 18px; background: var(--navy); color: #fff; border: none; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; transition: background 0.15s; }
+  .ai-send:hover { background: var(--blue); }
+  .ai-send:disabled { opacity: 0.5; cursor: not-allowed; }
+  .ai-response { margin-top: 10px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; border-top: 1px solid var(--border); padding-top: 10px; display: none; }
+  .ai-response.visible { display: block; }
+  .ai-thinking { color: var(--text-tertiary); font-style: italic; }
+  .today-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; box-shadow: var(--shadow); }
+  .panel-header { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .panel-title { font-size: 12px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-secondary); }
+  .panel-body { padding: 8px 0; }
+  .cal-event { padding: 8px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 10px; }
+  .cal-event:last-child { border-bottom: none; }
+  .cal-time { font-size: 11px; color: var(--text-tertiary); min-width: 44px; padding-top: 1px; }
+  .cal-title { font-size: 13px; font-weight: 500; }
+  .cal-cal { font-size: 11px; color: var(--text-tertiary); }
+  .cal-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+  .dot-work { background: #2C5F8A; } .dot-family { background: #9b59b6; }
+  .today-task { padding: 8px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 10px; }
+  .today-task:last-child { border-bottom: none; }
+  .task-check { width: 16px; height: 16px; border: 1.5px solid var(--border-strong); border-radius: 4px; flex-shrink: 0; margin-top: 1px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .task-check.done { background: var(--green-bg); border-color: var(--green); }
+  .task-check.done::after { content: ''; display: block; width: 4px; height: 7px; border: 1.5px solid var(--green); border-top: none; border-left: none; transform: rotate(45deg) translate(-1px,-1px); }
+  .task-text { font-size: 13px; }
+  .task-text.done { text-decoration: line-through; color: var(--text-tertiary); }
+  .task-eng { font-size: 11px; color: var(--blue); margin-top: 2px; }
+  .empty-state { padding: 24px 16px; text-align: center; color: var(--text-tertiary); font-size: 13px; }
+  .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+  .eng-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.1rem 1.25rem; box-shadow: var(--shadow); display: flex; flex-direction: column; }
+  .eng-card.prospective { border-left: 3px solid var(--purple); }
+  .eng-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+  .eng-name { font-size: 15px; font-weight: 600; color: var(--navy); }
+  .eng-type { font-size: 11px; color: var(--text-tertiary); margin-top: 2px; }
+  .eng-contact { font-size: 12px; color: var(--text-secondary); margin-top: 3px; }
+  .status-pill { font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: 20px; white-space: nowrap; flex-shrink: 0; margin-left: 8px; }
+  .s-active { background: var(--green-bg); color: var(--green); }
+  .s-waiting { background: var(--blue-light); color: var(--blue); }
+  .s-stalled { background: var(--amber-bg); color: var(--amber); }
+  .s-paused { background: #f1efe8; color: #5f5e5a; }
+  .s-prospective { background: var(--purple-bg); color: var(--purple); }
+  .eng-section { margin-bottom: 10px; }
+  .eng-label { font-size: 10px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 3px; }
+  .eng-value { font-size: 13px; color: var(--text-secondary); line-height: 1.5; }
+  .eng-next { font-size: 13px; color: var(--text); line-height: 1.5; }
+  .eng-deadline { font-size: 12px; color: var(--amber); margin-top: 4px; }
+  .eng-tasks-count { font-size: 11px; color: var(--text-tertiary); margin-top: 6px; }
+  .eng-footer { display: flex; gap: 6px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border); flex-wrap: wrap; }
+  .eng-btn { font-size: 12px; padding: 4px 10px; border: 1px solid var(--border); border-radius: 6px; background: transparent; color: var(--text-secondary); cursor: pointer; transition: all 0.15s; }
+  .eng-btn:hover { background: var(--bg); border-color: var(--border-strong); color: var(--text); }
+  .eng-btn.drive { color: var(--blue); border-color: var(--blue-mid); }
+  .eng-btn.drive:hover { background: var(--blue-light); }
+  .eng-btn.danger { margin-left: auto; color: var(--red); border-color: transparent; }
+  .eng-btn.danger:hover { background: var(--red-bg); border-color: var(--red); }
+  .add-card { background: var(--surface); border: 1px dashed var(--border-strong); border-radius: 10px; display: flex; align-items: center; justify-content: center; min-height: 140px; cursor: pointer; color: var(--text-tertiary); font-size: 13px; transition: all 0.15s; }
+  .add-card:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
+  .task-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; gap: 12px; flex-wrap: wrap; }
+  .filter-pills { display: flex; gap: 6px; flex-wrap: wrap; }
+  .filter-pill { font-size: 12px; padding: 4px 12px; border-radius: 20px; border: 1px solid var(--border); background: transparent; color: var(--text-secondary); cursor: pointer; transition: all 0.15s; }
+  .filter-pill.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .add-task-btn { font-size: 13px; padding: 6px 14px; border: 1px solid var(--navy); border-radius: 7px; background: transparent; color: var(--navy); cursor: pointer; font-weight: 500; transition: all 0.15s; white-space: nowrap; }
+  .add-task-btn:hover { background: var(--navy); color: #fff; }
+  .task-group { margin-bottom: 1.5rem; }
+  .task-group-header { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  .task-row { display: flex; align-items: flex-start; gap: 10px; padding: 9px 12px; border-radius: 8px; border: 1px solid transparent; transition: all 0.12s; margin-bottom: 2px; }
+  .task-row:hover { background: var(--surface); border-color: var(--border); }
+  .task-body { flex: 1; }
+  .task-title { font-size: 14px; line-height: 1.4; }
+  .task-title.done { text-decoration: line-through; color: var(--text-tertiary); }
+  .task-meta { display: flex; gap: 8px; margin-top: 2px; flex-wrap: wrap; }
+  .meta-eng { font-size: 11px; color: var(--blue); }
+  .meta-due { font-size: 11px; color: var(--text-tertiary); }
+  .task-del { opacity: 0; font-size: 11px; padding: 2px 8px; border: 1px solid var(--border); border-radius: 5px; background: transparent; color: var(--text-secondary); cursor: pointer; transition: opacity 0.15s; }
+  .task-row:hover .task-del { opacity: 1; }
+  .task-del:hover { background: var(--red-bg); color: var(--red); border-color: var(--red); }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(26,26,46,0.45); display: flex; align-items: flex-start; justify-content: center; padding: 50px 1rem 2rem; z-index: 200; opacity: 0; pointer-events: none; transition: opacity 0.15s; overflow-y: auto; }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal { background: var(--surface); border-radius: 12px; padding: 1.75rem; width: 100%; max-width: 520px; box-shadow: 0 8px 30px rgba(26,26,46,0.18); transform: translateY(-8px); transition: transform 0.15s; margin: auto; flex-shrink: 0; }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal h2 { font-size: 16px; font-weight: 600; color: var(--navy); margin-bottom: 4px; }
+  .modal-subtitle { font-size: 13px; color: var(--text-secondary); margin-bottom: 1rem; }
+  .field { margin-bottom: 12px; }
+  .field label { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-secondary); display: block; margin-bottom: 4px; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .field input, .field select, .field textarea { width: 100%; padding: 9px 11px; border: 1px solid var(--border-strong); border-radius: 7px; font-size: 14px; font-family: inherit; color: var(--text); background: var(--bg); outline: none; }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--blue); }
+  .field textarea { min-height: 64px; resize: vertical; }
+  .opt { font-size: 10px; color: var(--text-tertiary); font-weight: 400; margin-left: 4px; text-transform: none; letter-spacing: 0; }
+  .section-divider { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-tertiary); margin: 1.25rem 0 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1.25rem; }
+  .btn-cancel { padding: 8px 16px; border: 1px solid var(--border-strong); border-radius: 7px; background: transparent; color: var(--text-secondary); cursor: pointer; font-size: 13px; }
+  .btn-cancel:hover { background: var(--bg); }
+  .btn-save { padding: 8px 20px; border: none; border-radius: 7px; background: var(--navy); color: #fff; font-size: 13px; font-weight: 500; cursor: pointer; }
+  .btn-save:hover { background: var(--blue); }
+  .btn-save:disabled { opacity: 0.5; cursor: not-allowed; }
+  .type-toggle { display: flex; border: 1px solid var(--border-strong); border-radius: 7px; overflow: hidden; margin-bottom: 1.25rem; }
+  .type-toggle button { flex: 1; padding: 9px; border: none; background: transparent; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text-secondary); transition: all 0.15s; }
+  .type-toggle button.active { background: var(--navy); color: #fff; }
+  .progress-bar { display: flex; gap: 6px; margin-bottom: 1.25rem; }
+  .progress-step { flex: 1; height: 3px; border-radius: 2px; background: var(--border); }
+  .progress-step.done { background: var(--navy); }
+  .progress-step.active { background: var(--blue); }
+  .drive-status { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-tertiary); margin-top: 10px; padding: 8px 12px; background: var(--bg); border-radius: 6px; }
+  .drive-status.ok { color: var(--green); }
+  .drive-status.err { color: var(--red); }
 
-  /* ── Layout ── */
-  .app {
-    display: flex;
-    flex-direction: column;
-    height: 100dvh;
-    max-width: 480px;
-    margin: 0 auto;
-    padding: env(safe-area-inset-top, 20px) 0 env(safe-area-inset-bottom, 20px);
-  }
+  .review-panel { background: var(--surface); border: 1px solid var(--blue-mid); border-radius: 10px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: var(--shadow); }
+  .review-panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+  .review-panel-title { font-size: 13px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--blue); }
+  .review-panel-date { font-size: 11px; color: var(--text-tertiary); }
+  .review-close { font-size: 12px; padding: 3px 10px; border: 1px solid var(--border); border-radius: 5px; background: transparent; color: var(--text-secondary); cursor: pointer; }
+  .review-section { margin-bottom: 1rem; }
+  .review-section-title { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 6px; }
+  .review-item { font-size: 13px; color: var(--text); line-height: 1.6; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .review-item:last-child { border-bottom: none; }
+  .review-item strong { color: var(--navy); font-weight: 600; }
+  .review-question { font-size: 13px; color: var(--blue); font-style: italic; padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .review-question:last-child { border-bottom: none; }
+  .review-loading { font-size: 13px; color: var(--text-tertiary); font-style: italic; }
+  .attention-panel { background: var(--amber-bg); border: 1px solid rgba(133,79,11,0.2); border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 1.25rem; }
+  .attention-title { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--amber); margin-bottom: 8px; }
+  .attention-item { display: flex; align-items: flex-start; gap: 10px; padding: 7px 0; border-bottom: 1px solid rgba(133,79,11,0.12); }
+  .attention-item:last-child { border-bottom: none; }
+  .attention-name { font-size: 13px; font-weight: 600; color: var(--navy); }
+  .attention-detail { font-size: 12px; color: var(--amber); margin-top: 1px; }
+  .prospect-flag { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--amber); margin-left: 6px; vertical-align: middle; title: "Follow-up overdue"; }
 
-  /* ── Header ── */
-  .header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 28px 24px 16px;
-    flex-shrink: 0;
-    gap: 4px;
-    position: relative;
-  }
+  .upload-bar { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; margin-bottom: 1.5rem; box-shadow: var(--shadow); }
+  .upload-bar-label { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 6px; }
+  .upload-bar-row { display: flex; gap: 8px; align-items: center; }
+  .upload-drop-zone { flex: 1; border: 1.5px dashed var(--border-strong); border-radius: 7px; padding: 10px 14px; font-size: 13px; color: var(--text-tertiary); cursor: pointer; transition: all 0.15s; text-align: center; position: relative; }
+  .upload-drop-zone:hover, .upload-drop-zone.drag-over { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
+  .upload-drop-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+  .upload-eng-select { font-size: 13px; padding: 9px 11px; border: 1px solid var(--border-strong); border-radius: 7px; background: var(--bg); color: var(--text); outline: none; min-width: 180px; font-family: inherit; }
+  .upload-eng-select:focus { border-color: var(--blue); }
+  .upload-btn { padding: 9px 18px; background: var(--navy); color: #fff; border: none; border-radius: 7px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; transition: background 0.15s; }
+  .upload-btn:hover { background: var(--blue); }
+  .upload-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .upload-result { margin-top: 10px; font-size: 13px; color: var(--text-secondary); line-height: 1.6; border-top: 1px solid var(--border); padding-top: 10px; display: none; }
+  .upload-result.visible { display: block; }
+  .upload-result .result-summary { background: var(--bg); border-radius: 7px; padding: 10px 12px; margin-bottom: 8px; font-size: 13px; line-height: 1.6; color: var(--text); }
+  .upload-result .result-tasks { font-size: 12px; color: var(--green); margin-top: 4px; }
+  .upload-result .result-drive { font-size: 12px; color: var(--blue); margin-top: 4px; }
 
-  .header-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    position: relative;
-  }
+  /* PIPELINE TAB */
+  .pipeline-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 1.5rem; }
+  .metric-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.25rem; box-shadow: var(--shadow); }
+  .metric-label { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 6px; }
+  .metric-value { font-size: 24px; font-weight: 500; color: var(--navy); }
+  .metric-sub { font-size: 12px; color: var(--text-tertiary); margin-top: 3px; }
+  .pipeline-table { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; box-shadow: var(--shadow); overflow: hidden; }
+  .pipeline-table table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .pipeline-table th { padding: 10px 14px; text-align: left; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-tertiary); border-bottom: 1px solid var(--border); background: var(--bg); }
+  .pipeline-table td { padding: 11px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  .pipeline-table tr:last-child td { border-bottom: none; }
+  .pipeline-table tr:hover td { background: var(--bg); }
+  .pipeline-edit-btn { font-size: 11px; padding: 2px 8px; border: 1px solid var(--border); border-radius: 5px; background: transparent; color: var(--text-secondary); cursor: pointer; }
+  .pipeline-edit-btn:hover { background: var(--blue-light); color: var(--blue); border-color: var(--blue-mid); }
+  .prob-bar-wrap { display: flex; align-items: center; gap: 8px; }
+  .prob-bar { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .prob-bar-fill { height: 100%; border-radius: 2px; background: var(--blue); }
 
-  /* Wordmark — Cormorant gives it the weight of the Bosca feel */
-  .logo {
-    font-family: var(--display);
-    font-size: 22px;
-    font-weight: 600;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: var(--text-hi);
-    line-height: 1;
-  }
+  /* NOTES HISTORY */
+  .eng-history { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+  .eng-history-title { font-size: 10px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-tertiary); margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; }
+  .eng-history-entry { padding: 6px 0; border-bottom: 1px solid var(--border); }
+  .eng-history-entry:last-child { border-bottom: none; }
+  .eng-history-date { font-size: 10px; color: var(--text-tertiary); margin-bottom: 2px; }
+  .eng-history-text { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+  .eng-history-type { display: inline-block; font-size: 9px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; padding: 1px 5px; border-radius: 3px; margin-right: 4px; }
+  .ht-upload { background: var(--blue-light); color: var(--blue); }
+  .ht-ai { background: var(--green-bg); color: var(--green); }
+  .ht-manual { background: #f1efe8; color: #5f5e5a; }
+  .add-note-btn { font-size: 11px; padding: 2px 8px; border: 1px solid var(--border); border-radius: 5px; background: transparent; color: var(--text-secondary); cursor: pointer; }
+  .add-note-btn:hover { background: var(--bg); }
 
-  .logo-dot {
-    color: var(--accent-hi);
-    margin: 0 2px;
-  }
-
-  .tagline {
-    font-family: var(--mono);
-    font-size: 9.5px;
-    font-weight: 400;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--text-dim);
-  }
-
-  .tagline span {
-    color: var(--muted);
-    margin: 0 4px;
-  }
-
-  .status-dot {
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--muted);
-    transition: background 0.3s ease;
-  }
-
-  /* Rule beneath header */
-  .header-rule {
-    width: 100%;
-    height: 1px;
-    background: linear-gradient(to right, transparent, var(--border), transparent);
-    margin: 12px 0 0;
-  }
-
-  .status-dot.ready    { background: var(--success);  box-shadow: 0 0 6px var(--success); }
-  .status-dot.active   { background: var(--danger);   box-shadow: 0 0 10px var(--danger); animation: pulse 1s infinite; }
-  .status-dot.thinking { background: var(--accent-hi); box-shadow: 0 0 8px var(--accent-hi); animation: pulse 0.7s infinite; }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50%       { opacity: 0.4; }
-  }
-
-  /* ── Feed ── */
-  .feed {
-    flex: 1;
-    overflow-y: auto;
-    padding: 8px 24px 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .feed::-webkit-scrollbar { display: none; }
-
-  .feed-empty {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 14px;
-    text-align: center;
-    padding: 40px;
-    opacity: 0;
-    animation: fadeIn 0.8s 0.4s forwards;
-  }
-
-  .feed-empty .monogram {
-    font-family: var(--display);
-    font-size: 36px;
-    font-weight: 500;
-    letter-spacing: 0.15em;
-    color: var(--border);
-    text-transform: uppercase;
-  }
-
-  .feed-empty p {
-    font-size: 12.5px;
-    font-weight: 300;
-    line-height: 1.7;
-    color: var(--text-dim);
-    max-width: 200px;
-    font-family: var(--sans);
-  }
-
-  @keyframes fadeIn {
-    to { opacity: 1; }
-  }
-
-  /* ── Feed items ── */
-  .entry {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 14px 16px;
-    animation: slideUp 0.25s ease;
-  }
-
-  @keyframes slideUp {
-    from { opacity: 0; transform: translateY(8px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .entry-meta {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
-  }
-
-  .entry-type {
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 2px 7px;
-    border-radius: 4px;
-    background: var(--accent-lo);
-    color: var(--accent);
-  }
-
-  .entry-type.reminder { background: rgba(58,158,116,0.1);  color: var(--success); }
-  .entry-type.calendar { background: var(--accent-lo);       color: var(--accent-hi); }
-  .entry-type.client   { background: var(--gold-lo);         color: var(--gold); }
-  .entry-type.note     { background: rgba(93,116,148,0.12);  color: var(--text-dim); }
-  .entry-type.confirm  { background: rgba(192,64,74,0.1);    color: var(--danger); }
-
-  .entry-time {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-dim);
-    margin-left: auto;
-  }
-
-  .entry-transcript {
-    font-size: 12px;
-    color: var(--text-dim);
-    font-style: italic;
-    margin-bottom: 6px;
-    line-height: 1.5;
-    font-family: var(--mono);
-    font-weight: 300;
-  }
-
-  .entry-response {
-    font-size: 14px;
-    color: var(--text-hi);
-    line-height: 1.55;
-    font-weight: 400;
-  }
-
-  /* Confirm entry */
-  .entry.needs-confirm {
-    border-color: rgba(224,90,90,0.3);
-  }
-
-  .confirm-actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 12px;
-  }
-
-  .btn {
-    flex: 1;
-    padding: 9px 12px;
-    border-radius: 8px;
-    font-family: var(--sans);
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    border: none;
-    transition: opacity 0.15s, transform 0.1s;
-    letter-spacing: 0.02em;
-  }
-
-  .btn:active { transform: scale(0.97); opacity: 0.8; }
-
-  .btn-confirm {
-    background: var(--accent);
-    color: #fff;
-  }
-
-  .btn-cancel {
-    background: var(--border);
-    color: var(--text-dim);
-  }
-
-  /* Deep mode panel */
-  .deep-panel {
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    padding: 16px 24px;
-    flex-shrink: 0;
-    display: none;
-    flex-direction: column;
-    gap: 12px;
-    animation: slideUp 0.2s ease;
-  }
-
-  .deep-panel.active {
-    display: flex;
-  }
-
-  .deep-question {
-    font-size: 15px;
-    color: var(--text-hi);
-    line-height: 1.5;
-    font-weight: 400;
-    font-family: var(--sans);
-  }
-
-  .deep-input-row {
-    display: flex;
-    gap: 8px;
-  }
-
-  .deep-input {
-    flex: 1;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 14px;
-    color: var(--text-hi);
-    font-family: var(--sans);
-    font-size: 14px;
-    font-weight: 300;
-    outline: none;
-    transition: border-color 0.2s;
-  }
-
-  .deep-input:focus { border-color: var(--accent); }
-
-  .deep-mic-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 8px;
-    background: var(--accent-lo);
-    border: 1px solid var(--accent-md);
-    color: var(--accent-hi);
-    font-size: 16px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: background 0.15s;
-  }
-
-  .deep-mic-btn:active { background: var(--accent-md); }
-
-  .deep-close {
-    align-self: flex-end;
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-dim);
-    cursor: pointer;
-    padding: 2px 0;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  /* ── Record zone ── */
-  .record-zone {
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px 24px 32px;
-    gap: 16px;
-    border-top: 1px solid var(--border);
-    background: linear-gradient(to top, var(--bg) 60%, transparent);
-  }
-
-  .record-hint {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-dim);
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    transition: opacity 0.3s;
-    height: 16px;
-  }
-
-  /* The button — navy ring, blue accent on record */
-  .record-btn {
-    position: relative;
-    width: 84px;
-    height: 84px;
-    border-radius: 50%;
-    background: var(--surface-2);
-    border: 1.5px solid var(--muted);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: border-color 0.2s, background 0.2s, transform 0.1s, box-shadow 0.2s;
-    -webkit-tap-highlight-color: transparent;
-    user-select: none;
-    touch-action: none;
-    box-shadow: 0 0 0 8px rgba(46,111,196,0), 0 4px 24px rgba(0,0,0,0.4);
-  }
-
-  .record-btn.ready {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 1px var(--accent-lo), 0 4px 24px rgba(0,0,0,0.4);
-  }
-
-  .record-btn::before {
-    content: '';
-    position: absolute;
-    inset: -10px;
-    border-radius: 50%;
-    border: 1px solid var(--border);
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-
-  .record-btn.ready::before { opacity: 1; border-color: var(--muted); }
-
-  .record-btn.recording {
-    border-color: var(--danger);
-    background: rgba(192,64,74,0.08);
-    transform: scale(1.05);
-    box-shadow: 0 0 0 2px rgba(192,64,74,0.15), 0 4px 24px rgba(0,0,0,0.4);
-  }
-
-  .record-btn.recording::before {
-    border-color: var(--danger);
-    opacity: 1;
-    animation: ringPulse 1.2s ease infinite;
-  }
-
-  @keyframes ringPulse {
-    0%   { inset: -10px; opacity: 0.7; }
-    100% { inset: -22px; opacity: 0; }
-  }
-
-  .record-btn.thinking {
-    border-color: var(--accent-hi);
-    box-shadow: 0 0 0 2px var(--accent-lo), 0 4px 24px rgba(0,0,0,0.4);
-  }
-
-  .mic-icon {
-    width: 26px;
-    height: 26px;
-    color: var(--text-dim);
-    transition: color 0.2s;
-  }
-
-  .record-btn.ready     .mic-icon { color: var(--accent-hi); }
-  .record-btn.recording .mic-icon { color: var(--danger); }
-  .record-btn.thinking  .mic-icon { color: var(--accent-hi); }
-
-  /* Waveform bars (shown while recording) */
-  .waveform {
-    display: flex;
-    align-items: center;
-    gap: 3px;
-    height: 20px;
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-
-  .waveform.active { opacity: 1; }
-
-  .wave-bar {
-    width: 3px;
-    background: var(--danger);
-    border-radius: 2px;
-    animation: wave 0.8s ease infinite;
-  }
-
-  .wave-bar:nth-child(1) { animation-delay: 0.0s; }
-  .wave-bar:nth-child(2) { animation-delay: 0.1s; }
-  .wave-bar:nth-child(3) { animation-delay: 0.2s; }
-  .wave-bar:nth-child(4) { animation-delay: 0.1s; }
-  .wave-bar:nth-child(5) { animation-delay: 0.0s; }
-
-  @keyframes wave {
-    0%, 100% { height: 4px; }
-    50%       { height: 18px; }
-  }
-
-  /* Sign in */
-  .sign-in-btn {
-    padding: 10px 20px;
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-family: var(--sans);
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    letter-spacing: 0.03em;
-    transition: background 0.15s;
-  }
-
-  .sign-in-btn:active { background: var(--accent-hi); }
-
-  .sign-in-note {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-dim);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  /* Transcript preview while speaking */
-  .live-transcript {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--text-dim);
-    font-style: italic;
-    min-height: 18px;
-    text-align: center;
-    padding: 0 24px;
-    transition: opacity 0.2s;
-    line-height: 1.5;
-    max-width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
+  /* EMAIL COMPOSE */
+  .task-mail-btn { opacity: 0; font-size: 11px; padding: 2px 8px; border: 1px solid var(--border); border-radius: 5px; background: transparent; color: var(--blue); cursor: pointer; transition: opacity 0.15s; margin-right: 4px; }
+  .task-row:hover .task-mail-btn { opacity: 1; }
+  .task-mail-btn:hover { background: var(--blue-light); border-color: var(--blue-mid); }
+  #loading { display: flex; align-items: center; justify-content: center; min-height: 100vh; flex-direction: column; gap: 12px; }
+  .spinner { width: 24px; height: 24px; border: 2px solid var(--border); border-top-color: var(--navy); border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #loading p { font-size: 13px; color: var(--text-tertiary); }
+  .toast { position: fixed; bottom: 24px; right: 24px; background: var(--navy); color: #fff; font-size: 13px; padding: 10px 16px; border-radius: 8px; opacity: 0; transform: translateY(8px); transition: all 0.2s; pointer-events: none; z-index: 300; max-width: 320px; line-height: 1.5; }
+  .toast.show { opacity: 1; transform: translateY(0); }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
 </head>
 <body>
 
-<div class="app">
+<div id="loading"><div class="spinner"></div><p id="loading-msg">Loading…</p></div>
+<div id="error-banner" style="display:none;position:fixed;top:0;left:0;right:0;background:#A32D2D;color:#fff;padding:12px 16px;font-size:13px;z-index:9999;line-height:1.6;white-space:pre-wrap;"></div>
 
-  <!-- Header -->
-  <header class="header">
-    <div class="header-row">
-      <div class="logo">Ashvaren</div>
-      <div class="status-dot" id="statusDot"></div>
+<div id="auth-screen" style="display:none">
+  <div class="auth-card">
+    <div class="auth-logo">Ashvaren</div>
+    <div class="auth-tagline">Clarity. Structure. Growth.</div>
+    <h2>Work tracker</h2>
+    <p>Enter your credentials to get started. These are stored only in your browser's local storage.</p>
+    <div class="config-section">
+      <label>Google OAuth client ID</label>
+      <input type="text" id="cfg-client-id" placeholder="xxxx.apps.googleusercontent.com" />
+      <div class="hint">From Google Cloud Console › APIs & Services › Credentials</div>
     </div>
-    <div class="tagline">Clarity <span>·</span> Structure <span>·</span> Growth</div>
-    <div class="header-rule"></div>
-  </header>
-
-  <!-- Feed -->
-  <div class="feed" id="feed">
-    <div class="feed-empty" id="feedEmpty">
-      <div class="monogram">A</div>
-      <p>Hold the button and speak. Release when you're done.</p>
+    <div class="config-section">
+      <label>AI proxy URL</label>
+      <input type="text" id="cfg-proxy-url" placeholder="https://ashvaren-ai-proxy.xxx.workers.dev" />
+      <div class="hint">Your Cloudflare Worker URL</div>
     </div>
+    <button class="btn-primary" onclick="saveConfigAndAuth()">Connect with Google →</button>
+    <p class="auth-note">You will be redirected to Google to grant access to Drive and Calendar. Your Anthropic key is stored securely in Cloudflare.</p>
   </div>
-
-  <!-- Deep mode panel -->
-  <div class="deep-panel" id="deepPanel">
-    <div class="deep-question" id="deepQuestion">What's the company name?</div>
-    <div class="deep-input-row">
-      <input class="deep-input" id="deepInput" type="text" placeholder="Type or tap the mic…" />
-      <button class="deep-mic-btn" id="deepMicBtn" title="Speak answer">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-      </button>
-    </div>
-    <span class="deep-close" id="deepClose">cancel flow</span>
-  </div>
-
-  <!-- Record zone -->
-  <div class="record-zone">
-    <div class="live-transcript" id="liveTranscript"></div>
-    <div class="waveform" id="waveform">
-      <div class="wave-bar"></div>
-      <div class="wave-bar"></div>
-      <div class="wave-bar"></div>
-      <div class="wave-bar"></div>
-      <div class="wave-bar"></div>
-    </div>
-    <button class="record-btn" id="recordBtn" aria-label="Hold to record">
-      <svg class="mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-        <line x1="12" y1="19" x2="12" y2="23"/>
-        <line x1="8" y1="23" x2="16" y2="23"/>
-      </svg>
-    </button>
-    <div class="record-hint" id="recordHint">Hold to speak</div>
-    <button class="sign-in-btn" id="signInBtn" onclick="signInWithGoogle()" style="display:none">
-      Sign in with Google
-    </button>
-    <div class="sign-in-note" id="signInNote" style="display:none">
-      Required to write to your tracker
-    </div>
-  </div>
-
 </div>
 
+<div id="app">
+  <header>
+    <div class="header-left"><span class="logo">Ashvaren</span><span class="logo-tag">Work tracker</span></div>
+    <div class="header-right">
+      <span class="sync-status" id="sync-status"></span>
+      <button class="sync-btn" onclick="runWeeklyReview()">Weekly review</button>
+      <button class="sync-btn" onclick="saveToD()">Save to Drive</button>
+      <button class="sync-btn" onclick="openSettings()">Settings</button>
+      <button class="sync-btn" onclick="signOut()">Sign out</button>
+    </div>
+  </header>
+  <div class="nav-bar">
+    <button class="nav-tab active" onclick="showView('today',this)">Today</button>
+    <button class="nav-tab" onclick="showView('engagements',this)">Engagements</button>
+    <button class="nav-tab" onclick="showView('tasks',this)">Tasks</button>
+    <button class="nav-tab" onclick="showView('pipeline',this)">Pipeline</button>
+  </div>
+  <main>
+    <div class="ai-bar">
+      <div class="ai-bar-label">AI update</div>
+      <div class="ai-bar-row">
+        <input type="text" id="ai-input" placeholder="e.g. New engagement with Selka Health — Dr Sarah Bond, reviewing SpineNet licence from Oxford Uni. Sending report tonight." />
+        <button class="ai-send" id="ai-send-btn" onclick="sendToAI()">Update ↗</button>
+      </div>
+      <div class="ai-response" id="ai-response"></div>
+    </div>
+    <div class="upload-bar" id="upload-bar">
+      <div class="upload-bar-label">Upload notes</div>
+      <div class="upload-bar-row">
+        <div class="upload-drop-zone" id="upload-drop-zone">
+          <span id="upload-filename">Drop meeting notes here or click to select (.docx, .pdf, .txt)</span>
+          <input type="file" id="upload-file-input" accept=".docx,.pdf,.txt,.md" onchange="handleFileSelect(this)" />
+        </div>
+        <select class="upload-eng-select" id="upload-eng-select">
+          <option value="">Auto-detect engagement</option>
+        </select>
+        <button class="upload-btn" id="upload-btn" onclick="processUpload()" disabled>Process ↗</button>
+      </div>
+      <div class="upload-result" id="upload-result"></div>
+    </div>
+    <div id="view-today">
+    <div id="review-panel" class="review-panel" style="display:none">
+      <div class="review-panel-header">
+        <span class="review-panel-title">Weekly review</span>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="review-panel-date" id="review-date"></span>
+          <button class="review-close" onclick="closeReview()">Dismiss</button>
+        </div>
+      </div>
+      <div id="review-content"><div class="review-loading">Preparing your review…</div></div>
+    </div>
+    <div id="attention-panel" style="display:none"></div>
+
+      <div class="today-grid">
+        <div class="panel">
+          <div class="panel-header"><span class="panel-title">Today's calendar</span><span style="font-size:11px;color:var(--text-tertiary)" id="cal-date"></span></div>
+          <div class="panel-body" id="cal-today"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><span class="panel-title">Today &amp; tomorrow tasks</span></div>
+          <div class="panel-body" id="today-tasks"></div>
+        </div>
+      </div>
+      <div style="margin-top:1.25rem">
+        <div class="panel">
+          <div class="panel-header"><span class="panel-title">Tomorrow's calendar</span></div>
+          <div class="panel-body" id="cal-tomorrow"></div>
+        </div>
+      </div>
+    </div>
+    <div id="view-engagements" style="display:none"><div class="cards-grid" id="cards-grid"></div></div>
+
+    <div id="view-pipeline" style="display:none">
+      <div class="pipeline-metrics">
+        <div class="metric-card"><div class="metric-label">Confirmed revenue</div><div class="metric-value" id="pm-confirmed">£0</div><div class="metric-sub">Active engagements at 100%</div></div>
+        <div class="metric-card"><div class="metric-label">Weighted pipeline</div><div class="metric-value" id="pm-weighted">£0</div><div class="metric-sub">All engagements × probability</div></div>
+        <div class="metric-card"><div class="metric-label">Total pipeline</div><div class="metric-value" id="pm-total">£0</div><div class="metric-sub">Unweighted</div></div>
+      </div>
+      <div class="pipeline-table">
+        <table>
+          <thead><tr><th>Client</th><th>Fee type</th><th>Est. value</th><th>Probability</th><th>Weighted</th><th></th></tr></thead>
+          <tbody id="pipeline-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div id="view-tasks" style="display:none">
+      <div class="task-toolbar">
+        <div class="filter-pills" id="filter-pills"></div>
+        <button class="add-task-btn" onclick="openTaskModal()">+ New task</button>
+      </div>
+      <div id="task-list"></div>
+    </div>
+  </main>
+</div>
+
+<!-- ONBOARDING MODAL -->
+<div class="modal-overlay" id="onboard-modal">
+  <div class="modal">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;">
+      <h2 id="ob-title">New client onboarding</h2>
+      <button onclick="closeOnboard()" style="font-size:18px;line-height:1;border:none;background:transparent;color:var(--text-tertiary);cursor:pointer;padding:0 0 0 12px;" title="Close">&times;</button>
+    </div>
+    <p class="modal-subtitle" id="ob-subtitle"></p>
+    <div class="progress-bar">
+      <div class="progress-step active" id="ps0"></div>
+      <div class="progress-step" id="ps1"></div>
+      <div class="progress-step" id="ps2"></div>
+    </div>
+
+    <!-- Step 0 -->
+    <div id="ob-s0">
+      <div class="type-toggle">
+        <button class="active" id="tt-confirmed" onclick="setObType('confirmed')">Confirmed engagement</button>
+        <button id="tt-prospective" onclick="setObType('prospective')">Prospective client</button>
+      </div>
+      <div class="field"><label>Client trading name</label><input type="text" id="ob-name" placeholder="e.g. Selka Health" /></div>
+      <div class="field"><label>Client legal name <span class="opt">if different</span></label><input type="text" id="ob-legal" placeholder="e.g. Selka Health Ltd" /></div>
+      <div class="field-row">
+        <div class="field"><label>Company number <span class="opt">optional</span></label><input type="text" id="ob-conum" placeholder="12345678" /></div>
+        <div class="field"><label>How introduced</label>
+          <select id="ob-intro"><option value="">Select…</option><option>Referral</option><option>Inbound</option><option>Prior relationship</option><option>Conference / event</option><option>Other</option></select>
+        </div>
+      </div>
+      <div class="field"><label>Conflict of interest check <span class="opt">optional</span></label><input type="text" id="ob-conflict" placeholder="e.g. previously advised a competitor" /></div>
+    </div>
+
+    <!-- Step 1 -->
+    <div id="ob-s1" style="display:none">
+      <div class="section-divider">Client contact</div>
+      <div class="field-row">
+        <div class="field"><label>Contact name</label><input type="text" id="ob-cname" placeholder="e.g. Dr Sarah Bond" /></div>
+        <div class="field"><label>Contact email <span class="opt">optional</span></label><input type="text" id="ob-cemail" placeholder="sarah@selkahealth.com" /></div>
+      </div>
+      <div class="field"><label>Decision-maker <span class="opt">if not the contact</span></label><input type="text" id="ob-dm" placeholder="e.g. CEO — John Smith" /></div>
+      <div class="section-divider" id="ob-scope-hdr">Scope &amp; fees</div>
+      <div class="field"><label id="ob-scope-lbl">Scope summary</label><textarea id="ob-scope" placeholder="One or two sentences — becomes the recital in the engagement letter."></textarea></div>
+      <div id="ob-confirmed-fields">
+        <div class="field-row">
+          <div class="field"><label>Fee type</label>
+            <select id="ob-fee" onchange="updateFeeInputs()">
+              <option value="">TBD</option>
+              <option value="day-rate">Day rate (£1,500)</option>
+              <option value="half-day">Half-day (£800)</option>
+              <option value="hourly">Hourly (£250)</option>
+              <option value="fixed">Fixed fee</option>
+              <option value="retainer">Retainer</option>
+            </select>
+          </div>
+          <div class="field"><label>NDA</label>
+            <select id="ob-nda"><option value="ashvaren">Yes — Ashvaren NDA</option><option value="client">Yes — client's own</option><option value="none">No NDA needed</option></select>
+          </div>
+        </div>
+        <div class="field-row" id="ob-days-row" style="display:none">
+          <div class="field"><label>Estimated days</label><input type="number" id="ob-days" placeholder="e.g. 5" min="0" step="0.5" /></div>
+          <div class="field"><label>Fixed amount <span class="opt">override</span></label><input type="number" id="ob-fixed-amt" placeholder="e.g. 5000" /></div>
+        </div>
+        <div class="field-row" id="ob-fixed-row" style="display:none">
+          <div class="field"><label>Fixed amount (£)</label><input type="number" id="ob-fixed-amt2" placeholder="e.g. 5000" /></div>
+          <div class="field"><label>Probability % <span class="opt">default 100</span></label><input type="number" id="ob-prob" placeholder="100" min="0" max="100" value="100" /></div>
+        </div>
+        <div class="field"><label>Billing contact <span class="opt">if different</span></label><input type="text" id="ob-billing" placeholder="Name and email" /></div>
+      </div>
+      <div id="ob-prosp-fields" style="display:none">
+        <div class="field"><label>Problem statement</label><textarea id="ob-problem" placeholder="What are they trying to solve? What is driving their approach?"></textarea></div>
+        <div class="field"><label>Budget conversation <span class="opt">optional</span></label><input type="text" id="ob-budget" placeholder="Has budget been discussed?" /></div>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div id="ob-s2" style="display:none">
+      <div id="ob-summary"></div>
+      <div class="drive-status" id="ob-drive-status" style="display:none">
+        <div class="spinner" style="width:14px;height:14px;border-width:1.5px;" id="ob-drive-spinner"></div>
+        <span id="ob-drive-msg">Creating Drive folder…</span>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" id="ob-back" onclick="obBack()" style="display:none">← Back</button>
+      <button class="btn-cancel" onclick="closeOnboard()">Cancel</button>
+      <button class="btn-save" id="ob-next" onclick="obNext()">Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ENGAGEMENT EDIT MODAL -->
+<div class="modal-overlay" id="eng-modal">
+  <div class="modal">
+    <h2 id="eng-modal-title">Edit engagement</h2>
+    <div class="field"><label>Name</label><input type="text" id="em-name" /></div>
+    <div class="field"><label>Type</label><select id="em-type"><option>Advisory</option><option>Fractional CFO/COO</option><option>Workshop</option><option>Personal</option><option>Internal</option></select></div>
+    <div class="field"><label>Status</label><select id="em-status"><option value="active">Active</option><option value="waiting">Waiting on client</option><option value="stalled">Stalled</option><option value="paused">Paused</option><option value="prospective">Prospective</option></select></div>
+    <div class="field"><label>Last action</label><input type="text" id="em-last" /></div>
+    <div class="field"><label>Next step</label><input type="text" id="em-next" /></div>
+    <div class="field"><label>Deadline <span class="opt">optional</span></label><input type="text" id="em-deadline" /></div>
+    <div class="section-divider">Pipeline</div>
+    <div class="field-row">
+      <div class="field"><label>Fee type</label>
+        <select id="em-fee-type">
+          <option value="">TBD</option>
+          <option value="day-rate">Day rate (£1,500)</option>
+          <option value="half-day">Half-day (£800)</option>
+          <option value="hourly">Hourly (£250)</option>
+          <option value="fixed">Fixed fee</option>
+          <option value="retainer">Retainer</option>
+        </select>
+      </div>
+      <div class="field"><label>Probability %</label><input type="number" id="em-prob" placeholder="100" min="0" max="100" /></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Est. days <span class="opt">for day/hourly rates</span></label><input type="number" id="em-days" placeholder="e.g. 5" min="0" step="0.5" /></div>
+      <div class="field"><label>Fixed amount £ <span class="opt">for fixed/retainer</span></label><input type="number" id="em-fixed" placeholder="e.g. 5000" /></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeEngModal()">Cancel</button>
+      <button class="btn-save" onclick="saveEngagement()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- TASK MODAL -->
+<div class="modal-overlay" id="task-modal">
+  <div class="modal">
+    <h2>New task</h2>
+    <div class="field"><label>Task</label><input type="text" id="tm-title" placeholder="What needs to be done?" /></div>
+    <div class="field"><label>Engagement</label><select id="tm-engagement"></select></div>
+    <div class="field"><label>When</label><select id="tm-due"><option value="today">Today</option><option value="tomorrow">Tomorrow</option><option value="this-week">This week</option><option value="later">Later</option></select></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeTaskModal()">Cancel</button>
+      <button class="btn-save" onclick="saveTask()">Save</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- MANUAL NOTE MODAL -->
+<div class="modal-overlay" id="note-modal">
+  <div class="modal">
+    <h2>Add note</h2>
+    <div class="field"><label>Note</label><textarea id="nm-text" placeholder="What happened? Key decisions, commitments, context…" style="min-height:100px;"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeNoteModal()">Cancel</button>
+      <button class="btn-save" onclick="saveNote()">Save</button>
+    </div>
+  </div>
+</div>
+<!-- SETTINGS MODAL -->
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal">
+    <h2>Settings</h2>
+    <div class="field"><label>Google OAuth client ID</label><input type="text" id="s-client-id" /></div>
+    <div class="field"><label>AI proxy URL</label><input type="text" id="s-proxy-url" /></div>
+    <p style="font-size:12px;color:var(--text-tertiary);margin-bottom:1rem;line-height:1.6;">Updating the proxy URL takes effect immediately. Updating the OAuth client ID triggers a new Google sign-in.</p>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeSettings()">Cancel</button>
+      <button class="btn-save" onclick="saveSettings()">Save</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
 <script>
-// ── Config ──────────────────────────────────────────────────────────────────
-const WORKER_URL = 'https://ashvaren-assistant.mike-bc0.workers.dev';
-
-// ── State ───────────────────────────────────────────────────────────────────
-let recognition     = null;
-let isRecording     = false;
-let finalTranscript = '';
-let deepMode        = { active: false, context: [], pendingAction: null };
-
-// ── Elements ─────────────────────────────────────────────────────────────────
-const recordBtn      = document.getElementById('recordBtn');
-const statusDot      = document.getElementById('statusDot');
-const recordHint     = document.getElementById('recordHint');
-const waveform       = document.getElementById('waveform');
-const liveTranscript = document.getElementById('liveTranscript');
-const feed           = document.getElementById('feed');
-const feedEmpty      = document.getElementById('feedEmpty');
-const deepPanel      = document.getElementById('deepPanel');
-const deepQuestion   = document.getElementById('deepQuestion');
-const deepInput      = document.getElementById('deepInput');
-const deepMicBtn     = document.getElementById('deepMicBtn');
-const deepClose      = document.getElementById('deepClose');
-
-// ── Speech Recognition setup ─────────────────────────────────────────────────
-function initRecognition() {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) {
-    setStatus('error');
-    addEntry({ type: 'note', transcript: '', response: 'Speech recognition is not supported in this browser. Please use Safari on iOS.' });
-    return false;
+// Global error handler — surfaces JS errors visibly
+window.onerror = function(msg, src, line, col, err) {
+  const banner = document.getElementById('error-banner');
+  const loadMsg = document.getElementById('loading-msg');
+  if (banner) {
+    banner.style.display = 'block';
+    banner.textContent = 'JS Error: ' + msg + '\nFile: ' + src + ' Line: ' + line + ':' + col + (err ? '\n' + err.stack : '');
   }
-  recognition = new SR();
-  recognition.continuous      = false;
-  recognition.interimResults  = true;
-  recognition.lang            = 'en-GB';
-  recognition.maxAlternatives = 1;
-
-  recognition.onstart = () => {
-    isRecording = true;
-    setStatus('active');
-    waveform.classList.add('active');
-    recordHint.textContent = 'Listening…';
-  };
-
-  recognition.onresult = (e) => {
-    let interim = '';
-    finalTranscript = '';
-    for (let i = e.resultIndex; i < e.results.length; i++) {
-      if (e.results[i].isFinal) finalTranscript += e.results[i][0].transcript;
-      else interim += e.results[i][0].transcript;
-    }
-    liveTranscript.textContent = finalTranscript || interim;
-  };
-
-  recognition.onend = () => {
-    isRecording = false;
-    recordBtn.classList.remove('recording');
-    waveform.classList.remove('active');
-    if (finalTranscript.trim()) {
-      processTranscript(finalTranscript.trim());
-    } else {
-      setStatus('ready');
-      recordHint.textContent = 'Hold to speak';
-      liveTranscript.textContent = '';
-    }
-  };
-
-  recognition.onerror = (e) => {
-    isRecording = false;
-    recordBtn.classList.remove('recording');
-    waveform.classList.remove('active');
-    setStatus('ready');
-    recordHint.textContent = 'Hold to speak';
-    if (e.error !== 'no-speech' && e.error !== 'aborted') {
-      addEntry({ type: 'note', transcript: '', response: `Mic error: ${e.error}. Check browser permissions.` });
-    }
-  };
-
-  return true;
-}
-
-// ── Status helpers ───────────────────────────────────────────────────────────
-function setStatus(state) {
-  statusDot.className = 'status-dot ' + state;
-}
-
-// ── Record button: hold to record ────────────────────────────────────────────
-function startRecording() {
-  if (isRecording) return;
-  if (!recognition && !initRecognition()) return;
-  finalTranscript = '';
-  liveTranscript.textContent = '';
-  recordBtn.classList.add('recording');
-  try { recognition.start(); } catch(e) { /* already started */ }
-}
-
-function stopRecording() {
-  if (!isRecording) return;
-  try { recognition.stop(); } catch(e) {}
-  recordBtn.classList.remove('recording');
-}
-
-// Touch events (mobile primary)
-recordBtn.addEventListener('touchstart', (e) => { e.preventDefault(); startRecording(); }, { passive: false });
-recordBtn.addEventListener('touchend',   (e) => { e.preventDefault(); stopRecording();  }, { passive: false });
-
-// Mouse events (desktop fallback)
-recordBtn.addEventListener('mousedown', startRecording);
-recordBtn.addEventListener('mouseup',   stopRecording);
-recordBtn.addEventListener('mouseleave', stopRecording);
-
-// ── Process transcript ───────────────────────────────────────────────────────
-async function processTranscript(text) {
-  setStatus('thinking');
-  recordBtn.classList.add('thinking');
-  recordHint.textContent = 'Thinking…';
-
-  hideFeedEmpty();
-
-  try {
-    const messages = buildMessages(text);
-    const result   = await callClaude(messages);
-    handleResult(text, result);
-  } catch(err) {
-    addEntry({ type: 'note', transcript: text, response: `Error: ${err.message}` });
-    setStatus('ready');
-  } finally {
-    recordBtn.classList.remove('thinking');
-    recordHint.textContent = 'Hold to speak';
-    liveTranscript.textContent = '';
-  }
-}
-
-// ── Build message array for Claude ──────────────────────────────────────────
-function buildMessages(userText) {
-  const systemPrompt = `You are the executive assistant and chief of staff for Mike Warriner, founder of Ashvaren Advisory Limited, an independent advisory practice in London serving creative and IP-rich businesses.
-
-Mike's active clients include: Salt Creek, Office Test / Ultra HR, Aceae Nutra, Selka Health, PCC Governance.
-
-Your job is to listen to a voice memo, classify the intent, and return a JSON action object. Be brief and precise. Respond ONLY with valid JSON, no markdown, no preamble.
-
-Action types:
-- reminder: { type: "reminder", title: string, datetime: string|null, notes: string|null }
-- calendar: { type: "calendar", title: string, datetime: string, duration_mins: number, notes: string|null, confirm_required: true }
-- note: { type: "note", client: string|null, content: string }
-- new_client: { type: "new_client", confirm_required: true, data: { name: string|null, contact: string|null, engagement_type: string|null }, next_question: string }
-- new_project: { type: "new_project", confirm_required: true, data: { name: string|null, goal: string|null }, next_question: string }
-- deep_continue: { type: "deep_continue", next_question: string, data: object, complete: boolean, summary: string|null }
-- unknown: { type: "unknown", response: string }
-
-Rules:
-- calendar and new_client always set confirm_required: true
-- For new_client or new_project, if information is missing, set next_question to ask for it
-- Keep all strings concise
-- Today is ${new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' })}
-- Current time is ${new Date().toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' })}`;
-
-  const msgs = [{ role: 'user', content: userText }];
-
-  if (deepMode.active && deepMode.context.length) {
-    return [
-      ...deepMode.context,
-      { role: 'user', content: userText }
-    ];
-  }
-
-  return msgs;
-}
-
-// ── Call Claude via Worker ───────────────────────────────────────────────────
-async function callClaude(messages) {
-  const response = await fetch(WORKER_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      messages,
-      datetime: new Date().toLocaleString('en-GB', {
-        weekday: 'long', year: 'numeric', month: 'long',
-        day: 'numeric', hour: '2-digit', minute: '2-digit'
-      }),
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Worker returned ${response.status}`);
-  }
-
-  return await response.json();
-}
-
-// ── Handle result ────────────────────────────────────────────────────────────
-async function handleResult(transcript, result) {
-  setStatus('ready');
-
-  if (!googleToken) {
-    addEntry({ type: 'note', transcript, response: 'Not signed in to Google. Tap Sign in to connect.' });
-    return;
-  }
-
-  try {
-    // Load current tracker state
-    const state = await loadTrackerState();
-    if (!state) {
-      addEntry({ type: 'note', transcript, response: 'Could not load tracker state from Drive.' });
-      return;
-    }
-
-    if (result.type === 'reminder' || result.type === 'note') {
-      // Add as a task in the tracker
-      const engId = resolveEngagement(result.client || result.engagement, state.engagements);
-      const task  = {
-        id:         't' + Date.now(),
-        title:      result.title || result.content,
-        engagement: engId || '',
-        due:        result.due || (result.type === 'reminder' ? 'today' : 'this-week'),
-        done:       false,
-      };
-      state.tasks.push(task);
-      await saveTrackerState(state);
-
-      const engName = engId ? state.engagements.find(e => e.id === engId)?.name : null;
-      addEntry({
-        type: result.type === 'reminder' ? 'reminder' : 'note',
-        transcript,
-        response: engName
-          ? `Added to tracker under ${engName}: "${task.title}"`
-          : `Added to tracker: "${task.title}"`,
-      });
-
-    } else if (result.type === 'calendar') {
-      addConfirmEntry({
-        transcript,
-        label: 'calendar',
-        message: `Add to calendar: "${result.title}" on ${result.datetime} (${result.duration_mins} min)?`,
-        onConfirm: async () => {
-          // Add as a task with the date in the title for now
-          const task = {
-            id:         't' + Date.now(),
-            title:      `${result.title} — ${result.datetime}`,
-            engagement: '',
-            due:        'this-week',
-            done:       false,
-          };
-          state.tasks.push(task);
-          await saveTrackerState(state);
-        },
-      });
-
-    } else if (result.type === 'new_client' || result.type === 'new_project') {
-      addEntry({
-        type: result.type === 'new_client' ? 'client' : 'note',
-        transcript,
-        response: result.type === 'new_client'
-          ? 'Starting new client setup…'
-          : 'Starting new project setup…',
-      });
-      openDeepMode(result);
-
-    } else if (result.type === 'deep_continue') {
-      if (result.complete && result.engagement) {
-        // Write new engagement and tasks to tracker
-        const newEng = {
-          id:           'e' + Date.now(),
-          name:         result.engagement.name,
-          type:         result.engagement.type || 'Advisory',
-          status:       result.engagement.isProspective ? 'prospective' : 'active',
-          last:         `Engagement opened via assistant`,
-          next:         result.engagement.next || 'Draft NDA and engagement letter',
-          deadline:     '',
-          contactName:  result.engagement.contact || '',
-          contactEmail: '',
-          scope:        result.engagement.scope || '',
-          notes:        '',
-          driveFolder:  null,
-          isProspective: result.engagement.isProspective || false,
-          lastContact:  new Date().toISOString().split('T')[0],
-          history:      [],
-          feeType:      '',
-          estDays:      null,
-          fixedAmount:  null,
-          probability:  result.engagement.isProspective ? 25 : 100,
-        };
-        state.engagements.push(newEng);
-        (result.tasks || []).forEach(t => {
-          state.tasks.push({
-            id:         't' + Date.now() + Math.random(),
-            title:      t.title,
-            engagement: newEng.id,
-            due:        t.due || 'this-week',
-            done:       false,
-          });
-        });
-        await saveTrackerState(state);
-        closeDeepMode();
-        addEntry({
-          type: 'client',
-          transcript,
-          response: `${newEng.name} added to tracker with ${result.tasks?.length || 0} tasks.`,
-        });
-      } else {
-        updateDeepMode(result);
-      }
-
-    } else if (result.type === 'engagement_update') {
-      // Update an existing engagement's last/next fields
-      const eng = state.engagements.find(e =>
-        e.id === result.engagementId ||
-        e.name.toLowerCase().includes((result.engagementName || '').toLowerCase())
-      );
-      if (eng) {
-        if (result.last) eng.last = result.last;
-        if (result.next) eng.next = result.next;
-        if (result.status) eng.status = result.status;
-        if (result.historyEntry) {
-          if (!eng.history) eng.history = [];
-          eng.history.push({
-            date: new Date().toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' }),
-            type: 'assistant',
-            text: result.historyEntry,
-          });
-        }
-        await saveTrackerState(state);
-        addEntry({
-          type: 'note',
-          transcript,
-          response: `${eng.name} updated in tracker.`,
-        });
-      } else {
-        addEntry({ type: 'note', transcript, response: result.response || 'Got it.' });
-      }
-
-    } else {
-      addEntry({ type: 'note', transcript, response: result.response || 'Got it.' });
-    }
-
-  } catch(err) {
-    addEntry({ type: 'note', transcript, response: `Error writing to tracker: ${err.message}` });
-  }
-}
-
-// ── Resolve engagement by partial name ───────────────────────────────────────
-function resolveEngagement(nameHint, engagements) {
-  if (!nameHint || !engagements) return null;
-  const hint = nameHint.toLowerCase();
-  const match = engagements.find(e => e.name.toLowerCase().includes(hint) || hint.includes(e.name.toLowerCase().split(' ')[0]));
-  return match ? match.id : null;
-}
-
-// ── Deep mode ────────────────────────────────────────────────────────────────
-function openDeepMode(result) {
-  deepMode.active  = true;
-  deepMode.context = [{ role: 'user', content: 'Starting: ' + JSON.stringify(result) }];
-  deepMode.pendingAction = result;
-  deepQuestion.textContent = result.next_question;
-  deepInput.value = '';
-  deepPanel.classList.add('active');
-  setTimeout(() => deepInput.focus(), 200);
-}
-
-function updateDeepMode(result) {
-  deepMode.context.push({ role: 'assistant', content: JSON.stringify(result) });
-  deepQuestion.textContent = result.next_question;
-  deepInput.value = '';
-}
-
-function closeDeepMode() {
-  deepMode.active  = false;
-  deepMode.context = [];
-  deepPanel.classList.remove('active');
-}
-
-function submitDeepInput(text) {
-  if (!text.trim()) return;
-  deepMode.context.push({ role: 'user', content: text });
-  deepInput.value = '';
-  processTranscript(text);
-}
-
-deepInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') submitDeepInput(deepInput.value);
-});
-
-deepClose.addEventListener('click', () => {
-  closeDeepMode();
-  addEntry({ type: 'note', transcript: '', response: 'Flow cancelled.' });
-});
-
-// Deep mode mic button
-deepMicBtn.addEventListener('click', () => {
-  if (!recognition && !initRecognition()) return;
-  if (isRecording) { recognition.stop(); return; }
-  finalTranscript = '';
-  recognition.onend = () => {
-    isRecording = false;
-    if (finalTranscript.trim()) submitDeepInput(finalTranscript.trim());
-    // restore normal onend
-    recognition.onend = normalOnEnd;
-  };
-  recognition.start();
-  deepMicBtn.style.color = 'var(--danger)';
-  setTimeout(() => { deepMicBtn.style.color = ''; }, 3000);
-});
-
-function normalOnEnd() {
-  isRecording = false;
-  recordBtn.classList.remove('recording');
-  waveform.classList.remove('active');
-  if (finalTranscript.trim()) processTranscript(finalTranscript.trim());
-  else { setStatus('ready'); recordHint.textContent = 'Hold to speak'; liveTranscript.textContent = ''; }
-}
-
-// ── Feed helpers ─────────────────────────────────────────────────────────────
-function hideFeedEmpty() {
-  if (feedEmpty) feedEmpty.style.display = 'none';
-}
-
-function addEntry({ type, transcript, response }) {
-  const el = document.createElement('div');
-  el.className = 'entry';
-  el.innerHTML = `
-    <div class="entry-meta">
-      <span class="entry-type ${type}">${type}</span>
-      <span class="entry-time">${new Date().toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' })}</span>
-    </div>
-    ${transcript ? `<div class="entry-transcript">"${transcript}"</div>` : ''}
-    <div class="entry-response">${response}</div>
-  `;
-  feed.appendChild(el);
-  el.scrollIntoView({ behavior: 'smooth', block: 'end' });
-}
-
-function addConfirmEntry({ transcript, label, message, onConfirm }) {
-  const el = document.createElement('div');
-  el.className = 'entry needs-confirm';
-  el.innerHTML = `
-    <div class="entry-meta">
-      <span class="entry-type confirm">${label}</span>
-      <span class="entry-time">${new Date().toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' })}</span>
-    </div>
-    ${transcript ? `<div class="entry-transcript">"${transcript}"</div>` : ''}
-    <div class="entry-response">${message}</div>
-    <div class="confirm-actions">
-      <button class="btn btn-confirm">Do it</button>
-      <button class="btn btn-cancel">Cancel</button>
-    </div>
-  `;
-  el.querySelector('.btn-confirm').addEventListener('click', () => {
-    onConfirm();
-    el.querySelector('.confirm-actions').remove();
-    el.querySelector('.entry-response').textContent = '✓ Done.';
-    el.classList.remove('needs-confirm');
-  });
-  el.querySelector('.btn-cancel').addEventListener('click', () => {
-    el.querySelector('.confirm-actions').remove();
-    el.querySelector('.entry-response').textContent = 'Cancelled.';
-    el.classList.remove('needs-confirm');
-  });
-  feed.appendChild(el);
-  el.scrollIntoView({ behavior: 'smooth', block: 'end' });
-}
-
-// ── Google OAuth ─────────────────────────────────────────────────────────────
-const DRIVE_SCOPES  = 'https://www.googleapis.com/auth/drive.file';
-const DRIVE_FILE    = 'ashvaren-tracker-state.json';
-let googleToken     = null;
-let driveFileId     = null;
-
-function getClientId() {
-  return localStorage.getItem('ashvaren_client_id') || '';
-}
-
-function saveClientId(id) {
-  localStorage.setItem('ashvaren_client_id', id.trim());
-}
-
-function signInWithGoogle() {
-  const clientId = getClientId();
-  if (!clientId) {
-    promptClientId();
-    return;
-  }
-  const redirect = window.location.origin + window.location.pathname;
-  window.location.href = `https://accounts.google.com/o/oauth2/v2/auth`
-    + `?client_id=${encodeURIComponent(clientId)}`
-    + `&redirect_uri=${encodeURIComponent(redirect)}`
-    + `&response_type=token`
-    + `&scope=${encodeURIComponent(DRIVE_SCOPES)}`
-    + `&prompt=consent`;
-}
-
-function promptClientId() {
-  const existing = getClientId();
-  const id = window.prompt(
-    'Enter your Google OAuth Client ID\n(from console.cloud.google.com — same one used in the work tracker)',
-    existing
-  );
-  if (id && id.trim()) {
-    saveClientId(id.trim());
-    signInWithGoogle();
-  }
-}
-
-function handleOAuthCallback() {
-  const hash = window.location.hash;
-  if (!hash.includes('access_token')) return false;
-  const params = new URLSearchParams(hash.replace('#', '?'));
-  const token  = params.get('access_token');
-  if (token) {
-    localStorage.setItem('google_token', token);
-    googleToken = token;
-    window.location.hash = '';
-    return true;
-  }
+  if (loadMsg) loadMsg.textContent = 'Error on load — see red banner';
   return false;
+};
+window.addEventListener('unhandledrejection', function(e) {
+  const banner = document.getElementById('error-banner');
+  if (banner) {
+    banner.style.display = 'block';
+    banner.textContent = (banner.textContent || '') + '\nUnhandled promise: ' + (e.reason ? e.reason.toString() : 'unknown');
+  }
+});
+
+const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/calendar.readonly';
+const DRIVE_FILE = 'ashvaren-tracker-state.json';
+const WORK_CAL = 'mike@ashvaren.com';
+const FAMILY_CAL = 'mikeandlucyw@gmail.com';
+
+let cfg = { clientId:'', proxyUrl:'' };
+let token = null, driveFileId = null, editEngId = null, taskFilter = 'all';
+let obStep = 0, obType = 'confirmed';
+let calEvents = { today:[], tomorrow:[] };
+let state = { engagements:[], tasks:[] };
+
+const FOLLOWUP_DAYS = 7;
+function daysSince(dateStr) {
+  if (!dateStr) return 999;
+  const d = new Date(dateStr);
+  const now = new Date();
+  return Math.floor((now - d) / (1000 * 60 * 60 * 24));
 }
 
-// ── Drive helpers ─────────────────────────────────────────────────────────────
-async function driveGet(url) {
-  const res = await fetch(url, {
-    headers: { 'Authorization': `Bearer ${googleToken}` }
-  });
-  if (res.status === 401) {
-    googleToken = null;
-    localStorage.removeItem('google_token');
-    updateAuthUI();
-    throw new Error('Google session expired. Please sign in again.');
+// ── STATE NORMALISATION ───────────────────────────────────────────────────────
+function normaliseState() {
+  state.engagements = state.engagements.map(e => ({
+    driveFolder: null,
+    isProspective: false,
+    lastContact: null,
+    contactName: '',
+    contactEmail: '',
+    scope: '',
+    notes: '',
+    deadline: '',
+    history: [],
+    feeType: '',
+    estDays: null,
+    fixedAmount: null,
+    probability: e.isProspective ? 25 : 100,
+    ...e
+  }));
+  state.tasks = state.tasks.map(t => ({
+    done: false,
+    engagement: '',
+    due: 'this-week',
+    ...t
+  }));
+}
+
+
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+window.onload = async () => {
+  cfg.clientId = localStorage.getItem('cfg_client_id') || '';
+  cfg.proxyUrl = localStorage.getItem('cfg_proxy_url') || '';
+  const hash = window.location.hash;
+  if (hash.includes('access_token')) {
+    token = new URLSearchParams(hash.replace('#','?')).get('access_token');
+    localStorage.setItem('goog_token', token);
+    window.location.hash = '';
+    await boot(); return;
   }
+  token = localStorage.getItem('goog_token');
+  if (token && cfg.clientId && cfg.proxyUrl) {
+    try { await boot(); }
+    catch(e) {
+      const banner = document.getElementById('error-banner');
+      if (banner) { banner.style.display='block'; banner.textContent='Boot error: ' + e.message + '\n' + e.stack; }
+      document.getElementById('loading-msg').textContent = 'Boot failed — see red banner';
+    }
+  }
+  else {
+    document.getElementById('loading').style.display = 'none';
+    if (cfg.clientId) document.getElementById('cfg-client-id').value = cfg.clientId;
+    if (cfg.proxyUrl) document.getElementById('cfg-proxy-url').value = cfg.proxyUrl;
+    document.getElementById('auth-screen').style.display = 'flex';
+  }
+};
+
+function saveConfigAndAuth() {
+  cfg.clientId = document.getElementById('cfg-client-id').value.trim();
+  cfg.proxyUrl = document.getElementById('cfg-proxy-url').value.trim().replace(/\/$/,'');
+  if (!cfg.clientId || !cfg.proxyUrl) { alert('Both fields are required.'); return; }
+  localStorage.setItem('cfg_client_id', cfg.clientId);
+  localStorage.setItem('cfg_proxy_url', cfg.proxyUrl);
+  goGoogle();
+}
+function goGoogle() {
+  const r = window.location.origin + window.location.pathname;
+  window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(cfg.clientId)}&redirect_uri=${encodeURIComponent(r)}&response_type=token&scope=${encodeURIComponent(SCOPES)}&prompt=consent`;
+}
+function signOut() { localStorage.removeItem('goog_token'); token=null; document.getElementById('app').style.display='none'; document.getElementById('auth-screen').style.display='flex'; }
+function openSettings() { document.getElementById('s-client-id').value=cfg.clientId; document.getElementById('s-proxy-url').value=cfg.proxyUrl; document.getElementById('settings-modal').classList.add('open'); }
+function closeSettings() { document.getElementById('settings-modal').classList.remove('open'); }
+function saveSettings() {
+  const id=document.getElementById('s-client-id').value.trim(), px=document.getElementById('s-proxy-url').value.trim().replace(/\/$/,'');
+  if(!id||!px){alert('Both fields required.');return;}
+  const changed=id!==cfg.clientId; cfg.clientId=id; cfg.proxyUrl=px;
+  localStorage.setItem('cfg_client_id',id); localStorage.setItem('cfg_proxy_url',px);
+  closeSettings(); if(changed){toast('Re-authenticating…');setTimeout(goGoogle,1200);}else toast('Settings saved');
+}
+
+async function boot() {
+  document.getElementById('loading').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('cal-date').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
+  await loadFromDrive(); await loadCalendar(); render();
+  checkProspectFlags();
+  if (shouldRunWeeklyReview()) {
+    setTimeout(() => runWeeklyReview(true), 800);
+  }
+}
+
+// ── DRIVE ─────────────────────────────────────────────────────────────────────
+async function gapi(url, opts={}) {
+  const res = await fetch(url,{...opts,headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json',...(opts.headers||{})}});
+  if(res.status===401){localStorage.removeItem('goog_token');goGoogle();return null;}
   return res;
 }
+async function mkFolder(parentId, name) {
+  const q=`name='${name}' and mimeType='application/vnd.google-apps.folder' and '${parentId}' in parents and trashed=false`;
+  const r=await gapi(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id)`);
+  if(!r)return null; const d=await r.json();
+  if(d.files&&d.files.length)return d.files[0].id;
+  const c=await gapi('https://www.googleapis.com/drive/v3/files',{method:'POST',body:JSON.stringify({name,mimeType:'application/vnd.google-apps.folder',parents:[parentId]})});
+  if(!c)return null; const f=await c.json(); return f.id;
+}
+async function ensurePath(parts) { let p='root'; for(const n of parts){p=await mkFolder(p,n);if(!p)return null;} return p; }
 
-async function ensureDriveFolder(parts) {
-  let parentId = 'root';
-  for (const name of parts) {
-    const q = `name='${name}' and mimeType='application/vnd.google-apps.folder' and '${parentId}' in parents and trashed=false`;
-    const r = await driveGet(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id)`);
-    const d = await r.json();
-    if (d.files && d.files.length) {
-      parentId = d.files[0].id;
+async function createClientFolder(name, isProsp) {
+  return await ensurePath(['Ashvaren', isProsp?'Prospects':'Clients', name]);
+}
+
+async function loadFromDrive() {
+  setSS('Loading…');
+  try {
+    const fid=await ensurePath(['Ashvaren','Tracker']); if(!fid){setSS('Drive error');return;}
+    const q=`name='${DRIVE_FILE}' and '${fid}' in parents and trashed=false`;
+    const r=await gapi(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id)`);
+    if(!r)return; const d=await r.json();
+    if(d.files&&d.files.length){
+      driveFileId=d.files[0].id;
+      const fr=await gapi(`https://www.googleapis.com/drive/v3/files/${driveFileId}?alt=media`);
+      if(fr){const j=await fr.json();if(j.engagements){state=j;normaliseState();}}
     } else {
-      const c = await fetch('https://www.googleapis.com/drive/v3/files', {
-        method: 'POST',
-        headers: { 'Authorization': `Bearer ${googleToken}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, mimeType: 'application/vnd.google-apps.folder', parents: [parentId] })
-      });
-      const f = await c.json();
-      parentId = f.id;
+      state={engagements:[
+        {id:'e1',name:'Salt Creek',type:'Advisory',status:'active',last:'Three-statement model delivered to Nik and David',next:'Investor deck outline',deadline:'',contactName:'',contactEmail:'',driveFolder:null,isProspective:false,lastContact:null},
+        {id:'e2',name:'Office Test / Ultra HR',type:'Advisory',status:'active',last:'Strategy, scope and go-to-market paper iterated',next:'Follow-up call to confirm launch priorities',deadline:'',contactName:'',contactEmail:'',driveFolder:null,isProspective:false},
+        {id:'e3',name:'Ashvaren internal',type:'Internal',status:'active',last:'Transcription pipeline built',next:'Business development outreach',deadline:'',contactName:'',contactEmail:'',driveFolder:null,isProspective:false},
+      ],tasks:[
+        {id:'t1',title:'Investor deck outline for Salt Creek',engagement:'e1',due:'this-week',done:false},
+        {id:'t2',title:'Follow-up call with Office Test',engagement:'e2',due:'today',done:false},
+        {id:'t3',title:'BD outreach — two warm contacts',engagement:'e3',due:'this-week',done:false},
+      ]};
+      normaliseState();
+      await saveToD();
+    }
+    setSS('');
+  } catch(e){setSS('Drive error');console.error(e);}
+}
+
+async function saveToD() {
+  setSS('Saving…');
+  try {
+    const fid=await ensurePath(['Ashvaren','Tracker']); if(!fid){setSS('Save failed');return;}
+    const body=JSON.stringify(state,null,2);
+    if(driveFileId){
+      await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`,{method:'PATCH',headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},body});
+    } else {
+      const m=await gapi('https://www.googleapis.com/drive/v3/files',{method:'POST',body:JSON.stringify({name:DRIVE_FILE,mimeType:'application/json',parents:[fid]})});
+      if(m){const f=await m.json();driveFileId=f.id;await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`,{method:'PATCH',headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},body});}
+    }
+    setSS('Saved ✓'); setTimeout(()=>setSS(''),3000);
+  } catch(e){setSS('Save failed');}
+}
+function setSS(m){document.getElementById('sync-status').textContent=m;}
+
+// ── CALENDAR ──────────────────────────────────────────────────────────────────
+async function loadCalendar() {
+  const now=new Date();
+  const s=(off,h,m,s)=>{const d=new Date(now.getFullYear(),now.getMonth(),now.getDate()+off,h,m,s);return d.toISOString();};
+  calEvents={today:[],tomorrow:[]};
+  for(const [cal,lbl] of [[WORK_CAL,'work'],[FAMILY_CAL,'family']]){
+    for(const [key,off] of [['today',0],['tomorrow',1]]){
+      try{
+        const r=await gapi(`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(cal)}/events?timeMin=${s(off,0,0,0)}&timeMax=${s(off,23,59,59)}&singleEvents=true&orderBy=startTime`);
+        if(r){const d=await r.json();(d.items||[]).forEach(ev=>calEvents[key].push({...ev,_cal:lbl}));}
+      }catch(e){}
     }
   }
-  return parentId;
+  for(const k of['today','tomorrow']) calEvents[k].sort((a,b)=>(a.start.dateTime||a.start.date)>(b.start.dateTime||b.start.date)?1:-1);
 }
 
-async function loadTrackerState() {
-  const folderId = await ensureDriveFolder(['Ashvaren', 'Tracker']);
-  const q = `name='${DRIVE_FILE}' and '${folderId}' in parents and trashed=false`;
-  const r = await driveGet(`https://www.googleapis.com/drive/v3/files?q=${encodeURIComponent(q)}&fields=files(id)`);
-  const d = await r.json();
-  if (!d.files || !d.files.length) return null;
-  driveFileId = d.files[0].id;
-  const fr = await driveGet(`https://www.googleapis.com/drive/v3/files/${driveFileId}?alt=media`);
-  return await fr.json();
+function fmtTime(ev){if(ev.start.date)return'all day';return new Date(ev.start.dateTime).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});}
+
+function renderCalPanel(evs,id){
+  const el=document.getElementById(id);
+  if(!evs.length){el.innerHTML='<div class="empty-state">Nothing scheduled</div>';return;}
+  el.innerHTML=evs.map(ev=>`<div class="cal-event"><div class="cal-dot dot-${ev._cal}"></div><div class="cal-time">${fmtTime(ev)}</div><div><div class="cal-title">${ev.summary||'(no title)'}</div>${ev.location?`<div class="cal-cal">${ev.location}</div>`:''}</div></div>`).join('');
 }
 
-async function saveTrackerState(state) {
-  if (!driveFileId) return;
-  await fetch(`https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=media`, {
-    method: 'PATCH',
-    headers: {
-      'Authorization': `Bearer ${googleToken}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(state, null, 2)
+// ── RENDER ────────────────────────────────────────────────────────────────────
+function render(){
+  renderCalPanel(calEvents.today,'cal-today');
+  renderCalPanel(calEvents.tomorrow,'cal-tomorrow');
+  renderTodayTasks(); renderCards(); renderTasks(); renderPipeline();
+  checkProspectFlags();
+  updateUploadEngSelect();
+}
+function eName(id){const e=state.engagements.find(x=>x.id===id);return e?e.name:'';}
+function sLabel(s){return{active:'Active',waiting:'Waiting',stalled:'Stalled',paused:'Paused',prospective:'Prospective'}[s]||s;}
+function sClass(s){return{active:'s-active',waiting:'s-waiting',stalled:'s-stalled',paused:'s-paused',prospective:'s-prospective'}[s]||'';}
+
+function renderTodayTasks(){
+  const el=document.getElementById('today-tasks');
+  const items=state.tasks.filter(t=>t.due==='today'||t.due==='tomorrow');
+  if(!items.length){el.innerHTML='<div class="empty-state">No tasks for today or tomorrow</div>';return;}
+  el.innerHTML=items.map(t=>`<div class="today-task"><div class="task-check ${t.done?'done':''}" onclick="toggleTask('${t.id}')"></div><div><div class="task-text ${t.done?'done':''}">${t.title}</div><div class="task-eng">${eName(t.engagement)}</div></div></div>`).join('');
+}
+
+function renderCards(){
+  const tc=eid=>state.tasks.filter(t=>t.engagement===eid&&!t.done).length;
+  document.getElementById('cards-grid').innerHTML=state.engagements.map(e=>`
+    <div class="eng-card ${e.isProspective?'prospective':''}">
+      <div class="eng-card-top">
+        <div>
+          <div class="eng-name">${e.name}${e.isProspective && daysSince(e.lastContact) >= FOLLOWUP_DAYS ? '<span class="prospect-flag" title="Follow-up overdue"></span>' : ''}</div>
+          <div class="eng-type">${e.type}</div>
+          ${e.contactName?`<div class="eng-contact">${e.contactName}${e.contactEmail?' &mdash; '+e.contactEmail:''}</div>`:''}
+        </div>
+        <span class="status-pill ${sClass(e.status)}">${sLabel(e.status)}</span>
+      </div>
+      <div class="eng-section"><div class="eng-label">Last action</div><div class="eng-value">${e.last||'—'}</div></div>
+      <div class="eng-section"><div class="eng-label">Next step</div><div class="eng-next">${e.next||'—'}</div></div>
+      ${e.deadline?`<div class="eng-deadline">Due: ${e.deadline}</div>`:''}
+      ${tc(e.id)>0?`<div class="eng-tasks-count">${tc(e.id)} open task${tc(e.id)!==1?'s':''}</div>`:''}
+      <div class="eng-footer">
+        <button class="eng-btn" onclick="openEditEng('${e.id}')">Edit</button>
+        <button class="eng-btn" onclick="quickTask('${e.id}')">+ Task</button>
+        ${e.driveFolder
+          ? `<button class="eng-btn drive" onclick="openDrive('${e.driveFolder}')">Drive ↗</button>`
+          : `<button class="eng-btn drive" onclick="createFolderForEng('${e.id}')">+ Drive folder</button>`
+        }
+        <button class="eng-btn danger" onclick="deleteEng('${e.id}')">Remove</button>
+      </div>
+      ${(e.history||[]).length > 0 ? `<div class="eng-history">
+        <div class="eng-history-title">
+          <span>History (${(e.history||[]).length})</span>
+          <button class="add-note-btn" onclick="openNoteModal('${e.id}')">+ Note</button>
+        </div>
+        ${[...(e.history||[])].reverse().slice(0,3).map(h=>`
+          <div class="eng-history-entry">
+            <div class="eng-history-date"><span class="eng-history-type ht-${h.type}">${h.type}</span>${h.date}</div>
+            <div class="eng-history-text">${h.text}</div>
+          </div>`).join('')}
+      </div>` : `<div class="eng-history">
+        <div class="eng-history-title"><span>History</span><button class="add-note-btn" onclick="openNoteModal('${e.id}')">+ Note</button></div>
+        <div style="font-size:12px;color:var(--text-tertiary);padding:6px 0;">No entries yet</div>
+      </div>`}
+    </div>`).join('')+`<div class="add-card" onclick="openOnboard()">+ New engagement</div>`;
+}
+
+function renderTasks(){
+  document.getElementById('filter-pills').innerHTML=[{id:'all',name:'All'},...state.engagements.map(e=>({id:e.id,name:e.name}))].map(e=>`<button class="filter-pill ${taskFilter===e.id?'active':''}" onclick="setTF('${e.id}')">${e.name}</button>`).join('');
+  const g={today:[],tomorrow:[],'this-week':[],later:[],done:[]};
+  state.tasks.forEach(t=>{if(taskFilter!=='all'&&t.engagement!==taskFilter)return;if(t.done)g.done.push(t);else(g[t.due]||g.later).push(t);});
+  const lbl={today:'Today',tomorrow:'Tomorrow','this-week':'This week',later:'Later',done:'Done'};
+  document.getElementById('task-list').innerHTML=Object.entries(g).map(([k,ts])=>{
+    if(!ts.length)return'';
+    return`<div class="task-group"><div class="task-group-header">${lbl[k]} (${ts.length})</div>${ts.map(t=>`<div class="task-row"><div class="task-check ${t.done?'done':''}" onclick="toggleTask('${t.id}')"></div><div class="task-body"><div class="task-title ${t.done?'done':''}">${t.title}</div><div class="task-meta">${eName(t.engagement)?`<span class="meta-eng">${eName(t.engagement)}</span>`:''}<span class="meta-due">${lbl[t.due]||t.due}</span></div></div><button class="task-mail-btn" onclick="draftEmail('${t.id}')" title="Draft email">✉</button><button class="task-del" onclick="delTask('${t.id}')">Remove</button></div>`).join('')}</div>`;
+  }).join('');
+}
+
+function showView(n,btn){['today','engagements','tasks','pipeline'].forEach(v=>document.getElementById('view-'+v).style.display='none');document.querySelectorAll('.nav-tab').forEach(b=>b.classList.remove('active'));document.getElementById('view-'+n).style.display='block';btn.classList.add('active');}
+function openDrive(id){window.open(`https://drive.google.com/drive/folders/${id}`,'_blank');}
+
+async function createFolderForEng(engId) {
+  const eng = state.engagements.find(e => e.id === engId);
+  if (!eng) return;
+  const btn = document.querySelector(`button[onclick="createFolderForEng('${engId}')"]`);
+  if (btn) { btn.textContent = 'Creating…'; btn.disabled = true; }
+  try {
+    const folderId = await createClientFolder(eng.name, eng.isProspective);
+    if (!folderId) throw new Error('Folder creation returned null');
+    eng.driveFolder = folderId;
+    await saveToD();
+    render();
+    toast(`Drive folder created for ${eng.name}`);
+  } catch(e) {
+    toast(`Could not create folder: ${e.message}`);
+    if (btn) { btn.textContent = '+ Drive folder'; btn.disabled = false; }
+  }
+}
+
+// ── ONBOARDING ────────────────────────────────────────────────────────────────
+function openOnboard(pre){
+  obStep=0; obType='confirmed';
+  ['ob-name','ob-legal','ob-conum','ob-conflict','ob-cname','ob-cemail','ob-dm','ob-scope','ob-billing','ob-problem','ob-budget'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('ob-intro').value=''; document.getElementById('ob-fee').value=''; document.getElementById('ob-nda').value='ashvaren';
+  document.getElementById('tt-confirmed').classList.add('active'); document.getElementById('tt-prospective').classList.remove('active');
+  if(pre){
+    if(pre.name)document.getElementById('ob-name').value=pre.name;
+    if(pre.contactName)document.getElementById('ob-cname').value=pre.contactName;
+    if(pre.scope)document.getElementById('ob-scope').value=pre.scope;
+    if(pre.type==='prospective'){obType='prospective';document.getElementById('tt-prospective').classList.add('active');document.getElementById('tt-confirmed').classList.remove('active');}
+  }
+  updateOb(); document.getElementById('onboard-modal').classList.add('open');
+}
+function hasOnboardData() {
+  const fields = ['ob-name','ob-legal','ob-conum','ob-cname','ob-cemail','ob-scope','ob-problem'];
+  return fields.some(id => { const el = document.getElementById(id); return el && el.value.trim().length > 0; });
+}
+function closeOnboard(force) {
+  if (!force && hasOnboardData()) {
+    if (!confirm('You have unsaved onboarding data. Are you sure you want to close?')) return;
+  }
+  document.getElementById('onboard-modal').classList.remove('open');
+}
+
+function setObType(t){
+  obType=t;
+  document.getElementById('tt-confirmed').classList.toggle('active',t==='confirmed');
+  document.getElementById('tt-prospective').classList.toggle('active',t==='prospective');
+}
+
+function updateOb(){
+  [0,1,2].forEach(i=>{
+    document.getElementById('ob-s'+i).style.display=i===obStep?'block':'none';
+    const ps=document.getElementById('ps'+i);
+    ps.className='progress-step'+(i<obStep?' done':i===obStep?' active':'');
   });
+  document.getElementById('ob-back').style.display=obStep>0?'block':'none';
+  document.getElementById('ob-next').textContent=obStep===2?'Create ✓':'Next →';
+  document.getElementById('ob-next').disabled=false;
+  const titles=['Client details','Contact & scope','Review & create'];
+  document.getElementById('ob-title').textContent=titles[obStep];
+  if(obStep===1){
+    const isp=obType==='prospective';
+    document.getElementById('ob-scope-hdr').textContent=isp?'Background':'Scope & fees';
+    document.getElementById('ob-scope-lbl').textContent=isp?'Problem statement':'Scope summary';
+    document.getElementById('ob-scope').placeholder=isp?'What are they trying to solve?':'One or two sentences — becomes the recital in the engagement letter.';
+    document.getElementById('ob-confirmed-fields').style.display=isp?'none':'block';
+    document.getElementById('ob-prosp-fields').style.display=isp?'block':'none';
+  }
+  if(obStep===2)renderObSummary();
 }
 
-// ── Auth UI ───────────────────────────────────────────────────────────────────
-function updateAuthUI() {
-  const signInBtn = document.getElementById('signInBtn');
-  const signInNote = document.getElementById('signInNote');
-  if (googleToken) {
-    signInBtn.style.display = 'none';
-    signInNote.style.display = 'none';
-    setStatus('ready');
-    recordBtn.classList.add('ready');
+function renderObSummary(){
+  const v=id=>document.getElementById(id).value;
+  const name=v('ob-name')||'(no name)', isp=obType==='prospective';
+  const rows=[
+    ['Type',isp?'Prospective client':'Confirmed engagement'],
+    ['Client',name+(v('ob-legal')?` (${v('ob-legal')})`:'')],
+    v('ob-conum')?['Company no.',v('ob-conum')]:null,
+    v('ob-intro')?['Introduced via',v('ob-intro')]:null,
+    v('ob-conflict')?['Conflict check',v('ob-conflict')]:null,
+    v('ob-cname')?['Contact',v('ob-cname')+(v('ob-cemail')?` — ${v('ob-cemail')}`:'')] :null,
+    v('ob-dm')?['Decision-maker',v('ob-dm')]:null,
+    v('ob-scope')?['Scope',v('ob-scope')]:null,
+    !isp&&v('ob-fee')?['Fee',v('ob-fee')]:null,
+    !isp?['NDA',{ashvaren:'Ashvaren NDA',client:"Client's own",none:'No NDA'}[v('ob-nda')]||'']:null,
+    isp&&v('ob-budget')?['Budget',v('ob-budget')]:null,
+    ['Drive folder',`will create: Ashvaren/${isp?'Prospects':'Clients'}/${name}/`],
+  ].filter(Boolean);
+  const nda=v('ob-nda');
+  const tasks=isp
+    ?[`Follow up with ${v('ob-cname')||'contact'} at ${name}`,`Prepare capability overview for ${name}`]
+    :[
+      nda!=='none'?`Draft NDA for ${name} (Ashvaren Claude project)`:null,
+      `Draft engagement letter for ${name} (Ashvaren Claude project)`,
+      `Send NDA to ${v('ob-cname')||'client'}`,
+      `Send engagement letter to ${v('ob-cname')||'client'}`,
+      `Arrange kick-off call with ${v('ob-cname')||'client'}`,
+    ].filter(Boolean);
+  document.getElementById('ob-summary').innerHTML=`
+    <div style="background:var(--bg);border-radius:8px;padding:1rem;margin-bottom:1rem;">
+      <table style="width:100%;font-size:13px;border-collapse:collapse;">
+        ${rows.map(([l,vl])=>`<tr><td style="color:var(--text-tertiary);padding:4px 0;width:38%;vertical-align:top;padding-right:12px;">${l}</td><td style="padding:4px 0;">${vl}</td></tr>`).join('')}
+      </table>
+    </div>
+    <div style="font-size:11px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;color:var(--text-tertiary);margin-bottom:8px;">Tasks that will be created</div>
+    <ul style="font-size:13px;color:var(--text-secondary);padding-left:1.25rem;line-height:1.9;">${tasks.map(t=>`<li>${t}</li>`).join('')}</ul>`;
+  document.getElementById('ob-drive-status').style.display='none';
+}
+
+function obBack(){if(obStep>0){obStep--;updateOb();}}
+
+async function obNext(){
+  if(obStep===0){
+    if(!document.getElementById('ob-name').value.trim()){toast('Please enter a client name');return;}
+    obStep=1;updateOb();
+  } else if(obStep===1){
+    if(!document.getElementById('ob-cname').value.trim()){toast('Please enter a contact name');return;}
+    obStep=2;updateOb();
   } else {
-    signInBtn.style.display = 'inline-flex';
-    signInNote.style.display = 'block';
-    setStatus('');
-    recordBtn.classList.remove('ready');
+    await doCreate();
   }
 }
 
-// ── Call Claude via Worker ───────────────────────────────────────────────────
-async function callClaude(messages) {
-  const response = await fetch(WORKER_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      messages,
-      datetime: new Date().toLocaleString('en-GB', {
-        weekday: 'long', year: 'numeric', month: 'long',
-        day: 'numeric', hour: '2-digit', minute: '2-digit'
-      }),
-      googleToken,
-      driveFileId,
-    }),
+async function doCreate(){
+  const btn=document.getElementById('ob-next');
+  btn.disabled=true; btn.textContent='Creating…';
+  const ds=document.getElementById('ob-drive-status');
+  const dm=document.getElementById('ob-drive-msg');
+  ds.style.display='flex'; ds.className='drive-status'; dm.textContent='Creating Drive folder…';
+  document.getElementById('ob-drive-spinner').style.display='block';
+
+  const v=id=>document.getElementById(id).value.trim();
+  const name=v('ob-name'), isp=obType==='prospective';
+  const nda=v('ob-nda');
+  const cname=v('ob-cname');
+
+  let driveFolder=null;
+  try {
+    driveFolder=await createClientFolder(name,isp);
+    document.getElementById('ob-drive-spinner').style.display='none';
+    ds.className='drive-status ok';
+    dm.textContent=`Folder created: Ashvaren/${isp?'Prospects':'Clients'}/${name}/`;
+  } catch(e){
+    document.getElementById('ob-drive-spinner').style.display='none';
+    ds.className='drive-status err'; dm.textContent='Folder creation failed — create manually in Drive.';
+  }
+
+  const eid='e'+Date.now();
+  const eng={
+    id:eid, name, type:'Advisory',
+    status:isp?'prospective':'active',
+    last:isp?`Prospect identified — ${cname}`:`Engagement opened — ${cname}`,
+    next:isp?'Initial follow-up':'Draft NDA and engagement letter',
+    deadline:'', contactName:cname, contactEmail:v('ob-cemail'),
+    scope:v('ob-scope')||v('ob-problem'),
+    notes:[v('ob-legal')?`Legal: ${v('ob-legal')}`:'',v('ob-conum')?`Co.No.: ${v('ob-conum')}`:'',v('ob-intro')?`Via: ${v('ob-intro')}`:'',v('ob-conflict')?`Conflict: ${v('ob-conflict')}`:'',v('ob-dm')?`DM: ${v('ob-dm')}`:'',!isp&&v('ob-fee')?`Fee: ${v('ob-fee')}`:'',!isp&&v('ob-billing')?`Billing: ${v('ob-billing')}`:'',!isp?`NDA: ${nda}`:'',isp&&v('ob-budget')?`Budget: ${v('ob-budget')}`:''].filter(Boolean).join(' | '),
+    driveFolder, isProspective:isp,
+    lastContact: new Date().toISOString().split('T')[0],
+    history: [],
+    feeType: !isp ? v('ob-fee') : '',
+    estDays: !isp && v('ob-days') ? parseFloat(v('ob-days')) : null,
+    fixedAmount: !isp && (v('ob-fixed-amt')||v('ob-fixed-amt2')) ? parseFloat(v('ob-fixed-amt')||v('ob-fixed-amt2')) : null,
+    probability: isp ? 25 : 100,
+  };
+  state.engagements.push(eng);
+
+  const tasks=isp
+    ?[{title:`Follow up with ${cname} at ${name}`,due:'this-week'},{title:`Prepare capability overview for ${name}`,due:'later'}]
+    :[
+      nda!=='none'?{title:`Draft NDA for ${name} (Ashvaren Claude project)`,due:'today'}:null,
+      {title:`Draft engagement letter for ${name} (Ashvaren Claude project)`,due:'today'},
+      {title:`Send NDA to ${cname||name}`,due:'this-week'},
+      {title:`Send engagement letter to ${cname||name}`,due:'this-week'},
+      {title:`Arrange kick-off call with ${cname}`,due:'this-week'},
+    ].filter(Boolean);
+
+  tasks.forEach(t=>state.tasks.push({id:'t'+Date.now()+Math.random(),title:t.title,engagement:eid,due:t.due,done:false}));
+
+  await saveToD(); render();
+  setTimeout(()=>{
+    closeOnboard();
+    toast(`${name} created — ${tasks.length} tasks added`);
+    showView('engagements',document.querySelectorAll('.nav-tab')[1]);
+  },1200);
+}
+
+// ── ENG EDIT ──────────────────────────────────────────────────────────────────
+function openEditEng(id){
+  editEngId=id; const e=state.engagements.find(x=>x.id===id); if(!e)return;
+  document.getElementById('eng-modal-title').textContent='Edit engagement';
+  document.getElementById('em-name').value=e.name; document.getElementById('em-type').value=e.type;
+  document.getElementById('em-status').value=e.status; document.getElementById('em-last').value=e.last;
+  document.getElementById('em-next').value=e.next; document.getElementById('em-deadline').value=e.deadline||'';
+  document.getElementById('eng-modal').classList.add('open');
+}
+function closeEngModal(){document.getElementById('eng-modal').classList.remove('open');}
+function saveEngagement(){
+  const feeType=document.getElementById('em-fee-type').value;
+  const prob=document.getElementById('em-prob').value;
+  const days=document.getElementById('em-days').value;
+  const fixed=document.getElementById('em-fixed').value;
+  const d={name:document.getElementById('em-name').value.trim(),type:document.getElementById('em-type').value,status:document.getElementById('em-status').value,last:document.getElementById('em-last').value.trim(),next:document.getElementById('em-next').value.trim(),deadline:document.getElementById('em-deadline').value.trim(),feeType,probability:prob?parseInt(prob):undefined,estDays:days?parseFloat(days):undefined,fixedAmount:fixed?parseFloat(fixed):undefined};
+  Object.keys(d).forEach(k=>d[k]===undefined&&delete d[k]);
+  if(!d.name)return; const i=state.engagements.findIndex(e=>e.id===editEngId); if(i>-1)state.engagements[i]={...state.engagements[i],...d};
+  closeEngModal(); saveAndRender();
+}
+function deleteEng(id){if(!confirm('Remove this engagement?'))return;state.engagements=state.engagements.filter(e=>e.id!==id);saveAndRender();}
+
+// ── TASKS ─────────────────────────────────────────────────────────────────────
+function openTaskModal(pre){
+  const sel=document.getElementById('tm-engagement');
+  sel.innerHTML='<option value="">No engagement</option>'+state.engagements.map(e=>`<option value="${e.id}">${e.name}</option>`).join('');
+  if(pre)sel.value=pre; document.getElementById('tm-title').value='';
+  document.getElementById('task-modal').classList.add('open');
+}
+function quickTask(id){openTaskModal(id);}
+function closeTaskModal(){document.getElementById('task-modal').classList.remove('open');}
+function saveTask(){
+  const t={id:'t'+Date.now(),title:document.getElementById('tm-title').value.trim(),engagement:document.getElementById('tm-engagement').value,due:document.getElementById('tm-due').value,done:false};
+  if(!t.title)return; state.tasks.push(t); closeTaskModal(); saveAndRender();
+}
+function toggleTask(id){const t=state.tasks.find(x=>x.id===id);if(t){t.done=!t.done;saveAndRender();}}
+function delTask(id){state.tasks=state.tasks.filter(t=>t.id!==id);saveAndRender();}
+function setTF(id){taskFilter=id;renderTasks();}
+function saveAndRender(){render();saveToD();}
+
+// ── AI LAYER ──────────────────────────────────────────────────────────────────
+async function sendToAI(){
+  const input=document.getElementById('ai-input'), text=input.value.trim(); if(!text)return;
+  const resp=document.getElementById('ai-response'), btn=document.getElementById('ai-send-btn');
+  resp.className='ai-response visible'; resp.innerHTML='<span class="ai-thinking">Thinking…</span>';
+  btn.disabled=true; input.disabled=true;
+  const ctx=JSON.stringify({engagements:state.engagements.map(e=>({id:e.id,name:e.name,status:e.status,last:e.last,next:e.next})),tasks:state.tasks});
+  try {
+    const r=await fetch(cfg.proxyUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+      model:'claude-sonnet-4-5',max_tokens:1000,
+      system:`You are the AI layer of a work tracker for Mike Warriner at Ashvaren Advisory, London. Mike is a corporate lawyer, accountant, CFO and COO advising creative and IP-rich businesses.
+
+Current tracker state:
+${ctx}
+
+Analyse the update and respond with exactly two parts on separate lines:
+
+1. UPDATES line (always present):
+UPDATES: {"engagements":[{"id":"...","fields":{"last":"...","next":"...","status":"..."}}],"tasks":[{"action":"add","title":"...","engagement":"...","due":"today|tomorrow|this-week|later"}],"newClient":{"detected":false}}
+
+CRITICAL rules for engagement updates:
+- Use "fields" as an object containing all changed fields. Never use "field"/"value" format.
+- ALWAYS update both "last" and "next" together when any progress is mentioned. Never update one without the other.
+- If next step is not explicitly stated, INFER a logical one. Examples: signed NDA received means next is send engagement letter; model delivered means next is review call; waiting on signature means status becomes waiting.
+- Only include fields that actually changed.
+
+If you detect a NEW client or engagement (a name not in the engagements list, or phrases like "new engagement", "new client", "just taken on", "prospective"), set newClient to:
+{"detected":true,"name":"<name>","contactName":"<contact if mentioned>","scope":"<scope if mentioned>","type":"confirmed|prospective"}
+
+Only set detected:true for genuinely new clients not already in the tracker. "Prospective" or "potential" language means type:prospective.
+
+2. One or two sentences of direct, commercially astute commentary. No filler. No "I".`,
+      messages:[{role:'user',content:text}]
+    })});
+    const data=await r.json();
+    if(!r.ok){resp.textContent=`API error ${r.status}: ${(data.error||{}).message||'unknown'}`;btn.disabled=false;input.disabled=false;return;}
+    const raw=(data.content||[]).map(c=>c.text||'').join('');
+    let commentary=[],newClient=null;
+    for(const line of raw.split('\n')){
+      if(line.startsWith('UPDATES:')){
+        try{
+          const u=JSON.parse(line.replace('UPDATES:','').trim());
+          (u.engagements||[]).forEach(x=>{const e=state.engagements.find(e=>e.id===x.id);if(e&&x.fields){Object.entries(x.fields).forEach(([k,v])=>{if(k in e)e[k]=v;});touchProspect(x.id);if(x.fields.last)addHistoryEntry(x.id,'ai',x.fields.last);}else if(e&&x.field){e[x.field]=x.value;touchProspect(x.id);}});
+          (u.tasks||[]).forEach(x=>{if(x.action==='add')state.tasks.push({id:'t'+Date.now()+Math.random(),title:x.title,engagement:x.engagement||'',due:x.due||'this-week',done:false});});
+          if(u.newClient&&u.newClient.detected)newClient=u.newClient;
+        }catch(e){console.warn(e);}
+      } else if(line.trim())commentary.push(line.trim());
+    }
+    resp.textContent=commentary.join(' ')||'Updated.';
+    input.value=''; saveAndRender();
+    if(newClient){
+      toast(`New client detected: ${newClient.name} — opening onboarding…`);
+      setTimeout(()=>openOnboard(newClient),1000);
+    }
+  } catch(e){resp.textContent=`Network error: ${e.message}`;}
+  btn.disabled=false; input.disabled=false;
+}
+
+
+// ── PROSPECT FOLLOW-UP CHASING ────────────────────────────────────────────────
+function checkProspectFlags() {
+  const overdue = state.engagements.filter(e =>
+    e.isProspective && e.status === 'prospective' && daysSince(e.lastContact) >= FOLLOWUP_DAYS
+  );
+  const panel = document.getElementById('attention-panel');
+  if (!overdue.length) { panel.style.display = 'none'; return; }
+  panel.style.display = 'block';
+  panel.innerHTML = `<div class="attention-panel">
+    <div class="attention-title">Follow-up needed (${overdue.length})</div>
+    ${overdue.map(e => {
+      const days = daysSince(e.lastContact);
+      const label = e.lastContact ? `${days} day${days!==1?'s':''} since last contact` : 'No contact date recorded';
+      return `<div class="attention-item">
+        <div>
+          <div class="attention-name">${e.name}</div>
+          <div class="attention-detail">${label} — ${e.next || 'no next step set'}</div>
+        </div>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+
+// Update lastContact when a prospect engagement is touched via AI
+function touchProspect(engId) {
+  const e = state.engagements.find(x => x.id === engId);
+  if (e && e.isProspective) e.lastContact = new Date().toISOString().split('T')[0];
+}
+
+// ── WEEKLY REVIEW ─────────────────────────────────────────────────────────────
+function shouldRunWeeklyReview() {
+  const lastRun = localStorage.getItem('last_review_date');
+  const today = new Date();
+  const isMonday = today.getDay() === 1;
+  if (!isMonday) return false;
+  if (!lastRun) return true;
+  const lastDate = new Date(lastRun);
+  const daysSinceLast = Math.floor((today - lastDate) / (1000 * 60 * 60 * 24));
+  return daysSinceLast >= 6;
+}
+
+function closeReview() {
+  document.getElementById('review-panel').style.display = 'none';
+}
+
+async function runWeeklyReview(auto) {
+  const panel = document.getElementById('review-panel');
+  const content = document.getElementById('review-content');
+  const dateEl = document.getElementById('review-date');
+  panel.style.display = 'block';
+  dateEl.textContent = new Date().toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'});
+  content.innerHTML = '<div class="review-loading">Preparing your weekly review…</div>';
+
+  // Scroll to top of today view
+  showView('today', document.querySelectorAll('.nav-tab')[0]);
+
+  const now = new Date();
+  const stalled = state.engagements.filter(e => e.status === 'stalled' || e.status === 'paused');
+  const waiting = state.engagements.filter(e => e.status === 'waiting');
+  const prospects = state.engagements.filter(e => e.isProspective);
+  const overdueProspects = prospects.filter(e => daysSince(e.lastContact) >= FOLLOWUP_DAYS);
+  const tasksByEng = {};
+  state.tasks.filter(t => !t.done).forEach(t => {
+    if (!tasksByEng[t.engagement]) tasksByEng[t.engagement] = 0;
+    tasksByEng[t.engagement]++;
+  });
+  const heavilyLoaded = Object.entries(tasksByEng)
+    .filter(([,c]) => c >= 4)
+    .map(([id,c]) => ({ name: eName(id), count: c }));
+
+  const reviewCtx = JSON.stringify({
+    date: now.toLocaleDateString('en-GB'),
+    engagements: state.engagements.map(e => ({
+      name: e.name, status: e.status, last: e.last, next: e.next,
+      isProspective: e.isProspective, lastContact: e.lastContact || null,
+      openTasks: tasksByEng[e.id] || 0
+    })),
+    stalled: stalled.map(e => e.name),
+    waiting: waiting.map(e => e.name),
+    overdueProspects: overdueProspects.map(e => ({ name: e.name, days: daysSince(e.lastContact) })),
+    heavilyLoaded
   });
 
-  if (!response.ok) {
-    throw new Error(`Worker returned ${response.status}`);
-  }
+  try {
+    const r = await fetch(cfg.proxyUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-5',
+        max_tokens: 1500,
+        system: `You are conducting a weekly review for Mike Warriner at Ashvaren Advisory, London. Mike is a corporate lawyer, accountant, CFO and COO running an independent advisory practice.
 
-  return await response.json();
+Produce a structured weekly review in this exact JSON format (no markdown, no backticks, just raw JSON):
+{
+  "summary": "One sentence summary of where things stand overall.",
+  "flags": [{"label":"...","detail":"..."}],
+  "questions": ["...","...","..."],
+  "focus": "One specific thing Mike should do today above all else."
 }
 
-// ── Init ─────────────────────────────────────────────────────────────────────
-(async function init() {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) {
-    setStatus('error');
-    recordHint.textContent = 'Use Safari on iOS';
-    return;
-  }
+flags: Issues requiring attention — stalled engagements, overdue prospects, task pile-ups, anything that looks wrong. Be specific. Max 5.
+questions: 2-3 pointed questions to prompt Mike to think about things he might be avoiding or has not considered. Make them specific to his actual engagements, not generic.
+focus: The single most commercially important action for the week. Be direct and specific.
 
-  // Handle OAuth callback
-  handleOAuthCallback();
+Tone: intelligent, calm, commercial. No filler. No praise. Speak as a trusted senior adviser would.`,
+        messages: [{ role: 'user', content: `Current state:
+${reviewCtx}
 
-  // Restore token from storage
-  if (!googleToken) {
-    googleToken = localStorage.getItem('google_token') || null;
-  }
-
-  updateAuthUI();
-
-  // Pre-load Drive file ID so first action is fast
-  if (googleToken) {
+Produce the weekly review.` }]
+      })
+    });
+    const data = await r.json();
+    if (!r.ok) { content.innerHTML = `<div class="review-loading">Could not load review: ${r.status}</div>`; return; }
+    const raw = (data.content || []).map(c => c.text || '').join('').trim();
+    let review;
     try {
-      await loadTrackerState();
+      const clean = raw.replace(/^```json\n?/, '').replace(/\n?```$/, '').trim();
+      review = JSON.parse(clean);
     } catch(e) {
-      // Token may be stale — will surface on first action
-      googleToken = null;
-      localStorage.removeItem('google_token');
-      updateAuthUI();
+      content.innerHTML = `<div style="font-size:13px;line-height:1.7;color:var(--text-secondary);">${raw}</div>`;
+      return;
     }
+    let html = '';
+    if (review.summary) {
+      html += `<div style="font-size:14px;color:var(--text);line-height:1.6;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid var(--border);">${review.summary}</div>`;
+    }
+    if (review.focus) {
+      html += `<div style="background:var(--navy);color:#fff;border-radius:8px;padding:10px 14px;margin-bottom:1rem;font-size:13px;line-height:1.6;"><span style="font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;opacity:0.6;display:block;margin-bottom:3px;">Focus this week</span>${review.focus}</div>`;
+    }
+    if (review.flags && review.flags.length) {
+      html += `<div class="review-section"><div class="review-section-title">Flags (${review.flags.length})</div>`;
+      html += review.flags.map(f => `<div class="review-item"><strong>${f.label}</strong> — ${f.detail}</div>`).join('');
+      html += '</div>';
+    }
+    if (review.questions && review.questions.length) {
+      html += `<div class="review-section"><div class="review-section-title">Questions to consider</div>`;
+      html += review.questions.map(q => `<div class="review-question">${q}</div>`).join('');
+      html += '</div>';
+    }
+    content.innerHTML = html || '<div class="review-loading">Nothing to flag this week.</div>';
+    localStorage.setItem('last_review_date', new Date().toISOString().split('T')[0]);
+  } catch(e) {
+    content.innerHTML = `<div class="review-loading">Network error: ${e.message}</div>`;
   }
-})();
-</script>
+  if (auto) return;
+}
 
+
+// ── FILE UPLOAD & NOTES PROCESSING ───────────────────────────────────────────
+let uploadedFile = null;
+let uploadedText = null;
+
+function updateUploadEngSelect() {
+  const sel = document.getElementById('upload-eng-select');
+  if (!sel) return;
+  const current = sel.value;
+  sel.innerHTML = '<option value="">Auto-detect engagement</option>' +
+    state.engagements.map(e => `<option value="${e.id}">${e.name}</option>`).join('');
+  if (current) sel.value = current;
+}
+
+function handleFileSelect(input) {
+  const file = input.files[0];
+  if (!file) return;
+  uploadedFile = file;
+  uploadedText = null;
+  document.getElementById('upload-filename').textContent = file.name + ' — ready to process';
+  document.getElementById('upload-btn').disabled = false;
+  document.getElementById('upload-result').className = 'upload-result';
+}
+
+// Drag and drop support
+document.addEventListener('DOMContentLoaded', () => {
+  const zone = document.getElementById('upload-drop-zone');
+  if (!zone) return;
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault(); zone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0]; if (!file) return;
+    uploadedFile = file; uploadedText = null;
+    document.getElementById('upload-filename').textContent = file.name + ' — ready to process';
+    document.getElementById('upload-btn').disabled = false;
+    document.getElementById('upload-result').className = 'upload-result';
+  });
+});
+
+async function extractText(file) {
+  const name = file.name.toLowerCase();
+  if (name.endsWith('.txt') || name.endsWith('.md')) {
+    return await file.text();
+  }
+  if (name.endsWith('.docx')) {
+    const arrayBuffer = await file.arrayBuffer();
+    const result = await mammoth.extractRawText({ arrayBuffer });
+    return result.value;
+  }
+  if (name.endsWith('.pdf')) {
+    // Read PDF as text via simple extraction (works for text-based PDFs)
+    const arrayBuffer = await file.arrayBuffer();
+    const bytes = new Uint8Array(arrayBuffer);
+    let text = '';
+    for (let i = 0; i < bytes.length; i++) {
+      const c = String.fromCharCode(bytes[i]);
+      if (bytes[i] >= 32 && bytes[i] < 127) text += c;
+      else if (bytes[i] === 10 || bytes[i] === 13) text += '\n';
+    }
+    // Extract readable strings of 4+ chars
+    const readable = text.match(/[\x20-\x7E]{4,}/g) || [];
+    return readable.join(' ');
+  }
+  throw new Error('Unsupported file type');
+}
+
+async function processUpload() {
+  if (!uploadedFile) return;
+  const btn = document.getElementById('upload-btn');
+  const result = document.getElementById('upload-result');
+  btn.disabled = true; btn.textContent = 'Processing…';
+  result.className = 'upload-result visible';
+  result.innerHTML = '<span class="ai-thinking">Reading file and extracting actions…</span>';
+
+  try {
+    // Extract text
+    const text = await extractText(uploadedFile);
+    if (!text || text.trim().length < 20) {
+      result.innerHTML = '<span style="color:var(--red)">Could not extract readable text from this file. Try saving as .txt.</span>';
+      btn.disabled = false; btn.textContent = 'Process ↗'; return;
+    }
+    uploadedText = text;
+
+    // Get selected engagement or auto-detect
+    const selEngId = document.getElementById('upload-eng-select').value;
+    const engContext = JSON.stringify(state.engagements.map(e => ({ id: e.id, name: e.name, status: e.status, last: e.last, next: e.next })));
+
+    const prompt = `You are processing meeting or call notes for Mike Warriner at Ashvaren Advisory, London.
+
+Existing engagements: ${engContext}
+${selEngId ? `Pre-selected engagement ID: ${selEngId}` : 'No engagement pre-selected — detect from context.'}
+
+Notes content:
+---
+${text.slice(0, 4000)}
+---
+
+Respond with ONLY a JSON object (no markdown, no backticks):
+{
+  "engagementId": "<id from existing list, or null if new>",
+  "engagementName": "<name of engagement these notes relate to>",
+  "summary": "<3-5 sentence summary of the meeting/call — what was discussed, key decisions, overall status>",
+  "lastAction": "<one sentence for the engagement last action field — what happened in this meeting>",
+  "nextStep": "<one sentence for the engagement next step field — most important thing to do next>",
+  "statusChange": "<new status if changed: active|waiting|stalled|paused — or null>",
+  "tasks": [
+    {"title": "<specific action>", "due": "today|tomorrow|this-week|later", "notes": "<any extra context>"}
+  ]
+}
+
+Extract ALL action items, decisions requiring follow-up, and commitments made. Be specific — use names and details from the notes. tasks array can be empty if no actions. Summary should be useful as a standalone record of the meeting.`;
+
+    const r = await fetch(cfg.proxyUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-5',
+        max_tokens: 1500,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await r.json();
+    if (!r.ok) { result.innerHTML = `<span style="color:var(--red)">API error ${r.status}: ${(data.error||{}).message||'unknown'}</span>`; btn.disabled=false; btn.textContent='Process ↗'; return; }
+
+    const raw = (data.content||[]).map(c=>c.text||'').join('').trim();
+    let parsed;
+    try {
+      const clean = raw.replace(/^```json\n?/,'').replace(/\n?```$/,'').trim();
+      parsed = JSON.parse(clean);
+    } catch(e) {
+      result.innerHTML = `<span style="color:var(--red)">Could not parse AI response. Raw: ${raw.slice(0,200)}</span>`;
+      btn.disabled=false; btn.textContent='Process ↗'; return;
+    }
+
+    // Apply updates to engagement
+    const engId = selEngId || parsed.engagementId;
+    const eng = engId ? state.engagements.find(e => e.id === engId) : null;
+    if (eng) {
+      if (parsed.lastAction) eng.last = parsed.lastAction;
+      if (parsed.nextStep) eng.next = parsed.nextStep;
+      if (parsed.statusChange) eng.status = parsed.statusChange;
+      if (parsed.summary) addHistoryEntry(engId, 'upload', parsed.summary);
+    }
+
+    // Create tasks
+    const tasksCreated = [];
+    (parsed.tasks || []).forEach(t => {
+      const task = { id: 't'+Date.now()+Math.random(), title: t.title, engagement: engId||'', due: t.due||'this-week', done: false };
+      state.tasks.push(task);
+      tasksCreated.push(task);
+    });
+
+    // Save notes file and summary to Drive
+    let driveStatus = '';
+    if (eng && eng.driveFolder) {
+      try {
+        // Upload original file
+        await uploadFileToDrive(uploadedFile, eng.driveFolder, uploadedFile.name);
+        // Create and upload summary
+        const date = new Date().toLocaleDateString('en-GB');
+        const summaryContent = `Meeting notes summary — ${eng.name}
+Date: ${date}
+File: ${uploadedFile.name}
+
+${parsed.summary}
+
+Actions:
+${(parsed.tasks||[]).map((t,i) => `${i+1}. ${t.title} (${t.due})`).join('\n') || 'None recorded'}`;
+        const summaryBlob = new Blob([summaryContent], { type: 'text/plain' });
+        const summaryFile = new File([summaryBlob], `Summary — ${uploadedFile.name.replace(/\.[^.]+$/,'')} — ${date}.txt`);
+        await uploadFileToDrive(summaryFile, eng.driveFolder, summaryFile.name);
+        driveStatus = `Saved to Drive: ${eng.name} folder`;
+      } catch(e) {
+        driveStatus = 'Drive save failed — update tracker manually';
+      }
+    } else if (eng) {
+      driveStatus = 'No Drive folder linked to this engagement — file not saved';
+    }
+
+    await saveToD();
+    render();
+
+    // Build result display
+    const taskLines = tasksCreated.length
+      ? tasksCreated.map(t => `• ${t.title}`).join('<br>')
+      : 'No action items identified';
+
+    result.innerHTML = `
+      <div class="result-summary">${parsed.summary}</div>
+      ${eng ? `<div style="font-size:12px;color:var(--text-secondary);margin-bottom:4px;">Updated: <strong>${eng.name}</strong> — last action and next step</div>` : ''}
+      <div class="result-tasks">${tasksCreated.length} task${tasksCreated.length!==1?'s':''} created: ${taskLines}</div>
+      ${driveStatus ? `<div class="result-drive">${driveStatus}</div>` : ''}
+    `;
+
+    // Reset file input
+    uploadedFile = null;
+    document.getElementById('upload-file-input').value = '';
+    document.getElementById('upload-filename').textContent = 'Drop meeting notes here or click to select (.docx, .pdf, .txt)';
+
+  } catch(e) {
+    result.innerHTML = `<span style="color:var(--red)">Error: ${e.message}</span>`;
+  }
+
+  btn.disabled = false; btn.textContent = 'Process ↗';
+}
+
+async function uploadFileToDrive(file, folderId, fileName) {
+  // Step 1: Create file metadata
+  const meta = await fetch('https://www.googleapis.com/drive/v3/files', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: fileName, parents: [folderId] })
+  });
+  const metaData = await meta.json();
+  const fileId = metaData.id;
+  // Step 2: Upload content
+  const arrayBuffer = await file.arrayBuffer();
+  await fetch(`https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`, {
+    method: 'PATCH',
+    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': file.type || 'application/octet-stream' },
+    body: arrayBuffer
+  });
+  return fileId;
+}
+
+
+// ── PIPELINE ──────────────────────────────────────────────────────────────────
+const DAILY_RATES = { 'day-rate': 1500, 'half-day': 800, 'hourly': 250 };
+
+function calcEngValue(e) {
+  if (e.fixedAmount) return e.fixedAmount;
+  if (e.feeType && DAILY_RATES[e.feeType] && e.estDays) return DAILY_RATES[e.feeType] * e.estDays;
+  return 0;
+}
+
+function fmtGBP(n) {
+  if (!n) return '—';
+  return '£' + Math.round(n).toLocaleString('en-GB');
+}
+
+function renderPipeline() {
+  const engs = state.engagements;
+  let confirmed = 0, weighted = 0, total = 0;
+  engs.forEach(e => {
+    const val = calcEngValue(e);
+    const prob = (e.probability != null ? e.probability : (e.isProspective ? 25 : 100)) / 100;
+    total += val;
+    weighted += val * prob;
+    if (!e.isProspective && e.status === 'active') confirmed += val;
+  });
+  document.getElementById('pm-confirmed').textContent = fmtGBP(confirmed);
+  document.getElementById('pm-weighted').textContent = fmtGBP(weighted);
+  document.getElementById('pm-total').textContent = fmtGBP(total);
+
+  const tbody = document.getElementById('pipeline-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = engs.map(e => {
+    const val = calcEngValue(e);
+    const prob = e.probability != null ? e.probability : (e.isProspective ? 25 : 100);
+    const wval = Math.round(val * prob / 100);
+    const feeLabel = { 'day-rate':'Day rate','half-day':'Half-day','hourly':'Hourly','fixed':'Fixed','retainer':'Retainer','':'TBD' }[e.feeType||''] || 'TBD';
+    return `<tr>
+      <td><strong>${e.name}</strong><br><span style="font-size:11px;color:var(--text-tertiary)">${e.contactName||''}</span></td>
+      <td>${feeLabel}${e.estDays ? ` &times; ${e.estDays}d` : ''}</td>
+      <td>${fmtGBP(val)}</td>
+      <td><div class="prob-bar-wrap"><div class="prob-bar"><div class="prob-bar-fill" style="width:${prob}%"></div></div><span style="font-size:12px;min-width:32px;text-align:right">${prob}%</span></div></td>
+      <td>${fmtGBP(wval)}</td>
+      <td><button class="pipeline-edit-btn" onclick="openEditEng('${e.id}')">Edit</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function updateFeeInputs() {
+  const ft = document.getElementById('ob-fee').value;
+  const daysRow = document.getElementById('ob-days-row');
+  const fixedRow = document.getElementById('ob-fixed-row');
+  if (!daysRow) return;
+  daysRow.style.display = ['day-rate','half-day','hourly'].includes(ft) ? 'grid' : 'none';
+  fixedRow.style.display = ['fixed','retainer'].includes(ft) ? 'grid' : 'none';
+}
+
+// ── NOTES HISTORY ─────────────────────────────────────────────────────────────
+let noteModalEngId = null;
+
+function addHistoryEntry(engId, type, text) {
+  const e = state.engagements.find(x => x.id === engId);
+  if (!e) return;
+  if (!e.history) e.history = [];
+  e.history.push({
+    date: new Date().toLocaleDateString('en-GB', {day:'numeric',month:'short',year:'numeric'}),
+    type,
+    text
+  });
+}
+
+function openNoteModal(engId) {
+  noteModalEngId = engId;
+  document.getElementById('nm-text').value = '';
+  document.getElementById('note-modal').classList.add('open');
+}
+function closeNoteModal() { document.getElementById('note-modal').classList.remove('open'); }
+function saveNote() {
+  const text = document.getElementById('nm-text').value.trim();
+  if (!text || !noteModalEngId) return;
+  addHistoryEntry(noteModalEngId, 'manual', text);
+  closeNoteModal();
+  saveAndRender();
+}
+
+// ── EMAIL DRAFT ───────────────────────────────────────────────────────────────
+async function draftEmail(taskId) {
+  const task = state.tasks.find(t => t.id === taskId);
+  if (!task) return;
+  const eng = state.engagements.find(e => e.id === task.engagement);
+  const contactEmail = eng ? (eng.contactEmail || '') : '';
+  const contactName = eng ? (eng.contactName || '') : '';
+  const engName = eng ? eng.name : '';
+
+  // Use AI to draft the email body
+  toast('Drafting email…');
+  try {
+    const r = await fetch(cfg.proxyUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-5',
+        max_tokens: 600,
+        system: `You are drafting a short professional email for Mike Warriner at Ashvaren Advisory, London. Mike is a corporate lawyer, accountant, CFO and COO.
+Write a concise, professional email in British English. Sign off as Mike Warriner, Ashvaren Advisory.
+Respond with JSON only: {"subject":"...","body":"..."}`,
+        messages: [{ role: 'user', content: `Task: ${task.title}\nClient: ${engName}\nContact: ${contactName}\nContext: ${eng ? eng.last : ''}\nNext step: ${eng ? eng.next : ''}\n\nDraft a short email to action this task.` }]
+      })
+    });
+    const data = await r.json();
+    const raw = (data.content||[]).map(c=>c.text||'').join('').trim();
+    let parsed;
+    try { parsed = JSON.parse(raw.replace(/^```json\n?/,'').replace(/\n?```$/,'').trim()); }
+    catch(e) { parsed = { subject: task.title, body: `Hi ${contactName},\n\n${task.title}\n\nBest regards,\nMike Warriner\nAshvaren Advisory` }; }
+
+    const subject = encodeURIComponent(parsed.subject || task.title);
+    const body = encodeURIComponent(parsed.body || '');
+    const to = encodeURIComponent(contactEmail);
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${subject}&body=${body}`;
+    window.open(gmailUrl, '_blank');
+  } catch(e) {
+    // Fallback - open Gmail compose with basic info
+    const subject = encodeURIComponent(task.title);
+    const to = encodeURIComponent(contactEmail);
+    window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${to}&su=${subject}`, '_blank');
+  }
+}
+
+document.getElementById('ai-input').addEventListener('keydown',e=>{if(e.key==='Enter')sendToAI();});
+
+// Onboarding modal does NOT close on backdrop click — data loss prevention
+// Other modals close on backdrop click as before
+['eng-modal','task-modal','settings-modal','note-modal'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',e=>{if(e.target.id===id)document.getElementById(id).classList.remove('open');});
+});
+
+function toast(m){const el=document.getElementById('toast');el.textContent=m;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3500);}
+</script>
 </body>
 </html>
