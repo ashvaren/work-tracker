@@ -333,6 +333,47 @@
 
   /* ── Personal tab category badges ── */
   .cat-badge { display:inline-block; font-family:var(--mono); font-size:9px; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; padding:2px 7px; border-radius:4px; }
+
+  /* ── Journey panel ── */
+  .journey-panel { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:0; margin-bottom:1.25rem; box-shadow:var(--shadow); overflow:hidden; }
+  .journey-header { padding:11px 16px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+  .journey-title { font-family:var(--mono); font-size:9px; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; color:var(--text-dim); }
+  .journey-meta { display:flex; align-items:center; gap:10px; }
+  .journey-refreshed { font-family:var(--mono); font-size:9px; color:var(--text-dim); }
+  .journey-refresh-btn { font-family:var(--mono); font-size:9px; letter-spacing:0.06em; padding:3px 9px; border:1px solid var(--border); border-radius:5px; background:transparent; color:var(--text-dim); cursor:pointer; transition:all 0.15s; }
+  .journey-refresh-btn:hover { border-color:var(--accent); color:var(--accent-hi); }
+  .journey-trains { padding:4px 0; }
+  .train-row { display:flex; align-items:center; gap:0; padding:9px 16px; border-bottom:1px solid var(--border); transition:background 0.12s; }
+  .train-row:last-child { border-bottom:none; }
+  .train-row:hover { background:var(--surface-2); }
+  .train-time { font-family:var(--mono); font-size:14px; font-weight:500; color:var(--text-hi); min-width:52px; }
+  .train-time.delayed { color:var(--amber); }
+  .train-time.cancelled { color:var(--red); text-decoration:line-through; }
+  .train-dest { font-size:13px; color:var(--text); flex:1; }
+  .train-status { font-family:var(--mono); font-size:10px; margin-left:12px; }
+  .train-status.on-time  { color:var(--green); }
+  .train-status.delayed  { color:var(--amber); }
+  .train-status.cancelled{ color:var(--red); }
+  .train-platform { font-family:var(--mono); font-size:10px; color:var(--text-dim); margin-left:12px; min-width:60px; text-align:right; }
+  .journey-leave { padding:10px 16px; border-top:1px solid var(--border); background:var(--navy); display:flex; align-items:center; justify-content:space-between; }
+  .journey-leave-text { font-size:13px; color:var(--text); }
+  .journey-leave-time { font-family:var(--display); font-size:18px; font-weight:500; color:var(--accent-hi); }
+  .journey-leave-btn { font-family:var(--mono); font-size:9px; letter-spacing:0.06em; padding:4px 12px; border:1px solid var(--accent-mid); border-radius:5px; background:transparent; color:var(--accent-hi); cursor:pointer; transition:all 0.15s; }
+  .journey-leave-btn:hover { background:var(--accent-lo); }
+  .journey-loading { padding:20px 16px; font-family:var(--mono); font-size:11px; color:var(--text-dim); font-style:italic; text-align:center; }
+  .journey-error { padding:14px 16px; font-family:var(--mono); font-size:11px; color:var(--amber); }
+  .journey-key-missing { padding:14px 16px; }
+  .journey-key-missing p { font-size:12px; color:var(--text-dim); line-height:1.65; margin-bottom:8px; }
+  .journey-key-missing code { font-family:var(--mono); font-size:11px; color:var(--accent-hi); background:var(--accent-lo); padding:1px 5px; border-radius:3px; }
+  /* Travel calendar event modal */
+  .travel-modal .modal { max-width:560px; }
+  .travel-leg { padding:8px 0; border-bottom:1px solid var(--border); display:flex; gap:12px; align-items:flex-start; }
+  .travel-leg:last-child { border-bottom:none; }
+  .travel-leg-icon { font-size:16px; width:24px; text-align:center; flex-shrink:0; margin-top:1px; }
+  .travel-leg-body { flex:1; }
+  .travel-leg-title { font-size:13px; color:var(--text-hi); font-weight:400; }
+  .travel-leg-detail { font-family:var(--mono); font-size:10px; color:var(--text-dim); margin-top:2px; }
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
 </head>
@@ -414,7 +455,19 @@
         <div id="review-content"><div class="review-loading">Preparing your review…</div></div>
       </div>
       <div id="attention-panel" style="display:none"></div>
-      <div class="today-grid">
+            <!-- Journey panel -->
+      <div class="journey-panel" id="journey-panel">
+        <div class="journey-header">
+          <span class="journey-title">Trains from Tunbridge Wells</span>
+          <div class="journey-meta">
+            <span class="journey-refreshed" id="journey-refreshed"></span>
+            <button class="journey-refresh-btn" onclick="loadJourneys()">Refresh</button>
+          </div>
+        </div>
+        <div id="journey-body"><div class="journey-loading">Loading departures…</div></div>
+      </div>
+
+<div class="today-grid">
         <div class="panel">
           <div class="panel-header"><span class="panel-title">Today's calendar</span><span style="font-size:11px;color:var(--text-tertiary)" id="cal-date"></span></div>
           <div class="panel-body" id="cal-today"></div>
@@ -622,10 +675,52 @@
     <h2>Settings</h2>
     <div class="field"><label>Google OAuth client ID</label><input type="text" id="s-client-id" /></div>
     <div class="field"><label>AI proxy URL</label><input type="text" id="s-proxy-url" /></div>
-    <p style="font-size:12px;color:var(--text-tertiary);margin-bottom:1rem;line-height:1.6;">Updating the proxy URL takes effect immediately. Updating the OAuth client ID triggers a new Google sign-in.</p>
+    <div class="section-divider">Journey &amp; travel</div>
+    <div class="field">
+      <label>Google Maps API key <span class="opt">for journey planning</span></label>
+      <input type="text" id="s-maps-key" placeholder="AIza…" />
+      <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);margin-top:4px;">console.cloud.google.com › Enable Directions API</div>
+    </div>
+    <div class="field">
+      <label>RTT Bearer token</label>
+      <input type="password" id="s-rtt-key" placeholder="eyJ…" />
+      <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);margin-top:4px;">api-portal.rtt.io › your JWT token</div>
+    </div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeSettings()">Cancel</button>
       <button class="btn-save" onclick="saveSettings()">Save</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- TRAVEL CALENDAR MODAL -->
+<div class="modal-overlay travel-modal" id="travel-modal">
+  <div class="modal">
+    <h2>Add travel to calendar</h2>
+    <p class="modal-subtitle" id="travel-modal-subtitle">Journey details</p>
+    <div id="travel-legs"></div>
+    <div class="field" style="margin-top:1rem;">
+      <label>Meeting / event title</label>
+      <input type="text" id="travel-event-title" placeholder="e.g. Aceae Nutra kick-off" />
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Meeting date</label>
+        <input type="date" id="travel-event-date" />
+      </div>
+      <div class="field">
+        <label>Meeting time</label>
+        <input type="time" id="travel-event-time" />
+      </div>
+    </div>
+    <div class="field">
+      <label>Meeting location <span class="opt">for tube routing</span></label>
+      <input type="text" id="travel-destination" placeholder="e.g. 10 Finsbury Square, London EC2A" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeTravelModal()">Cancel</button>
+      <button class="btn-save" id="travel-plan-btn" onclick="planTravelAndCreate()">Plan journey ↗</button>
     </div>
   </div>
 </div>
@@ -714,21 +809,33 @@ function goGoogle() {
   window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(cfg.clientId)}&redirect_uri=${encodeURIComponent(r)}&response_type=token&scope=${encodeURIComponent(SCOPES)}&prompt=consent`;
 }
 function signOut() { localStorage.removeItem('goog_token'); token=null; document.getElementById('app').style.display='none'; document.getElementById('auth-screen').style.display='flex'; }
-function openSettings() { document.getElementById('s-client-id').value=cfg.clientId; document.getElementById('s-proxy-url').value=cfg.proxyUrl; document.getElementById('settings-modal').classList.add('open'); }
+function openSettings() {
+  document.getElementById('s-client-id').value = cfg.clientId;
+  document.getElementById('s-proxy-url').value  = cfg.proxyUrl;
+  document.getElementById('s-maps-key').value   = getMapsKey();
+  document.getElementById('s-rtt-key').value    = getRTTKey();
+  document.getElementById('settings-modal').classList.add('open');
+}
 function closeSettings() { document.getElementById('settings-modal').classList.remove('open'); }
 function saveSettings() {
   const id=document.getElementById('s-client-id').value.trim(), px=document.getElementById('s-proxy-url').value.trim().replace(/\/$/,'');
   if(!id||!px){alert('Both fields required.');return;}
   const changed=id!==cfg.clientId; cfg.clientId=id; cfg.proxyUrl=px;
   localStorage.setItem('cfg_client_id',id); localStorage.setItem('cfg_proxy_url',px);
-  closeSettings(); if(changed){toast('Re-authenticating…');setTimeout(goGoogle,1200);}else toast('Settings saved');
+  const mk=document.getElementById('s-maps-key').value.trim();
+  const rk=document.getElementById('s-rtt-key').value.trim();
+  if(mk) localStorage.setItem('maps_key',mk);
+  if(rk) localStorage.setItem('rtt_key',rk);
+  closeSettings();
+  if(changed){toast('Re-authenticating…');setTimeout(goGoogle,1200);}
+  else { toast('Settings saved'); if(ru&&rk) loadJourneys(); }
 }
 
 async function boot() {
   document.getElementById('loading').style.display='none';
   document.getElementById('app').style.display='block';
   document.getElementById('cal-date').textContent=new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long'});
-  await loadFromDrive(); await loadCalendar(); render();
+  await loadFromDrive(); await loadCalendar(); render(); loadJourneys();
   checkProspectFlags();
   if (shouldRunWeeklyReview()) setTimeout(() => runWeeklyReview(true), 800);
 }
@@ -1356,6 +1463,306 @@ async function draftEmail(taskId) {
     try{parsed=JSON.parse(raw.replace(/^```json\n?/,'').replace(/\n?```$/,'').trim());}catch(e){parsed={subject:task.title,body:`Hi ${eng?eng.contactName:''},\n\n${task.title}\n\nBest regards,\nMike Warriner\nAshvaren Advisory`};}
     window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(eng?eng.contactEmail:'')}&su=${encodeURIComponent(parsed.subject||task.title)}&body=${encodeURIComponent(parsed.body||'')}`, '_blank');
   } catch(e) { window.open(`https://mail.google.com/mail/?view=cm&fs=1&su=${encodeURIComponent(task.title)}`,'_blank'); }
+}
+
+
+// ── Journey & Travel ─────────────────────────────────────────────────────────
+// API keys — add yours in Settings once obtained
+// RTT:    https://www.realtimetrains.co.uk/open-data/  (free registration)
+// Maps:   https://console.cloud.google.com → Directions API + Maps JS API
+const TBW_CRS       = 'TBW';   // Tunbridge Wells CRS code
+const HOME_WALK_MINS = 14;      // Walk time from home to TBW station
+
+function getRTTKey()   { return localStorage.getItem('rtt_key')   || ''; }
+function getMapsKey()  { return localStorage.getItem('maps_key')  || ''; }
+function getRTTUser()  { return localStorage.getItem('rtt_user')  || ''; }
+
+// Called on boot alongside loadCalendar
+async function loadJourneys() {
+  const body = document.getElementById('journey-body');
+  if (!getRTTKey()) {
+    body.innerHTML = `<div class="journey-key-missing">
+      <p>Add your <code>RTT Bearer token</code> in <strong>Settings</strong> to see live departures.</p>
+      <p style="margin-bottom:0;">Obtain one at <code>api-portal.rtt.io</code></p>
+    </div>`;
+    return;
+  }
+
+  body.innerHTML = '<div class="journey-loading">Fetching live departures\u2026</div>';
+
+  try {
+    // RTT departure board — proxied through your Cloudflare Worker to avoid CORS
+    const now   = new Date();
+    const date  = now.toISOString().split('T')[0].replace(/-/g, '/');
+    const hhmm  = now.toTimeString().slice(0,5).replace(':','');
+    const url   = `https://data.rtt.io/api/v1/json/search/${TBW_CRS}/${date}/${hhmm.slice(0,2)}/${hhmm.slice(2,4)}`;
+
+    const resp  = await fetch(cfg.proxyUrl + '/rtt', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ rttUrl: url, rttToken: getRTTKey() })
+    });
+
+    if (!resp.ok) throw new Error(`RTT proxy returned ${resp.status}`);
+    const data = await resp.json();
+    renderDepartures(data);
+  } catch(e) {
+    body.innerHTML = `<div class="journey-error">\u26a0 Could not load departures: ${e.message}</div>`;
+  }
+}
+
+function renderDepartures(data) {
+  const body   = document.getElementById('journey-body');
+  const svcs   = (data.services || []).filter(s => {
+    const dest = (s.locationDetail?.destination || []).map(d => d.description);
+    return dest.some(d => d.includes('London') || d.includes('Charing') || d.includes('Cannon') || d.includes('Bridge'));
+  }).slice(0, 5);
+
+  if (!svcs.length) {
+    body.innerHTML = '<div class="journey-loading">No London services in the next two hours.</div>';
+    return;
+  }
+
+  const now      = new Date();
+  let leaveBy    = null;
+  let leaveForTrain = null;
+
+  const rows = svcs.map(s => {
+    const loc    = s.locationDetail;
+    const sched  = loc.gbttBookedDeparture || loc.gbttBookedArrival || '';
+    const rt     = loc.realtimeDeparture   || loc.realtimeArrival   || sched;
+    const dest   = (loc.destination || []).map(d => d.description).join(' / ');
+    const plat   = loc.platform ? `Plat ${loc.platform}` : '';
+    const cancel = loc.displayAs === 'CANCELLED_CALL';
+    const delay  = !cancel && rt && sched && rt !== sched;
+    const delayMins = delay ? timeDiff(sched, rt) : 0;
+
+    // Compute "leave by" for first non-cancelled service
+    if (!leaveBy && !cancel) {
+      const depTime  = parseHHMM(rt || sched);
+      const leaveDt  = new Date(depTime.getTime() - HOME_WALK_MINS * 60000);
+      leaveBy        = fmtHHMM(leaveDt);
+      leaveForTrain  = rt || sched;
+    }
+
+    const statusText  = cancel ? 'Cancelled' : delay ? `+${delayMins} min` : 'On time';
+    const statusClass = cancel ? 'cancelled'  : delay ? 'delayed'           : 'on-time';
+    const timeClass   = cancel ? 'cancelled'  : delay ? 'delayed'           : '';
+
+    return `<div class="train-row">
+      <span class="train-time ${timeClass}">${fmtHHMM4(rt||sched)}</span>
+      <span class="train-dest">\u2192 ${dest}</span>
+      <span class="train-status ${statusClass}">${statusText}</span>
+      <span class="train-platform">${plat}</span>
+    </div>`;
+  }).join('');
+
+  const refreshed = new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('journey-refreshed').textContent = `Updated ${refreshed}`;
+
+  const leaveSection = leaveBy ? `
+    <div class="journey-leave">
+      <div>
+        <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-dim);margin-bottom:3px;">Leave home by</div>
+        <div style="display:flex;align-items:baseline;gap:10px;">
+          <span class="journey-leave-time">${leaveBy}</span>
+          <span style="font-family:var(--mono);font-size:10px;color:var(--text-dim);">for the ${fmtHHMM4(leaveForTrain)} service</span>
+        </div>
+      </div>
+      <button class="journey-leave-btn" onclick="openTravelModal('${leaveForTrain}')">+ Calendar \u2197</button>
+    </div>` : '';
+
+  body.innerHTML = `<div class="journey-trains">${rows}</div>${leaveSection}`;
+}
+
+// ── Time helpers ─────────────────────────────────────────────────────────────
+function parseHHMM(hhmm) {
+  if (!hhmm) return new Date();
+  const h = parseInt(hhmm.slice(0,2)), m = parseInt(hhmm.slice(2,4)||hhmm.slice(3,5));
+  const d = new Date(); d.setHours(h, m, 0, 0); return d;
+}
+function fmtHHMM(dt) { return dt.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}); }
+function fmtHHMM4(s) {
+  if (!s) return '';
+  if (s.includes(':')) return s.slice(0,5);
+  return s.slice(0,2) + ':' + s.slice(2,4);
+}
+function timeDiff(sched, rt) {
+  const s = parseHHMM(sched), r = parseHHMM(rt);
+  return Math.round((r - s) / 60000);
+}
+
+// ── Travel calendar modal ────────────────────────────────────────────────────
+let travelDepartureTime = null;
+
+function openTravelModal(departureHHMM) {
+  travelDepartureTime = departureHHMM;
+  // Pre-fill date from next London calendar event
+  const londonEvt = calEvents.today.find(e => {
+    const loc = (e.location || '') + (e.summary || '');
+    return loc.match(/london|EC|WC|E1|E2|SW|SE|W1|WC2/i);
+  });
+  if (londonEvt) {
+    document.getElementById('travel-event-title').value = londonEvt.summary || '';
+    if (londonEvt.start.dateTime) {
+      const dt = new Date(londonEvt.start.dateTime);
+      document.getElementById('travel-event-date').value = dt.toISOString().split('T')[0];
+      document.getElementById('travel-event-time').value = dt.toTimeString().slice(0,5);
+      document.getElementById('travel-destination').value = londonEvt.location || '';
+    }
+  } else {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('travel-event-date').value = today;
+    document.getElementById('travel-event-time').value = '';
+    document.getElementById('travel-event-title').value = '';
+    document.getElementById('travel-destination').value = '';
+  }
+  document.getElementById('travel-modal-subtitle').textContent =
+    `Departing Tunbridge Wells ${fmtHHMM4(departureHHMM)}`;
+  document.getElementById('travel-legs').innerHTML = '';
+  document.getElementById('travel-modal').classList.add('open');
+}
+
+function closeTravelModal() {
+  document.getElementById('travel-modal').classList.remove('open');
+}
+
+async function planTravelAndCreate() {
+  const btn  = document.getElementById('travel-plan-btn');
+  const dest = document.getElementById('travel-destination').value.trim();
+  const date = document.getElementById('travel-event-date').value;
+  const time = document.getElementById('travel-event-time').value;
+  const title= document.getElementById('travel-event-title').value.trim() || 'Meeting';
+
+  if (!date || !time) { toast('Please enter the meeting date and time'); return; }
+
+  if (!getMapsKey()) {
+    // No Maps key — create a basic calendar event without routing
+    await createTravelCalendarEvent(title, date, travelDepartureTime, null);
+    closeTravelModal();
+    return;
+  }
+
+  btn.disabled = true; btn.textContent = 'Planning\u2026';
+
+  try {
+    // Google Maps Directions API: TBW → destination on meeting date
+    const origin    = encodeURIComponent('Tunbridge Wells Station, TN1 2SL');
+    const destEnc   = encodeURIComponent(dest || 'London Bridge Station');
+    const meetDt    = new Date(`${date}T${time}:00`);
+    const arrivalTs = Math.floor(meetDt.getTime() / 1000);
+
+    const mapsUrl = `https://maps.googleapis.com/maps/api/directions/json` +
+      `?origin=${origin}&destination=${destEnc}&mode=transit` +
+      `&arrival_time=${arrivalTs}&key=${getMapsKey()}`;
+
+    const resp = await fetch(mapsUrl);
+    const data = await resp.json();
+
+    if (data.status !== 'OK') throw new Error(`Maps API: ${data.status}`);
+
+    const route  = data.routes[0];
+    const leg    = route.legs[0];
+    const steps  = leg.steps.filter(s => s.travel_mode === 'TRANSIT' || s.travel_mode === 'WALKING');
+
+    // Render journey legs in modal
+    renderTravelLegs(leg, steps);
+
+    // Build calendar event description
+    const desc = buildJourneyDescription(leg, steps, title, travelDepartureTime);
+
+    // Create the calendar event
+    await createTravelCalendarEvent(title, date, travelDepartureTime, desc);
+    toast(`Travel event added to calendar`);
+    closeTravelModal();
+  } catch(e) {
+    toast(`Journey planning failed: ${e.message}`);
+  }
+
+  btn.disabled = false; btn.textContent = 'Plan journey \u2197';
+}
+
+function renderTravelLegs(leg, steps) {
+  const container = document.getElementById('travel-legs');
+  container.innerHTML = steps.map(s => {
+    if (s.travel_mode === 'WALKING') {
+      return `<div class="travel-leg">
+        <span class="travel-leg-icon">\uD83D\uDEB6</span>
+        <div class="travel-leg-body">
+          <div class="travel-leg-title">Walk ${s.duration.text}</div>
+          <div class="travel-leg-detail">${s.html_instructions.replace(/<[^>]+>/g,'')}</div>
+        </div>
+      </div>`;
+    }
+    const t = s.transit_details;
+    const icon = t.line.vehicle.type === 'RAIL' ? '\uD83D\uDE86' :
+                 t.line.vehicle.type === 'SUBWAY' ? '\uD83D\uDE87' : '\uD83D\uDE8C';
+    return `<div class="travel-leg">
+      <span class="travel-leg-icon">${icon}</span>
+      <div class="travel-leg-body">
+        <div class="travel-leg-title">${t.line.short_name || t.line.name} \u2192 ${t.headsign}</div>
+        <div class="travel-leg-detail">${t.departure_stop.name} ${t.departure_time.text} \u2192 ${t.arrival_stop.name} ${t.arrival_time.text} \u00b7 ${t.num_stops} stop${t.num_stops!==1?'s':''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function buildJourneyDescription(leg, steps, meetingTitle, depHHMM) {
+  const lines = [
+    `Travel to: ${meetingTitle}`,
+    `Depart Tunbridge Wells: ${fmtHHMM4(depHHMM)}`,
+    `Total journey: ${leg.duration.text}`,
+    `Arrive by: ${leg.arrival_time ? leg.arrival_time.text : ''}`,
+    '',
+    'JOURNEY DETAILS',
+    '───────────────',
+  ];
+  steps.forEach(s => {
+    if (s.travel_mode === 'WALKING') {
+      lines.push(`\uD83D\uDEB6 Walk ${s.duration.text} \u2014 ${s.html_instructions.replace(/<[^>]+>/g,'')}`);
+    } else {
+      const t = s.transit_details;
+      const icon = t.line.vehicle.type === 'RAIL' ? '\uD83D\uDE86' :
+                   t.line.vehicle.type === 'SUBWAY' ? '\uD83D\uDE87' : '\uD83D\uDE8C';
+      lines.push(`${icon} ${t.line.short_name||t.line.name} (${t.headsign})`);
+      lines.push(`  Board: ${t.departure_stop.name} at ${t.departure_time.text}`);
+      lines.push(`  Alight: ${t.arrival_stop.name} at ${t.arrival_time.text} (${t.num_stops} stop${t.num_stops!==1?'s':''})`);
+    }
+  });
+  lines.push('', 'Created by Ashvaren Assistant');
+  return lines.join('\n');
+}
+
+async function createTravelCalendarEvent(title, date, depHHMM, description) {
+  // Departure datetime
+  const depTime  = fmtHHMM4(depHHMM);
+  const startDt  = new Date(`${date}T${depTime}:00`);
+  // Walk from home to station
+  const boardDt  = new Date(startDt.getTime() - HOME_WALK_MINS * 60000);
+  // End time: 2 hours after departure (approx London journey)
+  const endDt    = new Date(startDt.getTime() + 120 * 60000);
+
+  const event = {
+    summary:     `\uD83D\uDE86 Travel \u2014 ${title}`,
+    description: description || `Depart Tunbridge Wells ${depTime}\nLeave home by ${fmtHHMM(boardDt)}`,
+    start: { dateTime: startDt.toISOString(), timeZone: 'Europe/London' },
+    end:   { dateTime: endDt.toISOString(),   timeZone: 'Europe/London' },
+    colorId: '9', // blueberry
+  };
+
+  const r = await fetch(
+    `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(WORK_CAL)}/events`,
+    {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify(event)
+    }
+  );
+  if (!r.ok) {
+    const err = await r.json();
+    throw new Error(err.error?.message || `Calendar API ${r.status}`);
+  }
+  return await r.json();
 }
 
 document.getElementById('ai-input').addEventListener('keydown',e=>{if(e.key==='Enter')sendToAI();});
