@@ -1508,10 +1508,21 @@ async function loadJourneys() {
 }
 
 function renderDepartures(data) {
-  const body   = document.getElementById('journey-body');
-  const svcs   = (data.services || []).filter(s => {
-    const dest = (s.locationDetail?.destination || []).map(d => d.description);
-    return dest.some(d => d.includes('London') || d.includes('Charing') || d.includes('Cannon') || d.includes('Bridge'));
+  const body = document.getElementById('journey-body');
+
+  // NG API response: services[].destination[].location.description
+  // services[].temporalData.departure.scheduleAdvertised (ISO datetime)
+  // services[].locationMetadata.platform.actual / .planned
+  // services[].temporalData.departure.realtimeAdvertisedLateness (seconds)
+  // services[].temporalData.departure.isCancelled
+
+  const svcs = (data.services || []).filter(s => {
+    const dests = (s.destination || []).map(d => d.location?.description || '');
+    return dests.some(d =>
+      d.includes('London') || d.includes('Charing') || d.includes('Cannon') ||
+      d.includes('Bridge') || d.includes('Victoria') || d.includes('Waterloo') ||
+      d.includes('Blackfriars') || d.includes('City Thameslink')
+    );
   }).slice(0, 5);
 
   if (!svcs.length) {
@@ -1519,26 +1530,34 @@ function renderDepartures(data) {
     return;
   }
 
-  const now      = new Date();
-  let leaveBy    = null;
+  let leaveBy = null;
   let leaveForTrain = null;
+  let leaveForISO = null;
 
   const rows = svcs.map(s => {
-    const loc    = s.locationDetail;
-    const sched  = loc.gbttBookedDeparture || loc.gbttBookedArrival || '';
-    const rt     = loc.realtimeDeparture   || loc.realtimeArrival   || sched;
-    const dest   = (loc.destination || []).map(d => d.description).join(' / ');
-    const plat   = loc.platform ? `Plat ${loc.platform}` : '';
-    const cancel = loc.displayAs === 'CANCELLED_CALL';
-    const delay  = !cancel && rt && sched && rt !== sched;
-    const delayMins = delay ? timeDiff(sched, rt) : 0;
+    const dep     = s.temporalData?.departure;
+    const schedDt = dep?.scheduleAdvertised ? new Date(dep.scheduleAdvertised) : null;
+    const rtDt    = dep?.realtimeEstimate   ? new Date(dep.realtimeEstimate)   : schedDt;
+    const cancel  = dep?.isCancelled || false;
+    const latenessSeconds = dep?.realtimeAdvertisedLateness || 0; // named 'seconds' but spec says minutes
+    const delayMins = latenessSeconds || 0; // already in minutes per spec
+    const delay   = !cancel && delayMins > 1;
 
-    // Compute "leave by" for first non-cancelled service
-    if (!leaveBy && !cancel) {
-      const depTime  = parseHHMM(rt || sched);
-      const leaveDt  = new Date(depTime.getTime() - HOME_WALK_MINS * 60000);
-      leaveBy        = fmtHHMM(leaveDt);
-      leaveForTrain  = rt || sched;
+    const dest  = (s.destination || []).map(d => d.location?.description || '').join(' / ');
+    const plat  = s.locationMetadata?.platform?.actual
+               || s.locationMetadata?.platform?.planned
+               || '';
+    const platText = plat ? `Plat ${plat}` : '';
+
+    const schedTime = schedDt ? schedDt.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}) : '';
+    const rtTime    = rtDt    ? rtDt.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})    : schedTime;
+    const dispTime  = cancel ? schedTime : rtTime;
+
+    if (!leaveBy && !cancel && schedDt) {
+      const leaveDt = new Date(schedDt.getTime() - HOME_WALK_MINS * 60000);
+      leaveBy       = fmtHHMM(leaveDt);
+      leaveForTrain = schedTime;
+      leaveForISO   = schedDt.toISOString();
     }
 
     const statusText  = cancel ? 'Cancelled' : delay ? `+${delayMins} min` : 'On time';
@@ -1546,10 +1565,10 @@ function renderDepartures(data) {
     const timeClass   = cancel ? 'cancelled'  : delay ? 'delayed'           : '';
 
     return `<div class="train-row">
-      <span class="train-time ${timeClass}">${fmtHHMM4(rt||sched)}</span>
+      <span class="train-time ${timeClass}">${dispTime}</span>
       <span class="train-dest">\u2192 ${dest}</span>
       <span class="train-status ${statusClass}">${statusText}</span>
-      <span class="train-platform">${plat}</span>
+      <span class="train-platform">${platText}</span>
     </div>`;
   }).join('');
 
@@ -1562,7 +1581,7 @@ function renderDepartures(data) {
         <div style="font-family:var(--mono);font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-dim);margin-bottom:3px;">Leave home by</div>
         <div style="display:flex;align-items:baseline;gap:10px;">
           <span class="journey-leave-time">${leaveBy}</span>
-          <span style="font-family:var(--mono);font-size:10px;color:var(--text-dim);">for the ${fmtHHMM4(leaveForTrain)} service</span>
+          <span style="font-family:var(--mono);font-size:10px;color:var(--text-dim);">for the ${leaveForTrain} service</span>
         </div>
       </div>
       <button class="journey-leave-btn" onclick="openTravelModal('${leaveForTrain}')">+ Calendar \u2197</button>
