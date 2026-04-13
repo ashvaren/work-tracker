@@ -374,6 +374,94 @@
   .travel-leg-title { font-size:13px; color:var(--text-hi); font-weight:400; }
   .travel-leg-detail { font-family:var(--mono); font-size:10px; color:var(--text-dim); margin-top:2px; }
 
+
+  /* ── Mobile responsive ───────────────────────────────────────────────────── */
+  @media (max-width: 768px) {
+
+    /* Header */
+    header { padding: 0 1rem; height: 54px; }
+    .header-left { gap: 8px; }
+    .logo { font-size: 15px; }
+    .logo-tag { display: none; }
+    .header-right { gap: 6px; }
+    .sync-status { display: none; }
+
+    /* Hide desktop nav buttons, show hamburger */
+    .header-right .sync-btn { display: none; }
+    .hamburger-btn { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--text-dim); cursor: pointer; font-size: 18px; line-height: 1; }
+
+    /* Mobile menu dropdown */
+    .mobile-menu { display: none; position: fixed; top: 54px; right: 0; left: 0; background: var(--surface); border-bottom: 1px solid var(--border); z-index: 100; padding: 8px 0; box-shadow: var(--shadow); }
+    .mobile-menu.open { display: block; }
+    .mobile-menu-item { display: block; width: 100%; padding: 13px 20px; font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-sec); background: transparent; border: none; text-align: left; cursor: pointer; border-bottom: 1px solid var(--border); }
+    .mobile-menu-item:last-child { border-bottom: none; }
+    .mobile-menu-item:hover { background: var(--surface-2); color: var(--text-hi); }
+
+    /* Nav bar — scrollable */
+    .nav-bar { padding: 0 0.5rem; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+    .nav-bar::-webkit-scrollbar { display: none; }
+    .nav-tab { padding: 12px 14px; font-size: 10px; white-space: nowrap; }
+
+    /* Main content */
+    main { padding: 1rem; }
+
+    /* AI bar */
+    .ai-bar-row { flex-direction: column; gap: 8px; }
+    .ai-send { width: 100%; padding: 11px; }
+
+    /* Upload bar */
+    .upload-bar-row { flex-direction: column; gap: 8px; }
+    .upload-eng-select { width: 100%; min-width: unset; }
+    .upload-btn { width: 100%; padding: 11px; }
+
+    /* Today grid — stack vertically */
+    .today-grid { grid-template-columns: 1fr; }
+
+    /* Cards grid — single column */
+    .cards-grid { grid-template-columns: 1fr; }
+
+    /* Pipeline metrics — single column */
+    .pipeline-metrics { grid-template-columns: 1fr; }
+
+    /* Task toolbar */
+    .task-toolbar { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .add-task-btn { width: 100%; text-align: center; padding: 10px; }
+
+    /* Filter pills — scrollable row */
+    .filter-pills { overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap; padding-bottom: 4px; width: 100%; scrollbar-width: none; }
+    .filter-pills::-webkit-scrollbar { display: none; }
+
+    /* Train rows — tighter */
+    .train-row { padding: 10px 12px; }
+    .train-time { font-size: 13px; min-width: 46px; }
+    .train-dest { font-size: 12px; }
+    .train-platform { min-width: 48px; font-size: 10px; }
+
+    /* Journey leave bar */
+    .journey-leave { flex-direction: column; gap: 10px; align-items: flex-start; padding: 12px 14px; }
+    .journey-leave-btn { width: 100%; text-align: center; padding: 9px; }
+
+    /* Engagement cards — full width, easier tap targets */
+    .eng-card { padding: 1rem; }
+    .eng-footer { gap: 8px; }
+    .eng-btn { padding: 7px 12px; font-size: 11px; }
+
+    /* Modals — full screen on mobile */
+    .modal-overlay { padding: 0; align-items: flex-end; }
+    .modal { border-radius: 14px 14px 0 0; max-height: 92dvh; overflow-y: auto; margin: 0; max-width: 100%; }
+
+    /* Pipeline table — horizontal scroll */
+    .pipeline-table { overflow-x: auto; }
+
+    /* Task rows */
+    .task-del { opacity: 1; }
+    .task-mail-btn { opacity: 1; }
+  }
+
+  /* Hamburger always hidden on desktop */
+  .hamburger-btn { display: none; }
+  .mobile-menu { display: none; }
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
 </head>
@@ -411,8 +499,15 @@
       <button class="sync-btn" onclick="saveToD()">Save to Drive</button>
       <button class="sync-btn" onclick="openSettings()">Settings</button>
       <button class="sync-btn" onclick="signOut()">Sign out</button>
+      <button class="hamburger-btn" onclick="toggleMobileMenu()" id="hamburger-btn" aria-label="Menu">&#9776;</button>
     </div>
   </header>
+  <div class="mobile-menu" id="mobile-menu">
+    <button class="mobile-menu-item" onclick="runWeeklyReview();closeMobileMenu()">Weekly review</button>
+    <button class="mobile-menu-item" onclick="saveToD();closeMobileMenu()">Save to Drive</button>
+    <button class="mobile-menu-item" onclick="openSettings();closeMobileMenu()">Settings</button>
+    <button class="mobile-menu-item" onclick="signOut()">Sign out</button>
+  </div>
   <div class="nav-bar">
     <button class="nav-tab active" onclick="showView('today',this)">Today</button>
     <button class="nav-tab" onclick="showView('engagements',this)">Engagements</button>
@@ -798,7 +893,7 @@ window.onload = async () => {
 
 function saveConfigAndAuth() {
   cfg.clientId = document.getElementById('cfg-client-id').value.trim();
-  cfg.proxyUrl = document.getElementById('cfg-proxy-url').value.trim().replace(/\/$/,'');
+  cfg.proxyUrl = document.getElementById('cfg-proxy-url').value.trim().replace(/`/g,'').replace(/\/$/,'');
   if (!cfg.clientId || !cfg.proxyUrl) { alert('Both fields are required.'); return; }
   localStorage.setItem('cfg_client_id', cfg.clientId);
   localStorage.setItem('cfg_proxy_url', cfg.proxyUrl);
@@ -818,7 +913,7 @@ function openSettings() {
 }
 function closeSettings() { document.getElementById('settings-modal').classList.remove('open'); }
 function saveSettings() {
-  const id=document.getElementById('s-client-id').value.trim(), px=document.getElementById('s-proxy-url').value.trim().replace(/\/$/,'');
+  const id=document.getElementById('s-client-id').value.trim(), px=document.getElementById('s-proxy-url').value.trim().replace(/`/g,'').replace(/\/$/,'');
   if(!id||!px){alert('Both fields required.');return;}
   const changed=id!==cfg.clientId; cfg.clientId=id; cfg.proxyUrl=px;
   localStorage.setItem('cfg_client_id',id); localStorage.setItem('cfg_proxy_url',px);
@@ -1792,6 +1887,24 @@ document.getElementById('ai-input').addEventListener('keydown',e=>{if(e.key==='E
   const el=document.getElementById(id); if(el) el.addEventListener('click',e=>{if(e.target.id===id)el.classList.remove('open');});
 });
 function toast(m){const el=document.getElementById('toast');el.textContent=m;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),3500);}
+
+// ── Mobile menu ───────────────────────────────────────────────────────────────
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobile-menu');
+  menu.classList.toggle('open');
+}
+function closeMobileMenu() {
+  document.getElementById('mobile-menu').classList.remove('open');
+}
+// Close mobile menu when tapping outside
+document.addEventListener('click', function(e) {
+  const menu = document.getElementById('mobile-menu');
+  const btn  = document.getElementById('hamburger-btn');
+  if (menu && btn && !menu.contains(e.target) && !btn.contains(e.target)) {
+    menu.classList.remove('open');
+  }
+});
+
 </script>
 </body>
 </html>
