@@ -828,7 +828,7 @@ function saveSettings() {
   if(rk) localStorage.setItem('rtt_key',rk);
   closeSettings();
   if(changed){toast('Re-authenticating…');setTimeout(goGoogle,1200);}
-  else { toast('Settings saved'); if(ru&&rk) loadJourneys(); }
+  else { toast('Settings saved'); if(rk) loadJourneys(); }
 }
 
 async function boot() {
