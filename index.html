@@ -375,6 +375,10 @@
   .travel-leg-detail { font-family:var(--mono); font-size:10px; color:var(--text-dim); margin-top:2px; }
 
 
+  /* Hamburger hidden on desktop, shown in media query below */
+  .hamburger-btn { display: none; }
+  .mobile-menu { display: none; }
+
   /* ── Mobile responsive ───────────────────────────────────────────────────── */
   @media (max-width: 768px) {
 
@@ -458,9 +462,7 @@
     .task-mail-btn { opacity: 1; }
   }
 
-  /* Hamburger always hidden on desktop */
-  .hamburger-btn { display: none; }
-  .mobile-menu { display: none; }
+
 
 </style>
 <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
