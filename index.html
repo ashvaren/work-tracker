@@ -1685,7 +1685,7 @@ async function planTravelAndCreate() {
 
     const route  = data.routes[0];
     const leg    = route.legs[0];
-    const steps  = leg.steps.filter(s => s.travel_mode === 'TRANSIT' || s.travel_mode === 'WALKING');
+    const steps  = leg.steps.filter(s => s.travel_mode === 'WALKING' || (s.travel_mode === 'TRANSIT' && !['BUS','INTERCITY_BUS','TROLLEYBUS'].includes(s.transit_details?.line?.vehicle?.type)));
 
     // Render journey legs in modal
     renderTravelLegs(leg, steps);
