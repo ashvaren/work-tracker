@@ -1492,19 +1492,15 @@ async function loadJourneys() {
 
   try {
     // RTT departure board — proxied through your Cloudflare Worker to avoid CORS
-    const now   = new Date();
-    const date  = now.toISOString().split('T')[0].replace(/-/g, '/');
-    const hhmm  = now.toTimeString().slice(0,5).replace(':','');
-    const url   = `https://data.rtt.io/api/v1/json/search/${TBW_CRS}/${date}/${hhmm.slice(0,2)}/${hhmm.slice(2,4)}`;
-
     const resp  = await fetch(cfg.proxyUrl + '/rtt', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ rttUrl: url, rttToken: getRTTKey() })
+      body: JSON.stringify({ rttToken: getRTTKey() })
     });
 
     if (!resp.ok) throw new Error(`RTT proxy returned ${resp.status}`);
     const data = await resp.json();
+    if (data.error) throw new Error(data.error);
     renderDepartures(data);
   } catch(e) {
     body.innerHTML = `<div class="journey-error">\u26a0 Could not load departures: ${e.message}</div>`;
